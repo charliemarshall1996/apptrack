@@ -1,0 +1,3 @@
+include README.md
+recursive-include apptrack/static *
+recursive-include apptrack/templates *
