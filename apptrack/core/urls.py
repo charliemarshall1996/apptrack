@@ -4,6 +4,6 @@ from . import views
 
 
 urlpatterns = [
-  path("", views.home, name="home"),
+  path("", views.home_view, name="home"),
   path("login/", auth_views.LoginView.as_view(template_name="core/login.html"), name="login"),
 ]
