@@ -8,7 +8,7 @@ class UserRegistrationForm(UserCreationForm):
     email = forms.EmailField()
     opt_in_email = forms.BooleanField(
         required=False, 
-        label="I agree to receive email communications"
+        label="I agree to receive email communications from AppTrack."
     )
 
 
