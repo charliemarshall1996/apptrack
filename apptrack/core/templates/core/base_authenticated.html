@@ -54,10 +54,16 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
 
 <footer>
-  <nav class="navbar fixed-bottom navbar-expand-lg bg-body-tertiary">
+  <nav class="navbar navbar-expand-lg bg-body-tertiary navbar-light" id="footer">
     <ul class="navbar-nav">
       <li class="nav-item">
         <p>&copy; AppTrack 2024, All Rights Reserved</p>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="{% url 'terms_and_conditions' %}">Home</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="{% url 'login' %}">Login</a>
       </li>
     </ul>
   </nav>

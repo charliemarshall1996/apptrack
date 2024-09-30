@@ -45,13 +45,16 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
 
 <footer>
-  <nav class="navbar navbar-expand-lg bg-body-tertiary navbar-light" id="footer">
-    <ul class="navbar-nav">
+<nav class="navbar navbar-expand-lg bg-body-tertiary navbar-light" id="footer">
+  <ul class="navbar-nav">
       <li class="nav-item">
         <p>&copy; AppTrack 2024, All Rights Reserved</p>
       </li>
-    </ul>
-  </nav>
+      <li class="nav-item">
+        <a class="nav-link" href="{% url 'terms_and_conditions' %}">Terms</a>
+      </li>
+  </ul>
+</nav>
 </footer>
 
 </html>
