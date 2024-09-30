@@ -1,9 +1,4 @@
-/*
-  1. Use a more-intuitive box-sizing model.
-*/
-*, *::before, *::after {
-    box-sizing: border-box;
-  }
+
   
   /*
     2. Remove default margin
@@ -20,13 +15,15 @@
   body {
     line-height: 1.5;
     -webkit-font-smoothing: antialiased;
+    padding-left: 0;
+    padding-right: 0;
   }
   
   /*
     5. Improve media defaults
   */
   img, picture, video, canvas, svg {
-    display: block;
+
     max-width: 100%;
   }
   
@@ -49,4 +46,9 @@
   */
   #root, #__next {
     isolation: isolate;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    width: 100vw;
   }
