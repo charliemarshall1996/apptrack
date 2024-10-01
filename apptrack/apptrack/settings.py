@@ -43,7 +43,8 @@ INSTALLED_APPS = [
     'accounts',
     'core',
     'crispy_forms',
-    'crispy_bootstrap5'
+    'crispy_bootstrap5',
+    'django_recaptcha'
 ]
 
 MIDDLEWARE = [
@@ -150,3 +151,7 @@ EMAIL_HOST_PASSWORD = str(os.getenv('EMAIL_PASSWORD'))
 
 # Session Info
 MESSAGE_STORAGE = 'django.contrib.messages.storage.session.SessionStorage'
+
+# Recaptcha
+RECAPTCHA_PUBLIC_KEY = str(os.getenv('RECAPTCHA_PUBLIC_KEY'))
+RECAPTCHA_PRIVATE_KEY = str(os.getenv('RECAPTCHA_PRIVATE_KEY'))

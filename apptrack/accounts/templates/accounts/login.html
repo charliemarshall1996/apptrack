@@ -6,28 +6,22 @@
 
 {% block content %}
 
-    <div class="row">
-        <div class="col">
-            <h2>Login</h2>
+    <div class="card">
+        <div class="card-header">
+            <h2 class="card-title">Login</h2>
         </div>
-    </div>
   
-    <div class="row" width="50%">
-        <div class="col">
+        <div class="card-body">
             {% load crispy_forms_tags %}
             <form method="POST">
                 {% csrf_token %}
+                {{ form.honeypot }}
                 {{ form|crispy }}
-                <button type="submit">Login</button>
+                <button type="submit" class="btn btn-primary">Login</button>
             </form>
         </div>
-    </div>
-    <div class="row">
-        <div class="col text-center">
+        <div class="card-footer text-center">
+            <a href="{% url 'password_reset' %}">Forgot Password?</a>
             <a href="{% url 'register' %}">Register</a>
         </div>
-        <div class="col text-center">
-            <a href="{% url 'password_reset' %}">Forgot Password?</a>
-        </div>
-    </div>
 {% endblock %}
