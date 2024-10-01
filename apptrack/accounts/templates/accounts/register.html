@@ -3,26 +3,22 @@
 
 {% block content %}
 
-    <div class="row">
-        <div class="col">
-            <h2>Register</h2>
+    <div class="card" width="50%">
+        <div class="card-header">
+            <h2 class="card-title">Register</h2>
         </div>
-    </div>
   
-    <div class="row" width="50%">
-        <div class="col">
+        <div class="card-body">
             {% load crispy_forms_tags %}
             <form method="POST">
                 {% csrf_token %}
                 {{ form|crispy }}
-                <button type="submit">Register</button>
+                <button type="submit" class="btn btn-primary">Register</button>
             </form>
         </div>
-    </div>
-    <div class="row">
-        <div class="col text-center">
+        <div class="card-footer text-center">
             <a href="{% url 'login' %}">Login</a>
         </div>
-    </div>
 
+    </div>
 {% endblock %}
