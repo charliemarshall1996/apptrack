@@ -36,3 +36,12 @@
     padding-left: 0;
     padding-right: 0;
 }
+
+/* Add this to your existing CSS file */
+#content {
+    padding-top: 56%;  /* Adjust based on the height of the navbar */
+}
+
+header {
+    display: flex!important;
+}
