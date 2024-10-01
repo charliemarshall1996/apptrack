@@ -22,11 +22,16 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
+ENVIRONMENT = str(os.getenv("ENVIRONMENT"))
+
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = str(os.getenv('SECRET_KEY'))
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+if ENVIRONMENT == "prod":
+    DEBUG = False
+else:
+    DEBUG = True
 
 ALLOWED_HOSTS = []
 
@@ -44,7 +49,8 @@ INSTALLED_APPS = [
     'core',
     'crispy_forms',
     'crispy_bootstrap5',
-    'django_recaptcha'
+    'django_recaptcha',
+    'jobs',
 ]
 
 MIDDLEWARE = [
@@ -81,12 +87,28 @@ WSGI_APPLICATION = 'apptrack.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+if ENVIRONMENT == "prod":
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.postgresql",
+            "NAME": str(os.getenv("PROD_DB_NAME")),
+            "USER": str(os.getenv("PROD_DB_USER")),
+            "PASSWORD": str(os.getenv("PROD_DB_PASSWORD")),
+            "HOST": str(os.getenv("PROD_DB_HOST")),
+            "PORT": str(os.getenv("PROD_DB_PORT")),
+        }
     }
-}
+else:
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.postgresql",
+            "NAME": str(os.getenv("DEV_DB_NAME")),
+            "USER": str(os.getenv("DEV_DB_USER")),
+            "PASSWORD": str(os.getenv("DEV_DB_PASSWORD")),
+            "HOST": str(os.getenv("DEV_DB_HOST")),
+            "PORT": str(os.getenv("DEV_DB_PORT")),
+        }
+    }
 
 
 # Password validation
