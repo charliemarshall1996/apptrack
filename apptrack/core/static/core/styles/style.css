@@ -5,11 +5,11 @@
 /* Index */
 .index-header {
     display: flex !important;
-    position: relative;
+    position: fixed;
     background-size: cover;
     background-position: center;
     place-items: center;
-    min-height: 75vh;
+    min-height: 50vh;
     width: 75wv;
     color: white; /* Ensures text color is readable on overlay */
     z-index: 1;
@@ -38,9 +38,6 @@
 }
 
 /* Add this to your existing CSS file */
-#content {
-    padding-top: 56%;  /* Adjust based on the height of the navbar */
-}
 
 header {
     display: flex!important;
