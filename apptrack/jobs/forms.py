@@ -1,18 +1,19 @@
 from django import forms
-from .models import Jobs
+from .models import Jobs, Company
 
 class JobForm(forms.ModelForm):
+    company_name = forms.CharField(max_length=255, required=False, label="Company Name (if new)")
+
     class Meta:
         model = Jobs
-        fields = ['company', 'title', 'source', 'url', 'description', 'location', 'status', 'note']
+        fields = ['title', 'url', 'source', 'description', 'location', 'location_policy', 'status', 'work_contract', 'pay_rate', 'note', 'company_name']
 
     def clean(self):
         cleaned_data = super().clean()
-        source = cleaned_data.get('source')
-        url = cleaned_data.get('url')
+        company_name = cleaned_data.get("company_name")
+        company = cleaned_data.get("company")
 
-        # Check if source is "web" and URL is empty
-        if source == Jobs.WEB and not url:
-            self.add_error('url', 'URL is required when the source is set to web.')
+        if not company and not company_name:
+            raise forms.ValidationError("Please either select an existing company or provide a new company name.")
 
         return cleaned_data

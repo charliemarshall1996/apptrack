@@ -34,7 +34,7 @@ class JobsListView(ListView):
 
         return queryset
     
-def create_job_view(request):
+def add_job_view(request):
     if request.method == 'POST':
         form = JobForm(request.POST)
         if form.is_valid():
@@ -42,4 +42,4 @@ def create_job_view(request):
             return redirect('jobs_list')
     else:
         form = JobForm()
-    return render(request, 'jobs/create_job.html', {'form': form})
+    return render(request, 'jobs/add_job.html', {'form': form})
