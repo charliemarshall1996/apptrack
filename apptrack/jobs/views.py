@@ -58,14 +58,22 @@ def add_job_view(request):
     if request.method == 'POST':
         user_job_details_form = UserJobsDetailsForm(request.POST)
         job_form = JobForm(request.POST)
+        company_form = CompanyForm(request.POST)
 
         # Check if all forms are valid
         if user_job_details_form.is_valid()\
-        and job_form.is_valid():
+        and job_form.is_valid()\
+        and company_form.is_valid():
             
+            company = company_form.save()
+            company.created_by = request.user
+            company.updated_by = request.user
+            company.save()
+
             job = job_form.save()
             job.created_by = request.user
             job.updated_by = request.user
+            job.company = company
 
             user_job_details = user_job_details_form.save()
             user_job_details.job = job
@@ -75,11 +83,16 @@ def add_job_view(request):
             job.users.add(user_job_details.user)
             job.save()
             return redirect('jobs_list')
+
+        else:
+            print(user_job_details_form.errors, job_form.errors, company_form.errors)
     else:
         job_form = JobForm()
         user_job_details_form = UserJobsDetailsForm()
+        company_form = CompanyForm()
 
     return render(request, 'jobs/add_job.html', {
         'job_form': JobForm(),
-        'user_jobs_form': UserJobsDetailsForm()
+        'user_jobs_form': UserJobsDetailsForm(),
+        'company_form': CompanyForm(),
     })
