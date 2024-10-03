@@ -53,6 +53,9 @@
                             <div class="col">
                                 <strong>Company Name</strong>
                             </div>
+                            <div class="col">
+                                <strong>Action</strong>
+                            </div>
                         </div>
                     </li>
                     {% for job in jobs %}
@@ -63,6 +66,9 @@
                         </div>
                         <div class="col">
                             {{ job.company_name|title }}
+                        </div>
+                        <div class="col">
+                            <a class="btn btn-primary" href="{% url 'update_job' job.id %}">Update</a>
                         </div>
                     </div>
                     </li>
