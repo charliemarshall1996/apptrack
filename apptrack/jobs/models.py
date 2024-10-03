@@ -12,11 +12,12 @@ from core.models import Locations
 
 class Companies(models.Model):
 
-    UNKNOWN = "unknown"
-    START_UP = "startup"
-    ESTABLISHED = "established"
-    ENTERPRISE = "enterprise"
+    UNKNOWN = "uk"
+    START_UP = "su"
+    ESTABLISHED = "es"
+    ENTERPRISE = "en"
     SIZE_CHOICES = (
+        (UNKNOWN, "unknown"),
         (START_UP, "startup"),
         (ESTABLISHED, "established"),
         (ENTERPRISE, "enterprise"),
@@ -84,9 +85,10 @@ class Companies(models.Model):
     ]
 
     id = models.BigAutoField(primary_key=True)
-    name = models.CharField(max_length=255, unique=True)
+    name = models.CharField(max_length=255)
     website = models.URLField(blank=True, null=True)
     linkedin = models.URLField(blank=True, null=True)
+    size = models.CharField(max_length=2, choices=SIZE_CHOICES, null=True, blank=True, default=UNKNOWN)
     description = models.TextField(blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -95,21 +97,58 @@ class Companies(models.Model):
     industry = models.CharField(max_length=10, choices=INDUSTRY_CHOICES, null=True, blank=True)
     is_recruiter = models.BooleanField(default=False)
 
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=['name', 'website'], name='unique_company_name'),
+            models.UniqueConstraint(fields=['name', 'linkedin'], name='unique_company_linkedin'),
+            models.UniqueConstraint(fields=['name', 'industry'], name='unique_name_industry'),
+            models.UniqueConstraint(fields=['website', 'linkedin'], name='unique_website_linkedin'),
+        ]
+
     def __str__(self):
         return self.name
 
 class Jobs(models.Model):
 
     WEB = "web"
-    HEADHUNTER = "headhunter"
-    NEWSPAPER = "newspaper"
+    HEADHUNTER = "hh"
+    NEWSPAPER = "np"
+    COMPANY_WEBSITE = "cw"
+    REFERRAL = "rf"
+    JOB_BOARD = "jb"
+    RECRUITMENT_AGENCY = "ra"
+    SOCIAL_MEDIA = "sm"
+    CAREER_FAIR = "cf"
+    INTERNAL_POSTING = "ip"
+    FREELANCE_PLATFORM = "fp"
+    UNIVERSITY_CAREER_SERVICES = "uc"
+    NETWORKING_EVENT = "ne"
+    PROFESSIONAL_ASSOCIATION = "pa"
+    GOVERNMENT_PORTAL = "gp"
+    COLD_OUTREACH = "co"
+    JOB_NEWSLETTER = "jn"
+    FREELANCER_NETWORK = "fn"
 
     SOURCE_CHOICES = (
-        (WEB, "web"),
-        (HEADHUNTER, "headhunter"),
-        (NEWSPAPER, "newspaper"),
+        (WEB, "Web"),
+        (HEADHUNTER, "Headhunter"),
+        (NEWSPAPER, "Newspaper"),
+        (COMPANY_WEBSITE, "Company Website"),
+        (REFERRAL, "Referral"),
+        (JOB_BOARD, "Job Board"),
+        (RECRUITMENT_AGENCY, "Recruitment Agency"),
+        (SOCIAL_MEDIA, "Social Media"),
+        (CAREER_FAIR, "Career Fair"),
+        (INTERNAL_POSTING, "Internal Posting"),
+        (FREELANCE_PLATFORM, "Freelance Platform"),
+        (UNIVERSITY_CAREER_SERVICES, "University Career Services"),
+        (NETWORKING_EVENT, "Networking Event"),
+        (PROFESSIONAL_ASSOCIATION, "Professional Association"),
+        (GOVERNMENT_PORTAL, "Government Job Portal"),
+        (COLD_OUTREACH, "Cold Outreach"),
+        (JOB_NEWSLETTER, "Job Newsletter"),
+        (FREELANCER_NETWORK, "Freelancer Network")
     )
-
     UNKNOWN = "unknown"
     HYBRID = "hybrid"
     ON_SITE = "onsite"
@@ -230,7 +269,7 @@ class Jobs(models.Model):
     pay_rate = models.CharField(max_length=100, choices=PAY_RATE_CHOICES, null=True, blank=True)
     currency = models.CharField(max_length=100, null=True, blank=True)
 
-    # company = models.ForeignKey(Companies, on_delete=models.CASCADE, null=True)
+    company = models.ForeignKey(Companies, on_delete=models.CASCADE, null=True)
     # location = models.ForeignKey(Locations, on_delete=models.SET_NULL, null=True)
 
     created_at = models.DateTimeField(auto_now_add=True)
