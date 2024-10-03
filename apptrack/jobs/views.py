@@ -1,9 +1,14 @@
+
 import logging
 import json
 
+from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views.generic import ListView
+from django.views.generic.edit import UpdateView
+from django.contrib.messages.views import SuccessMessageMixin
 from django.http import JsonResponse
+from django.contrib import messages
 from core.forms import LocationForm
 
 from .forms import JobForm
@@ -42,21 +47,7 @@ class JobsListView(ListView):
 
         return queryset
     
-def job_detail(request, job_id):
-    job = get_object_or_404(Jobs, id=job_id)
-    location = job.location  # Access the related location object
-
-    context = {
-        'job': job,
-        'location': location,
-        'country': location.get_country_display(),
-        'region': location.region,
-        'city': location.city,
-    }
-
-    return render(request, 'job_detail.html', context)
-    
-
+@login_required
 def add_job_view(request):
     if request.method == 'POST':
         job_form = JobForm(request.POST)
@@ -69,6 +60,7 @@ def add_job_view(request):
             job.location = location
             job.user = request.user
             job.save()
+            messages.success(request, 'Job added successfully!')
             return redirect('jobs_list')
 
     else:
@@ -76,3 +68,29 @@ def add_job_view(request):
         job_form = JobForm()
 
     return render(request, 'jobs/add_job.html', {'job_form': job_form, 'location_form': location_form})
+
+@login_required
+def update_job_view(request, pk):
+    job_to_update = Jobs.objects.get(pk=pk)
+
+    if request.method == 'POST':
+        job_form = JobForm(request.POST)
+        location_form = LocationForm(request.POST)
+        if job_form.is_valid() and location_form.is_valid():
+            location = location_form.save()
+            location.save()
+            job = job_form.save()
+            job.location = location
+            job.user = request.user
+            job.save()
+            messages.success(request, 'Your profile has been updated!')
+            return redirect('profile')  # Redirect to the profile page after saving
+    else:
+        user_form = JobForm(instance=job_to_update)
+        profile_form = LocationForm(instance=job_to_update.location)
+    
+    context = {
+        'job_form': job_form,
+        'location_form': location_form
+    }
+    return render(request, 'jobs/update_job.html', context)

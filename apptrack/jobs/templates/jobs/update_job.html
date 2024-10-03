@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+
+{% extends 'core/base_authenticated.html' %}
+
+{% load crispy_forms_tags %}
+
+{% block content %}
+
+<div class="card">
+    <div class="card-header">
+        <h2 class="card-title">Update Job</h2>
+    </div>
+    <div class="card-body">
+        <form method="POST">
+            {% csrf_token %}
+            {{ job_form|crispy }}  <!-- Use 'form' instead of 'job_form' -->
+            {{ location_form|crispy }}
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
+    </div>
+</div>
+
+{% endblock %}
