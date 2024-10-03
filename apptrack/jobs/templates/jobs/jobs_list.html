@@ -23,19 +23,19 @@
 
                 <ul class="nav nav-tabs">
                     <li class="nav-item">
-                        <a class="nav-link {% if request.GET.status == 'open' or not request.GET.status %}active{% endif %}" href="?status=open">Open Jobs</a>
+                        <a class="nav-link {% if request.GET.status == 'OP' or not request.GET.status %}active{% endif %}" href="?status=open">Open Jobs</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link {% if request.GET.status == 'applied' %}active{% endif %}" href="?status=applied">Applied Jobs</a>
+                        <a class="nav-link {% if request.GET.status == 'AP' %}active{% endif %}" href="?status=applied">Applied Jobs</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link {% if request.GET.status == 'shortlisted' %}active{% endif %}" href="?status=shortlisted">Shortlisted Jobs</a>
+                        <a class="nav-link {% if request.GET.status == 'SL' %}active{% endif %}" href="?status=shortlisted">Shortlisted Jobs</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link {% if request.GET.status == 'offer' %}active{% endif %}" href="?status=offer">Offers</a>
+                        <a class="nav-link {% if request.GET.status == 'OF' %}active{% endif %}" href="?status=offer">Offers</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link {% if request.GET.status == 'closed' %}active{% endif %}" href="?status=closed">Closed Jobs</a>
+                        <a class="nav-link {% if request.GET.status == 'CL' %}active{% endif %}" href="?status=closed">Closed Jobs</a>
                     </li>
                 </ul>
 
@@ -45,18 +45,24 @@
         <div class="tab-content mt-3">
             <div class="tab-pane fade show active" id="jobs">
                 <ul class="list-group">
+                    <li class="list-group-item">
+                        <div class="row">
+                            <div class="col">
+                                <strong>Job Title</strong>
+                            </div>
+                            <div class="col">
+                                <strong>Company Name</strong>
+                            </div>
+                        </div>
+                    </li>
                     {% for job in jobs %}
                     <li class="list-group-item">
                     <div class="row">
                         <div class="col">
-                            {{ job.title|title }}
+                            {{ job.job_title|title }}
                         </div>
                         <div class="col">
-                            {{ job.company.name|title }}
-                        </div>
-                        <div class="col">
-                            <a class="btn btn-primary" href="{% url 'job_update' job.id %}">Update</a>
-                            
+                            {{ job.company_name|title }}
                         </div>
                     </div>
                     </li>

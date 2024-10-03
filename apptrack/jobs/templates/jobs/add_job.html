@@ -11,27 +11,15 @@
     <div class="card-body">
         <form method="POST">
             {% csrf_token %}
-
-            <h4>Company Details</h4>
             <div class="form-group">
-                {{ company_form|crispy }}
-            </div>
-
-            <h4>Job Details</h4>
-            <div class="form-group">
+                <h3>Job Details</h3>
                 {{ job_form|crispy}}
             </div>
 
-            <h4>Location Details</h4>
             <div class="form-group">
-                {{ location_form|crispy }}
+                <h3>Location</h3>
+                {{ location_form|crispy}}
             </div>
-
-            <h4>Custom Information</h4>
-            <div class="form-group">
-                {{ user_jobs_form|crispy }}
-            </div>
-
 
             <button type="submit" class="btn btn-primary">Submit</button>
         </form>

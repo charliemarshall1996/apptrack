@@ -1,41 +1,44 @@
 import logging
+import json
 
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views.generic import ListView
+from django.http import JsonResponse
 from core.forms import LocationForm
 
-from .forms import JobForm, CompanyForm, UserJobsDetailsForm
-from .models import Jobs, Companies, UserJobsDetails
+from .forms import JobForm
+from .models import Jobs
 
 logger = logging.getLogger(__name__)
 
 # Create your views here.
 class JobsListView(ListView):
-    model = UserJobsDetails
+    model = Jobs
     template_name = "jobs/jobs_list.html"
     context_object_name = "jobs"
     paginate_by = 100
 
     def get_queryset(self):
         queryset = super().get_queryset()
+        # queryset = queryset.filter(user=self.request.user)
         # Get the status from the query parameters
         status_filter = self.request.GET.get('status', 'all')
-        if status_filter == 'open':
-            queryset = queryset.filter(status='open')
-        elif status_filter == 'applied':
-            queryset = queryset.filter(status='applied')
-        elif status_filter == 'shortlisted':
-            queryset = queryset.filter(status='shortlisted')
-        elif status_filter == 'interview':
-            queryset = queryset.filter(status='interview')
-        elif status_filter == 'offer':
-            queryset = queryset.filter(status='offer')
-        elif status_filter == 'rejected':
-            queryset = queryset.filter(status='rejected')
-        elif status_filter == 'closed':
-            queryset = queryset.filter(status='closed')
+        if status_filter == 'OP':
+            queryset = queryset.filter(status='OP')
+        elif status_filter == 'AP':
+            queryset = queryset.filter(status='AP')
+        elif status_filter == 'SL':
+            queryset = queryset.filter(status='SL')
+        elif status_filter == 'IN':
+            queryset = queryset.filter(status='IN')
+        elif status_filter == 'OF':
+            queryset = queryset.filter(status='OF')
+        elif status_filter == 'RE':
+            queryset = queryset.filter(status='RE')
+        elif status_filter == 'CL':
+            queryset = queryset.filter(status='CL')
         else:
-            queryset = queryset.filter(status='open')
+            queryset = queryset.filter(status='OP')
 
         return queryset
     
@@ -56,43 +59,20 @@ def job_detail(request, job_id):
 
 def add_job_view(request):
     if request.method == 'POST':
-        user_job_details_form = UserJobsDetailsForm(request.POST)
         job_form = JobForm(request.POST)
-        company_form = CompanyForm(request.POST)
+        location_form = LocationForm(request.POST)
 
-        # Check if all forms are valid
-        if user_job_details_form.is_valid()\
-        and job_form.is_valid()\
-        and company_form.is_valid():
-            
-            company = company_form.save()
-            company.created_by = request.user
-            company.updated_by = request.user
-            company.save()
-
+        if job_form.is_valid() and location_form.is_valid():
+            location = location_form.save()
+            location.save()
             job = job_form.save()
-            job.created_by = request.user
-            job.updated_by = request.user
-            job.company = company
-
-            user_job_details = user_job_details_form.save()
-            user_job_details.job = job
-            user_job_details.user = request.user
-            job.save()
-            user_job_details.save()
-            job.users.add(user_job_details.user)
+            job.location = location
+            job.user = request.user
             job.save()
             return redirect('jobs_list')
 
-        else:
-            print(user_job_details_form.errors, job_form.errors, company_form.errors)
     else:
+        location_form = LocationForm()
         job_form = JobForm()
-        user_job_details_form = UserJobsDetailsForm()
-        company_form = CompanyForm()
 
-    return render(request, 'jobs/add_job.html', {
-        'job_form': JobForm(),
-        'user_jobs_form': UserJobsDetailsForm(),
-        'company_form': CompanyForm(),
-    })
+    return render(request, 'jobs/add_job.html', {'job_form': job_form, 'location_form': location_form})
