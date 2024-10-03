@@ -23,19 +23,22 @@
 
                 <ul class="nav nav-tabs">
                     <li class="nav-item">
-                        <a class="nav-link {% if request.GET.status == 'OP' or not request.GET.status %}active{% endif %}" href="?status=open">Open Jobs</a>
+                        <a class="nav-link {% if request.GET.status == 'OP' or not request.GET.status %}active{% endif %}" href="?status=OP">Open</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link {% if request.GET.status == 'AP' %}active{% endif %}" href="?status=applied">Applied Jobs</a>
+                        <a class="nav-link {% if request.GET.status == 'AP' %}active{% endif %}" href="?status=AP">Applied</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link {% if request.GET.status == 'SL' %}active{% endif %}" href="?status=shortlisted">Shortlisted Jobs</a>
+                        <a class="nav-link {% if request.GET.status == 'SL' %}active{% endif %}" href="?status=SL">Shortlisted</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link {% if request.GET.status == 'OF' %}active{% endif %}" href="?status=offer">Offers</a>
+                        <a class="nav-link {% if request.GET.status == 'IN' %}active{% endif %}" href="?status=IN">Interview</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link {% if request.GET.status == 'CL' %}active{% endif %}" href="?status=closed">Closed Jobs</a>
+                        <a class="nav-link {% if request.GET.status == 'OF' %}active{% endif %}" href="?status=OF">Offers</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.GET.status == 'CL' %}active{% endif %}" href="?status=CL">Closed</a>
                     </li>
                 </ul>
 
@@ -74,14 +77,7 @@
                     </li>
                     {% empty %}
                     <li class="list-group-item">
-                        <div class="row">
-                            <div class="col">
-                                <strong>No jobs found</strong>
-                            </div>
-                            <div class="col text-start">
-                                <a class="btn btn-primary" href="{% url 'add_job' %}">Add Job</a>
-                            </div>
-                        </div>
+                        No jobs found.
                     </li>
                     {% endfor %}
                 </ul>
