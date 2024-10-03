@@ -1,18 +1,39 @@
+<!-- jobs/add_job.html -->
 
 {% extends 'core/base_authenticated.html' %}
 
 {% block content %}
-
+{% load crispy_forms_tags %}
 <div class="card">
     <div class="card-header">
         <h2 class="card-title">Add Job</h2>
     </div>
     <div class="card-body">
-        {% load crispy_forms_tags %}
-        <form action="{% url 'add_job' %}" method="post">
+        <form method="POST">
             {% csrf_token %}
-            {{ form|crispy }}
-            <button type="submit" class="btn btn-primary">Add Job</button>
+
+            <h4>Company Details</h4>
+            <div class="form-group">
+                {{ company_form|crispy }}
+            </div>
+
+            <h4>Job Details</h4>
+            <div class="form-group">
+                {{ job_form|crispy}}
+            </div>
+
+            <h4>Location Details</h4>
+            <div class="form-group">
+                {{ location_form|crispy }}
+            </div>
+
+            <h4>Custom Information</h4>
+            <div class="form-group">
+                {{ user_jobs_form|crispy }}
+            </div>
+
+
+            <button type="submit" class="btn btn-primary">Submit</button>
         </form>
     </div>
 </div>
