@@ -6,8 +6,11 @@ from .models import Locations
 class LocationForm(forms.ModelForm):
     class Meta:
         model = Locations
-        fields = ['city', 'region', 'country']
+        fields = ['country', 'region', 'city']
 
+    def save(self, *args, **kwargs):
+        return super().save(*args, commit=False, **kwargs)
+    
 class ContactForm(forms.Form):
     first_name = forms.CharField(required=True)
     last_name = forms.CharField(required=True)
