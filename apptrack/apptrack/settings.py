@@ -51,6 +51,8 @@ INSTALLED_APPS = [
     'crispy_bootstrap5',
     'django_recaptcha',
     'jobs',
+    'django_countries',
+    'pycountry',
 ]
 
 MIDDLEWARE = [
@@ -177,3 +179,4 @@ MESSAGE_STORAGE = 'django.contrib.messages.storage.session.SessionStorage'
 # Recaptcha
 RECAPTCHA_PUBLIC_KEY = str(os.getenv('RECAPTCHA_PUBLIC_KEY'))
 RECAPTCHA_PRIVATE_KEY = str(os.getenv('RECAPTCHA_PRIVATE_KEY'))
+

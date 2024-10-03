@@ -1,12 +1,17 @@
-from django.shortcuts import render, redirect
-from django.views.generic import ListView
+import logging
 
-from .forms import JobForm
-from .models import Jobs
+from django.shortcuts import render, redirect, get_object_or_404
+from django.views.generic import ListView
+from core.forms import LocationForm
+
+from .forms import JobForm, CompanyForm, UserJobsDetailsForm
+from .models import Jobs, Companies, UserJobsDetails
+
+logger = logging.getLogger(__name__)
 
 # Create your views here.
 class JobsListView(ListView):
-    model = Jobs
+    model = UserJobsDetails
     template_name = "jobs/jobs_list.html"
     context_object_name = "jobs"
     paginate_by = 100
@@ -34,12 +39,34 @@ class JobsListView(ListView):
 
         return queryset
     
+def job_detail(request, job_id):
+    job = get_object_or_404(Jobs, id=job_id)
+    location = job.location  # Access the related location object
+
+    context = {
+        'job': job,
+        'location': location,
+        'country': location.get_country_display(),
+        'region': location.region,
+        'city': location.city,
+    }
+
+    return render(request, 'job_detail.html', context)
+    
+
 def add_job_view(request):
     if request.method == 'POST':
-        form = JobForm(request.POST)
-        if form.is_valid():
-            form.save()
+        user_job_details_form = UserJobsDetailsForm(request.POST)
+
+        # Check if all forms are valid
+        if user_job_details_form.is_valid():
+            user_job_details = user_job_details_form.save()
+            user_job_details.user = request.user
+            user_job_details.save()
             return redirect('jobs_list')
     else:
-        form = JobForm()
-    return render(request, 'jobs/add_job.html', {'form': form})
+        user_job_details_form = UserJobsDetailsForm()
+
+    return render(request, 'jobs/add_job.html', {
+        'user_jobs_form': UserJobsDetailsForm()
+    })
