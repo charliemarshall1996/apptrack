@@ -16,6 +16,24 @@ class UserJobsDetailsForm(forms.ModelForm):
 
     def save(self, *args, **kwargs):
         return super().save(commit=False)
+    
+class JobForm(forms.ModelForm):
+    class Meta:
+        model = Jobs
+        fields = ['job_title', 
+                  'job_function', 
+                  'description', 
+                  'url', 
+                  'source', 
+                  'work_contract', 
+                  'location_policy', 
+                  'pay_rate', 
+                  'min_pay', 
+                  'max_pay', 
+                  'currency']
+        
+    def save(self, *args, **kwargs):
+        return super().save(commit=False)
 
 class CompanyForm(forms.ModelForm):
     class Meta:
@@ -73,63 +91,3 @@ class CompanyForm(forms.ModelForm):
     
 
     
-class JobForm(forms.ModelForm):
-    class Meta:
-        model = Jobs
-        fields = ['job_title', 
-                  'job_function', 
-                  'description', 
-                  'url', 
-                  'source', 
-                  'work_contract', 
-                  'location_policy', 
-                  'pay_rate', 
-                  'min_pay', 
-                  'max_pay', 
-                  'currency']
-        
-    def __init__(self, *args, **kwargs):
-        self.user = kwargs.pop('user', None)  # Pop the user argument from kwargs
-        super().__init__(*args, **kwargs)
-
-    def save(self):
-        # Get the company name from the form data
-        name = self.cleaned_data.get('name')
-
-        # Try to find the company by name
-        job, created = Jobs.objects.get_or_create(
-            url=self.cleaned_data.get('url'),
-            defaults={
-                'job_title': self.cleaned_data.get('job_title'),
-                'job_function': self.cleaned_data.get('job_function'),
-                'description': self.cleaned_data.get('description'),
-                'source': self.cleaned_data.get('source'),
-                'work_contract': self.cleaned_data.get('work_contract'),
-                'location_policy': self.cleaned_data.get('location_policy'),
-                'pay_rate': self.cleaned_data.get('pay_rate'),
-                'min_pay': self.cleaned_data.get('min_pay'),
-                'max_pay': self.cleaned_data.get('max_pay'),
-                'currency': self.cleaned_data.get('currency'),
-                'created_by': self.user,
-                'updated_by': self.user
-            }
-        )
-
-        # If the company exists (not created), update its fields with the new values from the form
-        if not created:
-            job.job_title = self.cleaned_data.get('job_title')
-            job.job_function = self.cleaned_data.get('job_function')
-            job.description = self.cleaned_data.get('description')
-            job.source = self.cleaned_data.get('source')
-            job.work_contract = self.cleaned_data.get('work_contract')
-            job.location_policy = self.cleaned_data.get('location_policy')
-            job.pay_rate = self.cleaned_data.get('pay_rate')
-            job.min_pay = self.cleaned_data.get('min_pay')
-            job.max_pay = self.cleaned_data.get('max_pay')
-            job.currency = self.cleaned_data.get('currency')
-
-            # Update the 'updated_by' field with the current user
-            if self.user:
-                job.updated_by = self.user
-
-        return job

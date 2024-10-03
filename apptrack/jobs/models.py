@@ -240,21 +240,6 @@ class Jobs(models.Model):
 
     users = models.ManyToManyField(User, related_name="users", blank=True)
 
-    def save(self, *args, **kwargs):
-        user = kwargs.pop('user', None)  # Get the user from the kwargs (optional)
-
-        # Ensure that if this job already exists (i.e., it has a primary key), then it's an update
-        if self.pk:
-            if user:
-                # Add the current user to the `users_with_access` ManyToManyField if this is an update
-                self.users.add(user)
-
-        # Check if a job with the same title and company already exists
-        if Jobs.objects.filter(url=self.url, company=self.company, job_title=self.job_title, location=self.location).exists():
-            raise ValueError(f"A job with the title '{self.job_title}' at the company '{self.company}' already exists.")
-        
-        super().save(*args, **kwargs)  # Call the original save method
-
 class UserJobsDetails(models.Model):
 
     ARCHIVED = "arc"
@@ -280,7 +265,7 @@ class UserJobsDetails(models.Model):
 
     id = models.BigAutoField(primary_key=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    # job = models.ForeignKey(Jobs, on_delete=models.CASCADE, null=True, blank=True)
+    job = models.ForeignKey(Jobs, on_delete=models.CASCADE, null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     note = models.TextField(null=True, blank=True)
