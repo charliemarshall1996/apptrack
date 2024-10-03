@@ -74,8 +74,8 @@ def update_job_view(request, pk):
     job_to_update = Jobs.objects.get(pk=pk)
 
     if request.method == 'POST':
-        job_form = JobForm(request.POST)
-        location_form = LocationForm(request.POST)
+        job_form = JobForm(request.POST, instance=job_to_update)
+        location_form = LocationForm(request.POST, instance=job_to_update.location)
         if job_form.is_valid() and location_form.is_valid():
             location = location_form.save()
             location.save()
@@ -84,10 +84,10 @@ def update_job_view(request, pk):
             job.user = request.user
             job.save()
             messages.success(request, 'Your profile has been updated!')
-            return redirect('profile')  # Redirect to the profile page after saving
+            return redirect('jobs_list')  # Redirect to the profile page after saving
     else:
-        user_form = JobForm(instance=job_to_update)
-        profile_form = LocationForm(instance=job_to_update.location)
+        job_form = JobForm(instance=job_to_update)
+        location_form = LocationForm(instance=job_to_update.location)
     
     context = {
         'job_form': job_form,
