@@ -71,3 +71,6 @@ def load_cities(request):
     cities_in_region = cities.get(region_code, [])
     
     return JsonResponse({'cities': cities_in_region})
+
+def privacy_policy_view(request):
+    return render(request, 'core/privacy_policy.html')
