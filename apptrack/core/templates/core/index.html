@@ -4,12 +4,14 @@
 {% load static %}
 
 {% block content %}
-<div class="container-fluid d-flex justify-content-center align-items-center index-header"
+<div class="container-fluid justify-content-center align-items-center index-header"
      style="background-image: url('{% static 'core/resume-genius-72D3z_LfrQA-unsplash.jpg' %}');">
-    <div class="text-center">
-        <h1 class="display-5 fw-bold">AppTrack</h1>
-        <p class="col-md-8 mx-auto fs-4">The application tracking system for candidates.</p>
-        <a type="button" class="btn btn-primary btn-lg px-4 gap-3" href="{% url 'register' %}">Register Now!</a>
+    <div class="row text-center">
+        <div class="col">
+            <h1 class="display-5 fw-bold">AppTrack</h1>
+            <p class="col-md-8 mx-auto fs-4">The application tracking system for candidates.</p>
+            <a type="button" class="btn btn-primary btn-lg px-4 gap-3" href="{% url 'register' %}">Register Now!</a>
+        </div>
     </div>
 </div>
 <hr>
