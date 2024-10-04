@@ -8,42 +8,42 @@
      style="background-image: url('{% static 'core/resume-genius-72D3z_LfrQA-unsplash.jpg' %}');">
     <div class="row text-center">
         <div class="col">
-            <h1 class="display-5 fw-bold">AppTrack</h1>
+            <h1 class="display-1 fw-bold">AppTrack</h1>
             <p class="col-md-8 mx-auto fs-4">The application tracking system for candidates.</p>
             <a type="button" class="btn btn-primary btn-lg px-4 gap-3" href="{% url 'register' %}">Register Now!</a>
         </div>
     </div>
 </div>
 <hr>
-<div class="container">
+<div class="container-fluid">
     <div class="row">
         <div class="col">
             <div class="row">
-                <div class="col text-start">
-                    <h2>About AppTrack</h2>
+                <div class="col">
+                    <h2 class="text-start display-2">About AppTrack</h2>
                 </div>
             </div>
             <div class="row">
-                <div class="col text-start">
-                    <p>
+                <div class="col">
+                    <p class="text-start mx-auto fs-5">
                         AppTrack is an intuitive web app designed to help job seekers efficiently manage and track their job applications. Whether you're applying to multiple positions or organizing follow-ups, Apptrack simplifies the process by allowing candidates to monitor their progress, set reminders, and store essential application details—all in one place.
                         With AppTrack, staying organized during your job search has never been easier. The platform is designed to save time, reduce stress, and increase your chances of landing the perfect job. From application submission to interview scheduling, keep track of every step on your career journey with ease.
                     </p>
                 </div>
             </div>
             <div class="row">
-                <div class="col text-start">
-                    <strong>Stay on top of your job search:</strong>
+                <div class="col">
+                    <p class="fs-5"><strong>Stay on top of your job search:</strong></p>
                 </div>
             </div>
             <div class="row">
-                <div class="col text-start">
-                    <a type="button" class="btn btn-primary btn-sm" href="{% url 'register' %}">Get started with AppTrack today!</a>
+                <div class="col">
+                    <a type="button" class="btn btn-outline-primary btn-sm fs-5" href="{% url 'register' %}">Get started with AppTrack today!</a>
                 </div>
             </div>
         </div>
-        <div class="col justify-content-end d-none d-md-block" id="about-image">
-            <img src="{% static 'core/man-in-suit.jpg' %}" alt="">
+        <div class="col h-100 justify-content-end d-none d-md-block" id="about-image">
+            <img class="img-fluid h-100 mx-auto" src="{% static 'core/man-in-suit.jpg' %}" alt="">
         </div>
     </div>
 </div>
