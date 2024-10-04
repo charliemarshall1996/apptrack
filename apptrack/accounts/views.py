@@ -5,7 +5,8 @@ from django.contrib.auth.views import PasswordResetView
 from django.views.generic.detail import DetailView
 from django.contrib.messages.views import SuccessMessageMixin
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.contrib.auth import get_user_model
+from django.contrib.auth import get_user_model, logout
+
 from django.contrib import messages
 from django.urls import reverse_lazy
 from .forms import UserRegistrationForm, UserUpdateForm, ProfileUpdateForm
@@ -64,6 +65,12 @@ class ProfileView(LoginRequiredMixin, DetailView):
 @login_required
 def dashboard_view(request):
     return render(request, 'accounts/dashboard.html')
+
+
+@login_required
+def logout_view(request):
+    logout(request)
+    return redirect('home')
 
 
 class ResetPasswordView(SuccessMessageMixin, PasswordResetView):
