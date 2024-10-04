@@ -1,0 +1,31 @@
+
+{% extends 'core/base_authenticated.html' %}
+
+{% load crispy_forms_tags %}
+
+{% block content %}
+  <h2>Profile Page</h2>
+
+  <form method="post">
+      {% csrf_token %}
+      <fieldset class="form-group">
+          <legend>Update Profile</legend>
+
+          <h5>User Info</h5>
+          {{ user_form|crispy }}
+          
+          <h5>Profile Info</h5>
+          {{ profile_form|crispy }}
+
+      </fieldset>
+      <button type="submit" class="btn btn-primary">Update Profile</button>
+  </form>
+  
+  {% if messages %}
+    <ul>
+      {% for message in messages %}
+        <li>{{ message }}</li>
+      {% endfor %}
+    </ul>
+  {% endif %}
+{% endblock %}

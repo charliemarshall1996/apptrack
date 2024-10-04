@@ -2,10 +2,16 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
 from django.contrib.auth import login
 from django.contrib.auth.views import PasswordResetView
+from django.views.generic.detail import DetailView
 from django.contrib.messages.views import SuccessMessageMixin
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth import get_user_model
 from django.contrib import messages
 from django.urls import reverse_lazy
 from .forms import UserRegistrationForm, UserUpdateForm, ProfileUpdateForm
+
+User = get_user_model()
+
 
 def register(request):
     if request.method == 'POST':
@@ -13,34 +19,52 @@ def register(request):
         if form.is_valid():
             user = form.save()
             login(request, user)
-            return redirect('dashboard')  # Redirect to profile or job application list
+            # Redirect to profile or job application list
+            return redirect('dashboard')
     else:
         form = UserRegistrationForm()
     return render(request, 'accounts/register.html', {'form': form})
 
+
 @login_required
-def profile_view(request):
+def profile_settings_view(request):
     if request.method == 'POST':
         user_form = UserUpdateForm(request.POST, instance=request.user)
-        profile_form = ProfileUpdateForm(request.POST, instance=request.user.profile)
+        profile_form = ProfileUpdateForm(
+            request.POST, instance=request.user.profile)
         if user_form.is_valid() and profile_form.is_valid():
             user_form.save()
             profile_form.save()
             messages.success(request, 'Your profile has been updated!')
-            return redirect('profile')  # Redirect to the profile page after saving
+            # Redirect to the profile page after saving
+            return redirect('profile')
     else:
         user_form = UserUpdateForm(instance=request.user)
         profile_form = ProfileUpdateForm(instance=request.user.profile)
-    
+
     context = {
         'user_form': user_form,
         'profile_form': profile_form
     }
-    return render(request, 'accounts/profile.html', context)
+    return render(request, 'accounts/profile_settings.html', context)
+
+
+class ProfileView(LoginRequiredMixin, DetailView):
+    model = User
+    template_name = 'accounts/profile.html'  # Adjust based on your template
+    slug_field = 'username'  # Or 'slug' if you use a custom slug field
+    slug_url_kwarg = 'slug'  # This is the URL parameter expected
+
+    # Override get_object to use the logged-in user
+    def get_object(self):
+        # Return the logged-in user based on the slug
+        return self.request.user
+
 
 @login_required
 def dashboard_view(request):
     return render(request, 'accounts/dashboard.html')
+
 
 class ResetPasswordView(SuccessMessageMixin, PasswordResetView):
     template_name = 'accounts/password_reset.html'
