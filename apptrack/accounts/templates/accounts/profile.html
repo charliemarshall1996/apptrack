@@ -1,31 +1,26 @@
 
-{% extends 'core/base_authenticated.html' %}
+<!DOCTYPE html>
 
-{% load crispy_forms_tags %}
+{% extends "core/base_authenticated.html" %}
 
 {% block content %}
-  <h2>Profile Page</h2>
 
-  <form method="post">
-      {% csrf_token %}
-      <fieldset class="form-group">
-          <legend>Update Profile</legend>
-
-          <h5>User Info</h5>
-          {{ user_form|crispy }}
-          
-          <h5>Profile Info</h5>
-          {{ profile_form|crispy }}
-
-      </fieldset>
-      <button type="submit" class="btn btn-primary">Update Profile</button>
-  </form>
+    <div class="card">
+        <div class="card-header">
+            <h2 class="card-title">Profile</h2>
+        </div>
   
-  {% if messages %}
-    <ul>
-      {% for message in messages %}
-        <li>{{ message }}</li>
-      {% endfor %}
-    </ul>
-  {% endif %}
+        <div class="card-body">
+            <h5 class="card-title">{{ user.username }}</h5>
+            <p class="card-text">Email: {{ user.email }}</p>
+            <p class="card-text">First Name: {{ user.first_name }}</p>
+            <p class="card-text">Last Name: {{ user.last_name }}</p>
+            <p class="card-text">Date Joined: {{ user.date_joined }}</p>
+        </div>
+
+        <div class="card-footer text-center">
+            <a class="btn btn-primary" href="{% url 'profile_settings' %}">Settings</a>
+        </div>
+
+    </div>
 {% endblock %}
