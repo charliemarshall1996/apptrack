@@ -39,8 +39,8 @@
   </header>
 
   <!-- Content -->
+  {% include 'core/messages.html' %}
   <div class="container align-content-center" id="content">
-    {% include 'core/messages.html' %}
     {% block content %}
     {% endblock %}
   </div>

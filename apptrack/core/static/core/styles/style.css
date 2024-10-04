@@ -5,7 +5,7 @@
 /* Index */
 .index-header {
     display: flex !important;
-    position: fixed;
+    /* position: fixed; */
     background-size: cover;
     background-position: center;
     place-items: center;
@@ -39,6 +39,6 @@
 
 /* Add this to your existing CSS file */
 
-header {
+/* header {
     display: flex!important;
-}
+} */
