@@ -1,0 +1,36 @@
+
+{% extends 'core/base_authenticated.html' %}
+
+{% load static %}
+{% load filter %}
+{% csrf_token %}
+<meta name="csrf-token" content="{{ csrf_token }}">
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Assign Task</title>
+
+    <link rel="stylesheet" href="{% static 'css/drag_drop.css' %}">
+    <script src="{% static 'js/jquery.js' %}" defer></script>
+    <script src="{% static 'js/dragdrop.js' %}" defer></script>
+  </head>
+  <body>
+    <div class="board">
+      
+      <div class="lanes">
+    
+        {% for employee in employees %}
+            <div class="swim-lane" id="{{ employee.id }}">
+              <h3 class="heading">Employee: {{ employee.id }}</h3>
+              {% for task in tasks|employee_tasks:employee %}
+                  <p class="task" draggable="true" id="{{ task.id }}">{{ task.id }}</p>
+              {% endfor %}
+            </div>
+          {% endfor %}
+      </div>
+    </div>
+  </body>
+</html>
