@@ -16,42 +16,11 @@ from django.urls import reverse
 from django.views import View
 
 from .forms import JobForm
-from .models import Jobs, Boards, Columns, Employee, Task
+from .models import Jobs, Boards, Columns
 
 logger = logging.getLogger(__name__)
 
 # Create your views here.
-
-
-class JobsListView(ListView):
-    model = Jobs
-    template_name = "jobs/jobs_list.html"
-    context_object_name = "jobs"
-    paginate_by = 100
-
-    def get_queryset(self):
-        queryset = super().get_queryset()
-        # queryset = queryset.filter(user=self.request.user)
-        # Get the status from the query parameters
-        status_filter = self.request.GET.get('status', 'all')
-        if status_filter == 'OP':
-            queryset = queryset.filter(status='OP')
-        elif status_filter == 'AP':
-            queryset = queryset.filter(status='AP')
-        elif status_filter == 'SL':
-            queryset = queryset.filter(status='SL')
-        elif status_filter == 'IN':
-            queryset = queryset.filter(status='IN')
-        elif status_filter == 'OF':
-            queryset = queryset.filter(status='OF')
-        elif status_filter == 'RE':
-            queryset = queryset.filter(status='RE')
-        elif status_filter == 'CL':
-            queryset = queryset.filter(status='CL')
-        else:
-            queryset = queryset.filter(status='OP')
-
-        return queryset
 
 
 @login_required
@@ -86,77 +55,103 @@ def update_job_view(request, pk):
 @login_required
 def board_view(request):
     board = Boards.objects.filter(user=request.user).first()
+    jobs = Jobs.objects.filter(user=request.user).all()
+    columns = board.columns.all()
     job_form = JobForm()
     location_form = LocationForm()
 
-    if not board:
-        return HttpResponse('No board available for this user.')
+    if job_form.is_valid() and location_form.is_valid():
+        location = location_form.save()
+        location.save()
+        job = job_form.save()
+        job.location = location
+        job.user = request.user
+        job.save()
 
-    if request.method == 'POST':
-        job_form = JobForm(request.POST)
-        location_form = LocationForm(request.POST)
-
-        if job_form.is_valid() and location_form.is_valid():
-            loc = location_form.save()
-            new_job = job_form.save()
-            new_job.location = loc
-            new_job.user = request.user
-            new_job.save()
-
-            # Option 1: Redirect for a full refresh (existing behavior)
-            if not request.headers.get('x-requested-with') == 'XMLHttpRequest':
-                return redirect('job_board')
-
-    # Regular context for rendering the full page
     context = {
         'board': board,
+        'columns': columns,
+        'jobs': jobs,
         'job_form': job_form,
-        'location_form': location_form,
+        'location_form': location_form
     }
 
     return render(request, 'jobs/jobs_kanban.html', context)
 
 
 @login_required
-def assign_job_view(request):
-    jobs = Jobs.objects.filter(user=request.user)
-    columns = Columns.objects.all()
-    context = {
-        'jobs': jobs,
-        'columns': columns
-    }
-    return render(request, 'jobs/partials/kanban_board.html')
+def add_job_view(request):
+    if request.method == 'POST':
+        job_form = JobForm(request.POST)
+        location_form = LocationForm(request.POST)
+        if job_form.is_valid() and location_form.is_valid():
+            location = location_form.save()
+            location.save()
+            job = job_form.save()
+            job.location = location
+            job.user = request.user
+            job.save()
+            return redirect('jobs:board')
+    else:
+        job_form = JobForm()
+        location_form = LocationForm()
 
+    context = {
+        'job_form': job_form,
+        'location_form': location_form
+    }
+    return render(request, 'jobs/jobs_kanban.html', context)
 
 # ...
+
+
 class ChangeSheetAssign(LoginRequiredMixin, View):
 
     @staticmethod
     def get(request, *args, **kwargs):
-        emp_id = kwargs['emp_id']
-        task_id = kwargs['task_id']
+        col_id = kwargs['col_id']
+        job_id = kwargs['job_id']
 
-        employee = Employee.objects.get(id=emp_id)
-        task = Task.objects.get(id=task_id)
+        column = Columns.objects.get(id=col_id)
+        job = Jobs.objects.get(id=job_id)
 
-        employee.task = task
-        task.save()
+        job.column = column
+        job.save()
+        column.save()
 
-        return redirect(reverse('myapp:main_page'))
+        return redirect(reverse('jobs:board'))
 
 # render page
 
 
-class AssignTaskView(LoginRequiredMixin, View):
+class AssignJobView(LoginRequiredMixin, View):
 
     @staticmethod
     def get(request, *args, **kwargs):
-        columns = Columns.objects.all()
+        employees = Columns.objects.all()
         jobs = Jobs.objects.all()
-        spare_jobs = Task.objects.filter(employee__isnull=True)
 
-        context = {'columns': columns,
-                   'jobs': jobs,
-                   'spare_jobs': spare_jobs}
+        context = {'employees': employees,
+                   'tasks': jobs}
 
         return render(request, 'jobs/jobs_kanban.html', context)
+
+    @staticmethod
+    def post(request, *args, **kwargs):
+        col_id = kwargs['col_id']
+        job_id = kwargs['job_id']
+        print(f"col_id: {col_id}, job_id: {job_id}")
+        column = Columns.objects.get(id=col_id)
+        job = Jobs.objects.get(id=job_id)
+        print(f"column: {column}, job: {job}")
+
+        job.column = column
+
+        try:
+            job.save()
+            column.save()
+            print(f"Job assigned successfully to column: {column}")
+        except Exception as e:
+            print(f"Error: {e}")
+
+        return redirect(reverse('jobs:board'))

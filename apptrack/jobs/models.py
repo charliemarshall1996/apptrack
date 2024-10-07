@@ -20,6 +20,9 @@ class Columns(models.Model):
     def __str__(self):
         return self.name
 
+    class Meta:
+        ordering = ['position']
+
 
 class Boards(models.Model):
     name = models.CharField(max_length=255)
@@ -196,13 +199,23 @@ class Jobs(models.Model):
     )
 
     STATUS_POSITIONS = {
+        OPEN: 1,
         APPLIED: 2,
-        REJECTED: 2,
         SHORTLISTED: 3,
         INTERVIEW: 4,
         OFFER: 5,
-        OPEN: 1,
+        REJECTED: 6,
         CLOSED: 7
+    }
+
+    POSITION_STATUSES = {
+        1: OPEN,
+        2: APPLIED,
+        3: SHORTLISTED,
+        4: INTERVIEW,
+        5: OFFER,
+        6: REJECTED,
+        7: CLOSED
     }
 
     PAY_CURRENCY_CHOICES = get_currency_choices()
@@ -247,16 +260,9 @@ class Jobs(models.Model):
         return f"{self.company_name} - {self.job_title}"
 
     def save(self):
-        self.column = Columns.objects.get(
-            id=self.STATUS_POSITIONS[self.status])
-
-
-class Employee(models.Model):
-    firstname = models.CharField(max_length=50)
-    lastname = models.CharField(max_length=50)
-    department = models.CharField(max_length=30)
-
-
-class Task(models.Model):
-    title = models.CharField(max_length=255)
-    employee = models.ForeignKey(Employee, on_delete=models.CASCADE)
+        if not self.column:
+            self.column = Columns.objects.get(
+                id=self.STATUS_POSITIONS[self.status])
+        else:
+            self.status = self.POSITION_STATUSES[self.column.position]
+        super().save()

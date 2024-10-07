@@ -1,9 +1,18 @@
 {% extends 'core/base_authenticated.html' %}
-{% load static %}
 
-<link rel="stylesheet" href="{% static 'jobs/styles/kanban_style.css' %}">
+
+
 
 {% block content %}
+
+{% load static %}
+{% load filter %}
+{% csrf_token %}
+<meta name="csrf-token" content="{{ csrf_token }}">
+
+<script src="{% static 'jobs/scripts/jquery.js' %}" defer></script>
+<script src="{% static 'jobs/scripts/kanban.js' %}" defer></script>
+
 
 <div class="container-fluid py-3">
     <div class="row">
@@ -19,10 +28,32 @@
         </div>
     </div>
 
-    <!-- This is the part that will be updated dynamically via AJAX -->
-    <div class="row board d-flex flex-nowrap overflow-auto py-3">
-        {% include 'jobs/partials/kanban_board.html' %}
+    <div class="row board">
+      
+        <div class="lanes d-flex flex-nowrap overflow-auto py-3">
+        
+            {% for column in columns %}
+                <div class="swim-lane card mx-2" id="{{ column.id }}">
+                    <div class="card-header text-center">
+                        <h3 class="heading">{{ column.name }}</h3>
+                    </div>
+                    <div class="card-body">
+                        {% for job in jobs|column_jobs:column %}
+                        <div class="task card m-2" draggable="true" id="{{ job.id }}">
+                            <div class="card-header text-center">
+                                <h3 class="heading">{{ job.job_title }}</h3>
+                            </div>
+                            <div class="card-body">
+                                <p>{{ job.job_description }}</p>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
     </div>
+
 </div>
 
 <!-- Create Job Modal -->
@@ -35,7 +66,7 @@
             </div>
             <div class="modal-body">
                 {% load crispy_forms_tags %}
-                <form method="POST" id="addJobForm">
+                <form method="POST" id="addJobForm" action="{% url 'jobs:add_job' %}">
                     {% csrf_token %}
                     {{ job_form|crispy }}
                     {{ location_form|crispy }}
