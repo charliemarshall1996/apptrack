@@ -1,0 +1,50 @@
+{% extends 'core/base_authenticated.html' %}
+{% load static %}
+
+<link rel="stylesheet" href="{% static 'jobs/styles/kanban_style.css' %}">
+
+{% block content %}
+
+<div class="container-fluid py-3">
+    <div class="row">
+        <div class="col">
+            <h1 class="text-start">{{ board.name }}</h1>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <button type="button" class="btn btn-primary" id="addJobButton" data-bs-toggle="modal" data-bs-target="#createJobModal">
+                Add Job
+            </button>
+        </div>
+    </div>
+
+    <!-- This is the part that will be updated dynamically via AJAX -->
+    <div class="row board d-flex flex-nowrap overflow-auto py-3">
+        {% include 'jobs/partials/kanban_board.html' %}
+    </div>
+</div>
+
+<!-- Create Job Modal -->
+<div class="modal fade" id="createJobModal" tabindex="-1" aria-labelledby="createJobModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="createJobModalLabel">Create Job</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                {% load crispy_forms_tags %}
+                <form method="POST" id="addJobForm">
+                    {% csrf_token %}
+                    {{ job_form|crispy }}
+                    {{ location_form|crispy }}
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+{% endblock %}

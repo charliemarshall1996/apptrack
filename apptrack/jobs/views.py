@@ -3,20 +3,26 @@ import logging
 import json
 
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import render, redirect, get_object_or_404
-from django.views.generic import ListView
+from django.shortcuts import render, redirect, get_object_or_404, HttpResponse
+from django.views.generic import ListView, View
 from django.views.generic.edit import UpdateView
 from django.contrib.messages.views import SuccessMessageMixin
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import JsonResponse
 from django.contrib import messages
 from core.forms import LocationForm
+from django.template.loader import render_to_string
+from django.urls import reverse
+from django.views import View
 
 from .forms import JobForm
-from .models import Jobs
+from .models import Jobs, Boards, Columns, Employee, Task
 
 logger = logging.getLogger(__name__)
 
 # Create your views here.
+
+
 class JobsListView(ListView):
     model = Jobs
     template_name = "jobs/jobs_list.html"
@@ -46,28 +52,7 @@ class JobsListView(ListView):
             queryset = queryset.filter(status='OP')
 
         return queryset
-    
-@login_required
-def add_job_view(request):
-    if request.method == 'POST':
-        job_form = JobForm(request.POST)
-        location_form = LocationForm(request.POST)
 
-        if job_form.is_valid() and location_form.is_valid():
-            location = location_form.save()
-            location.save()
-            job = job_form.save()
-            job.location = location
-            job.user = request.user
-            job.save()
-            messages.success(request, 'Job added successfully!')
-            return redirect('jobs_list')
-
-    else:
-        location_form = LocationForm()
-        job_form = JobForm()
-
-    return render(request, 'jobs/add_job.html', {'job_form': job_form, 'location_form': location_form})
 
 @login_required
 def update_job_view(request, pk):
@@ -75,7 +60,8 @@ def update_job_view(request, pk):
 
     if request.method == 'POST':
         job_form = JobForm(request.POST, instance=job_to_update)
-        location_form = LocationForm(request.POST, instance=job_to_update.location)
+        location_form = LocationForm(
+            request.POST, instance=job_to_update.location)
         if job_form.is_valid() and location_form.is_valid():
             location = location_form.save()
             location.save()
@@ -84,13 +70,93 @@ def update_job_view(request, pk):
             job.user = request.user
             job.save()
             messages.success(request, 'Your profile has been updated!')
-            return redirect('jobs_list')  # Redirect to the profile page after saving
+            # Redirect to the profile page after saving
+            return redirect('jobs_list')
     else:
         job_form = JobForm(instance=job_to_update)
         location_form = LocationForm(instance=job_to_update.location)
-    
+
     context = {
         'job_form': job_form,
         'location_form': location_form
     }
     return render(request, 'jobs/update_job.html', context)
+
+
+@login_required
+def board_view(request):
+    board = Boards.objects.filter(user=request.user).first()
+    job_form = JobForm()
+    location_form = LocationForm()
+
+    if not board:
+        return HttpResponse('No board available for this user.')
+
+    if request.method == 'POST':
+        job_form = JobForm(request.POST)
+        location_form = LocationForm(request.POST)
+
+        if job_form.is_valid() and location_form.is_valid():
+            loc = location_form.save()
+            new_job = job_form.save()
+            new_job.location = loc
+            new_job.user = request.user
+            new_job.save()
+
+            # Option 1: Redirect for a full refresh (existing behavior)
+            if not request.headers.get('x-requested-with') == 'XMLHttpRequest':
+                return redirect('job_board')
+
+    # Regular context for rendering the full page
+    context = {
+        'board': board,
+        'job_form': job_form,
+        'location_form': location_form,
+    }
+
+    return render(request, 'jobs/jobs_kanban.html', context)
+
+
+@login_required
+def assign_job_view(request):
+    jobs = Jobs.objects.filter(user=request.user)
+    columns = Columns.objects.all()
+    context = {
+        'jobs': jobs,
+        'columns': columns
+    }
+    return render(request, 'jobs/partials/kanban_board.html')
+
+
+# ...
+class ChangeSheetAssign(LoginRequiredMixin, View):
+
+    @staticmethod
+    def get(request, *args, **kwargs):
+        emp_id = kwargs['emp_id']
+        task_id = kwargs['task_id']
+
+        employee = Employee.objects.get(id=emp_id)
+        task = Task.objects.get(id=task_id)
+
+        employee.task = task
+        task.save()
+
+        return redirect(reverse('myapp:main_page'))
+
+# render page
+
+
+class AssignTaskView(LoginRequiredMixin, View):
+
+    @staticmethod
+    def get(request, *args, **kwargs):
+        columns = Columns.objects.all()
+        jobs = Jobs.objects.all()
+        spare_jobs = Task.objects.filter(employee__isnull=True)
+
+        context = {'columns': columns,
+                   'jobs': jobs,
+                   'spare_jobs': spare_jobs}
+
+        return render(request, 'jobs/jobs_kanban.html', context)

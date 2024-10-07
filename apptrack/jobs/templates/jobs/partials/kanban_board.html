@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+
+{% block content %}
+{% load static %}
+{% load filter %}
+{% load crispy_forms_tags %}
+
+<link rel="stylesheet" href="{% static 'jobs/styles/kanban.css' %}">
+<div class="board">
+      
+    <div class="lanes">
+      <div class="swim-lane" id="-1">
+        <h3 class="heading">Spare Job</h3>
+
+        {% for spare_task in tasks %}
+          <p class="task" draggable="true" id="{{ task.id }}">{{ task.title }}</p>
+        {% endfor %}
+
+      </div>
+  
+      {% for column in columns %}
+          <div class="swim-lane" id="{{ commision.id }}">
+            <h3 class="heading">{{ column.name }}</h3>
+            {% for job in jobs|column_jobs:column %}
+                <p class="task" draggable="true" id="{{ sheet.id }}">{{ sheet.id }}</p>
+            {% endfor %}
+              </div>
+        {% endfor %}
+    </div>
+<script src="{% static 'jobs/scripts/kanban.js' %}" defer></script>
+
+{% endblock %}

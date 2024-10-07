@@ -38,22 +38,40 @@ ALLOWED_HOSTS = []
 
 # Application definition
 
-INSTALLED_APPS = [
-    'django.contrib.admin',
-    'django.contrib.auth',
-    'django.contrib.contenttypes',
-    'django.contrib.sessions',
-    'django.contrib.messages',
-    'django.contrib.staticfiles',
-    'accounts',
-    'core',
-    'crispy_forms',
-    'crispy_bootstrap5',
-    'django_recaptcha',
-    'jobs',
-    'django_countries',
-    'pycountry',
-]
+if ENVIRONMENT == "prod":
+    INSTALLED_APPS = [
+        'django.contrib.admin',
+        'django.contrib.auth',
+        'django.contrib.contenttypes',
+        'django.contrib.sessions',
+        'django.contrib.messages',
+        'django.contrib.staticfiles',
+        'accounts',
+        'core',
+        'crispy_forms',
+        'crispy_bootstrap5',
+        'django_recaptcha',
+        'jobs',
+        'django_countries',
+        'pycountry',
+    ]
+else:
+    INSTALLED_APPS = [
+        'django.contrib.admin',
+        'django.contrib.auth',
+        'django.contrib.contenttypes',
+        'django.contrib.sessions',
+        'django.contrib.messages',
+        'django.contrib.staticfiles',
+        'accounts',
+        'core',
+        'crispy_forms',
+        'crispy_bootstrap5',
+        'django_recaptcha',
+        'jobs',
+        'django_countries',
+        'pycountry',
+    ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -148,6 +166,12 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
 STATIC_URL = 'static/'
+STATIC_ROOT = BASE_DIR / 'staticfiles'
+
+if DEBUG:
+    STATICFILES_DIRS = [
+        BASE_DIR / "static",
+    ]
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
@@ -180,3 +204,19 @@ MESSAGE_STORAGE = 'django.contrib.messages.storage.session.SessionStorage'
 RECAPTCHA_PUBLIC_KEY = str(os.getenv('RECAPTCHA_PUBLIC_KEY'))
 RECAPTCHA_PRIVATE_KEY = str(os.getenv('RECAPTCHA_PRIVATE_KEY'))
 
+# Logging
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['console'],
+            'level': 'INFO',  # Set the level you want to log
+        },
+    },
+}
