@@ -1,13 +1,39 @@
 
 from datetime import datetime
 
-from django.contrib.auth.models import User
 from django.db import models
+from django.contrib.auth import get_user_model
 
 from core.models import Locations
 from core.utils import get_currency_choices
 
+
+User = get_user_model()
+
+
 # Create your models here.
+
+class Columns(models.Model):
+    name = models.CharField(max_length=255)
+    position = models.PositiveIntegerField()
+
+    def __str__(self):
+        return self.name
+
+
+class Boards(models.Model):
+    name = models.CharField(max_length=255)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    columns = models.ManyToManyField(
+        Columns)  # A Many-to-Many relationship
+
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        if not self.columns.exists():
+            columns_to_add = Columns.objects.all()
+            self.columns.add(*columns_to_add)
+            print(f"Columns added: {columns_to_add}")
+
 
 class Jobs(models.Model):
 
@@ -169,6 +195,15 @@ class Jobs(models.Model):
         (CLOSED, "closed"),
     )
 
+    STATUS_POSITIONS = {
+        APPLIED: 2,
+        REJECTED: 2,
+        SHORTLISTED: 3,
+        INTERVIEW: 4,
+        OFFER: 5,
+        OPEN: 1,
+        CLOSED: 7
+    }
 
     PAY_CURRENCY_CHOICES = get_currency_choices()
 
@@ -176,24 +211,52 @@ class Jobs(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
 
     url = models.URLField(blank=True, null=True)
-    source = models.CharField(max_length=2, choices=SOURCE_CHOICES)
-    
-    job_title = models.CharField(max_length=100)
-    job_function = models.CharField(max_length=2, choices=JOB_FUNCTION_CHOICES, null=True, blank=True)
+    source = models.CharField(
+        max_length=2, choices=SOURCE_CHOICES, null=True, blank=True)
+
+    job_title = models.CharField(max_length=100, blank=True, null=True)
+    job_function = models.CharField(
+        max_length=2, choices=JOB_FUNCTION_CHOICES, null=True, blank=True)
     description = models.TextField(blank=True, null=True)
 
     company_name = models.CharField(max_length=100, null=True, blank=True)
     is_recruiter = models.BooleanField(default=False, null=True, blank=True)
-    
-    location_policy = models.CharField(max_length=100, choices=LOCATION_POLICY_CHOICES, null=True, blank=True)
-    work_contract = models.CharField(max_length=100, choices=WORK_CONTRACT_CHOICES, null=True, blank=True)
+
+    location_policy = models.CharField(
+        max_length=100, choices=LOCATION_POLICY_CHOICES, null=True, blank=True)
+    work_contract = models.CharField(
+        max_length=100, choices=WORK_CONTRACT_CHOICES, null=True, blank=True)
 
     min_pay = models.IntegerField(null=True, blank=True)
     max_pay = models.IntegerField(null=True, blank=True)
-    pay_rate = models.CharField(max_length=2, choices=PAY_RATE_CHOICES, null=True, blank=True)
-    currency = models.CharField(max_length=3, null=True, blank=True, choices=PAY_CURRENCY_CHOICES)
+    pay_rate = models.CharField(
+        max_length=2, choices=PAY_RATE_CHOICES, null=True, blank=True)
+    currency = models.CharField(
+        max_length=3, null=True, blank=True, choices=PAY_CURRENCY_CHOICES)
 
-    location = models.ForeignKey(Locations, on_delete=models.SET_NULL, null=True)
+    location = models.ForeignKey(
+        Locations, on_delete=models.SET_NULL, null=True, blank=True)
 
     note = models.TextField(null=True, blank=True)
-    status = models.CharField(max_length=2, choices=STATUS_CHOICES, default=OPEN)
+    status = models.CharField(
+        max_length=2, choices=STATUS_CHOICES, default=OPEN)
+    column = models.ForeignKey(
+        Columns, related_name="jobs", on_delete=models.CASCADE, null=True, blank=True)
+
+    def __str__(self):
+        return f"{self.company_name} - {self.job_title}"
+
+    def save(self):
+        self.column = Columns.objects.get(
+            id=self.STATUS_POSITIONS[self.status])
+
+
+class Employee(models.Model):
+    firstname = models.CharField(max_length=50)
+    lastname = models.CharField(max_length=50)
+    department = models.CharField(max_length=30)
+
+
+class Task(models.Model):
+    title = models.CharField(max_length=255)
+    employee = models.ForeignKey(Employee, on_delete=models.CASCADE)
