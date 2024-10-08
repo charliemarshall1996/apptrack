@@ -30,7 +30,7 @@ class Boards(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL,
                              on_delete=models.CASCADE)
     columns = models.ManyToManyField(
-        Columns)  # A Many-to-Many relationship
+        Columns)
 
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
@@ -38,6 +38,11 @@ class Boards(models.Model):
             columns_to_add = Columns.objects.all()
             self.columns.add(*columns_to_add)
             print(f"Columns added: {columns_to_add}")
+
+    def delete(self, *args, **kwargs):
+        # Remove the many-to-many relationships without affecting the columns
+        self.columns.clear()  # This removes the link between board and columns
+        super().delete(*args, **kwargs)  # Proceed with deleting the board
 
 
 class Jobs(models.Model):
