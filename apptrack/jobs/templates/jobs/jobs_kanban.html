@@ -1,7 +1,5 @@
+
 {% extends 'core/base_authenticated.html' %}
-
-
-
 
 {% block content %}
 
@@ -10,6 +8,7 @@
 {% csrf_token %}
 <meta name="csrf-token" content="{{ csrf_token }}">
 
+<link rel="stylesheet" href="{% static 'jobs/styles/kanban.css' %}" />
 <script src="{% static 'jobs/scripts/jquery.js' %}" defer></script>
 <script src="{% static 'jobs/scripts/kanban.js' %}" defer></script>
 
@@ -28,24 +27,38 @@
         </div>
     </div>
 
-    <div class="row board">
+    <div class="row board mt-5">
         <div class="lanes d-flex flex-nowrap overflow-auto py-3">
             {% for column in columns %}
-                <div class="swim-lane card mx-2" id="{{ column.id }}">
-                    <div class="card-header text-center text-truncate">
-                        <h2 class="mb-0">{{ column.name }}</h2>
+                <div class="swim-lane card mx-2 {{ column.name|lower }}" id="{{ column.id }}">
+                    <div class="card-header p-2 text-center text-truncate {{ column.name|lower }}">
+                        <h2>{{ column.name }}</h2>
                     </div>
-                    <div class="card-body d-flex flex-nowrap justify-content-center text-truncate">
+                    <div class="card-body p-0 justify-content-center text-truncate {{ column.name|lower }}">
+
                         {% for job in jobs|column_jobs:column %}
-                        <div class="task card m-1 align-content-center" draggable="true" id="{{ job.id }}">
-                            <div class="card-header text-center text-truncate">
-                                <h3 class="mb-0">{{ job.job_title }}</h3>
-                            </div>
-                            <div class="card-body">
-                                <p>{{ job.job_description }}</p>
+                        <div class="task m-2 card align-content-center" draggable="true" id="{{ job.id }}">
+                            <div class="card-body py-0 px-1 job-card text-truncate">
+                                <div class="row d-flex align-items-center">
+                                    <div class="d-flex flex-row ">
+                                        <h5 class="mb-0 me-auto">{{ job.job_title }},</h5>
+                                        {% if job.company %}
+                                            <h5 class="mb-0 me-auto">{{ job.company }},</h5>
+                                        {% endif %}
+                                        {% if job.location.city %}
+                                            <h5 class="mb-0 me-auto">{{ job.location.city }},</h5>
+                                        {% endif %}
+                                        <h5 class="mb-0 me-auto">{{ job.location.country }}</h5>
+                                        <a href="#" class="btn p-0 ms-auto" data-bs-toggle="modal" data-bs-target="#jobDetailModal{{ job.id }}">
+                                            <i class="bi bi-three-dots"></i>
+                                        </a>
+                                    </div>
+                                    
+                                </div>
                             </div>
                         </div>
                         {% endfor %}
+
                     </div>
                 </div>
             {% endfor %}
@@ -58,7 +71,7 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="createJobModalLabel">Create Job</h5>
+                <p class="modal-title" id="createJobModalLabel">Create Job</p>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
@@ -73,6 +86,44 @@
         </div>
     </div>
 </div>
+
+<!-- Job Detail Modal -->
+
+{% for job in jobs %}
+    <div class="modal fade" id="jobDetailModal{{ job.id }}" tabindex="-1" aria-labelledby="jobDetailModalLabel{{ job.id }}" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="jobDetailModalLabel{{ job.id }}">{{ job.job_title }}</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="list-group list-group-flush">
+                        <p class="list-group-item"><strong>Job Title:</strong> {{ job.job_title }}</p>
+                        <p class="list-group-item"><strong>Job Function:</strong> {{ job.get_job_function_display }}</p>
+                        <p class="list-group-item"><strong>Location:</strong> {{ job.location.city }}, {{ job.location.get_country_display }}</p>
+                        <p class="list-group-item"><strong>Company:</strong> {{ job.company }}</p>
+                        <p class="list-group-item"><strong>Industry:</strong> {{ job.company_industry }}</p>
+                        <p class="list-group-item"><strong>Description:</strong> {{ job.job_description }}</p>
+                        <p class="list-group-item"><strong>Minimum Pay:</strong> {{ job.min_pay }}</p>
+                        <p class="list-group-item"><strong>Maximum Pay:</strong> {{ job.max_pay }}</p>
+                        <p class="list-group-item"><strong>Pay Rate:</strong> {{ job.get_pay_rate_display }}</p>
+                        <p class="list-group-item"><strong>Pay Currency:</strong> {{ job.get_pay_currency_display }}</p>
+                        <p class="list-group-item"><strong>Location Policy:</strong> {{ job.get_location_policy_display }}</p>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <a href="#" class="btn btn-primary">Edit</a>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+
+                    {% if job.url and job.url != '' %}
+                        <a href="#" class="btn btn-primary">Apply</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+{% endfor %}
 
 
 {% endblock %}
