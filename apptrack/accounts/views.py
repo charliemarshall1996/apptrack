@@ -9,22 +9,35 @@ from django.contrib.auth import get_user_model, logout
 
 from django.contrib import messages
 from django.urls import reverse_lazy
-from .forms import UserRegistrationForm, UserUpdateForm, ProfileUpdateForm
+from .forms import UserRegistrationForm, UserUpdateForm, ProfileUpdateForm, ProfileRegistrationForm
+from core.forms import LocationForm
 
 User = get_user_model()
 
 
 def register(request):
     if request.method == 'POST':
-        form = UserRegistrationForm(request.POST)
-        if form.is_valid():
-            user = form.save()
+        user_form = UserRegistrationForm(request.POST)
+        profile_form = ProfileRegistrationForm(request.POST)
+        location_form = LocationForm(request.POST)
+
+        if user_form.is_valid() and profile_form.is_valid()\
+        and location_form.is_valid():  # noqa
+
+            location = location_form.save()
+            location.save()
+            user = user_form.save()
+            user.location = location
             login(request, user)
             # Redirect to profile or job application list
             return redirect('dashboard')
     else:
-        form = UserRegistrationForm()
-    return render(request, 'accounts/register.html', {'form': form})
+        user_form = UserRegistrationForm()
+        profile_form = ProfileRegistrationForm()
+        location_form = LocationForm()
+    return render(request, 'accounts/register.html', {'user_form': user_form,
+                                                      'profile_form': profile_form,
+                                                      'location_form': location_form})
 
 
 @login_required
