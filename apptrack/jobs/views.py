@@ -12,7 +12,7 @@ from django.http import JsonResponse
 from django.contrib import messages
 from core.forms import LocationForm
 from django.template.loader import render_to_string
-from django.urls import reverse
+from django.urls import reverse, reverse_lazy
 from django.views import View
 
 from .forms import JobForm
@@ -155,3 +155,27 @@ class AssignJobView(LoginRequiredMixin, View):
             print(f"Error: {e}")
 
         return redirect(reverse('jobs:board'))
+
+
+class DeleteJobView(LoginRequiredMixin, SuccessMessageMixin, View):
+
+    model = Jobs
+    success_url = reverse_lazy('jobs:board')
+    success_message = 'Job deleted successfully'
+
+    def get(self, request, *args, **kwargs):
+        return self.post(request, *args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        job = self.model.objects.get(id=kwargs["pk"])
+        job.delete()
+        return redirect(reverse("jobs:board"))
+
+
+class EditJobView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
+    model = Jobs
+    template_name = "jobs/edit_job.html"
+    success_url = reverse_lazy("jobs:board")
+    success_message = "Job updated successfully"
+    fields = ['job_title', 'job_function', 'url', 'description', 'company_name',
+              'location_policy', 'min_pay', 'max_pay', 'pay_rate', 'currency',  'note']

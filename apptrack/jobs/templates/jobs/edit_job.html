@@ -8,13 +8,12 @@
 
 <div class="card">
     <div class="card-header">
-        <h2 class="card-title">Update Job</h2>
+        <h2 class="card-title">Edit Job</h2>
     </div>
     <div class="card-body">
         <form method="POST">
             {% csrf_token %}
-            {{ job_form|crispy }}  <!-- Use 'form' instead of 'job_form' -->
-            {{ location_form|crispy }}
+            {{ form|crispy }}  <!-- Use 'form' instead of 'job_form' -->
             <button type="submit" class="btn btn-primary">Submit</button>
         </form>
     </div>
