@@ -94,22 +94,44 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="jobDetailModalLabel{{ job.id }}">{{ job.job_title }}</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <div class="list-group list-group-flush">
-                        <p class="list-group-item"><strong>Job Title:</strong> {{ job.job_title }}</p>
-                        <p class="list-group-item"><strong>Job Function:</strong> {{ job.get_job_function_display }}</p>
-                        <p class="list-group-item"><strong>Location:</strong> {{ job.location.city }}, {{ job.location.get_country_display }}</p>
-                        <p class="list-group-item"><strong>Company:</strong> {{ job.company }}</p>
-                        <p class="list-group-item"><strong>Industry:</strong> {{ job.company_industry }}</p>
-                        <p class="list-group-item"><strong>Description:</strong> {{ job.job_description }}</p>
-                        <p class="list-group-item"><strong>Minimum Pay:</strong> {{ job.min_pay }}</p>
-                        <p class="list-group-item"><strong>Maximum Pay:</strong> {{ job.max_pay }}</p>
-                        <p class="list-group-item"><strong>Pay Rate:</strong> {{ job.get_pay_rate_display }}</p>
-                        <p class="list-group-item"><strong>Pay Currency:</strong> {{ job.get_pay_currency_display }}</p>
-                        <p class="list-group-item"><strong>Location Policy:</strong> {{ job.get_location_policy_display }}</p>
+                    <div class="row">
+                        <div class="col">
+                            <div class="list-group list-group-flush">
+                                <h5>Job Details</h5>
+                                <p class="list-group-item"><strong>Job Title:</strong> {{ job.job_title }}</p>
+                                <p class="list-group-item"><strong>Job Function:</strong> {{ job.get_job_function_display }}</p>
+                                <p class="list-group-item"><strong>Location Policy:</strong> {{ job.get_location_policy_display }}</p>
+                                <p class="list-group-item"><strong>Job Description:</strong> {{ job.job_description }}</p>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="list-group list-group-flush">
+                                <h5>Job Location</h5>
+                                <p class="list-group-item"><strong>City:</strong> {{ job.location.city }}</p>
+                                <p class="list-group-item"><strong>Country:</strong> {{ job.location.get_country_display }}</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <div class="list-group list-group-flush">
+                                <h5>Company Details</h5>
+                                <p class="list-group-item"><strong>Company:</strong> {{ job.company }}</p>
+                                <p class="list-group-item"><strong>Industry:</strong> {{ job.company_industry }}</p>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="list-group list-group-flush me-auto">
+                                <h5>Pay Details</h5>
+                                <p class="list-group-item"><strong>Minimum Pay:</strong> {{ job.min_pay }}</p>
+                                <p class="list-group-item"><strong>Maximum Pay:</strong> {{ job.max_pay }}</p>
+                                <p class="list-group-item"><strong>Pay Rate:</strong> {{ job.get_pay_rate_display }}</p>
+                                <p class="list-group-item"><strong>Pay Currency:</strong> {{ job.get_pay_currency_display }}</p>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <div class="modal-footer">
