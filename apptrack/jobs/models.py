@@ -3,6 +3,7 @@ from datetime import datetime
 
 from django.db import models
 from django.contrib.auth import get_user_model
+from django.conf import settings
 
 from core.models import Locations
 from core.utils import get_currency_choices
@@ -25,8 +26,9 @@ class Columns(models.Model):
 
 
 class Boards(models.Model):
-    name = models.CharField(max_length=255)
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    name = models.CharField(max_length=255, null=True, blank=True)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL,
+                             on_delete=models.CASCADE)
     columns = models.ManyToManyField(
         Columns)  # A Many-to-Many relationship
 
@@ -221,7 +223,8 @@ class Jobs(models.Model):
     PAY_CURRENCY_CHOICES = get_currency_choices()
 
     id = models.BigAutoField(primary_key=True)
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL,
+                             on_delete=models.CASCADE)
 
     url = models.URLField(blank=True, null=True)
     source = models.CharField(
