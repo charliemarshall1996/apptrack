@@ -27,7 +27,12 @@ def register(request):
             location = location_form.save()
             location.save()
             user = user_form.save()
-            user.location = location
+            user.save()
+            profile = profile_form.save()
+            profile.location = location
+            profile.user = user
+            profile.save()
+
             login(request, user)
             # Redirect to profile or job application list
             return redirect('dashboard')
