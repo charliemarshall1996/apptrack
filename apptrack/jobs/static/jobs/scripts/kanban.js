@@ -4,6 +4,15 @@ const csrftoken = $('meta[name="csrf-token"]').attr('content');
 var task_id= '0';
 var emp_id = '0';
 
+// Allow the column to accept a drop
+function allowDrop(ev) {
+  ev.preventDefault(); // Prevent the default behavior
+}
+
+// Start dragging the job card
+function drag(ev) {
+  ev.dataTransfer.setData("text", ev.target.id); // Store the dragged element's ID
+}
 
 draggables.forEach((task) => {
   task.addEventListener("dragstart", () => {
