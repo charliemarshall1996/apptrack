@@ -37,6 +37,10 @@
     padding-right: 0;
 }
 
+#content {
+    min-height: 75vh;
+}
+
 /* Add this to your existing CSS file */
 
 /* header {
