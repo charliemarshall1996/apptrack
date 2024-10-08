@@ -14,5 +14,7 @@ urlpatterns = [
 
     # Any other views, like adding or updating jobs
     path("add-job/", views.add_job_view, name="add_job"),
-    path("update-job/<int:pk>/", views.update_job_view, name="update_job"),
+    path("edit-job/<int:pk>/", views.EditJobView.as_view(), name="edit_job"),
+
+    path("delete-job/<int:pk>/", views.DeleteJobView.as_view(), name="delete_job"),
 ]
