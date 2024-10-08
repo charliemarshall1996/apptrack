@@ -35,7 +35,7 @@ def register(request):
 
             login(request, user)
             # Redirect to profile or job application list
-            return redirect('dashboard')
+            return redirect('jobs:board')
     else:
         user_form = UserRegistrationForm()
         profile_form = ProfileRegistrationForm()
