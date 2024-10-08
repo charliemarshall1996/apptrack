@@ -225,6 +225,8 @@ class Jobs(models.Model):
         7: CLOSED
     }
 
+    APPLIED_STATUSES = [APPLIED, SHORTLISTED, INTERVIEW, OFFER, REJECTED]
+
     PAY_CURRENCY_CHOICES = get_currency_choices()
 
     id = models.BigAutoField(primary_key=True)
@@ -263,6 +265,7 @@ class Jobs(models.Model):
         max_length=2, choices=STATUS_CHOICES, default=OPEN)
     column = models.ForeignKey(
         Columns, related_name="jobs", on_delete=models.CASCADE, null=True, blank=True)
+    applied = models.BooleanField(null=True, blank=True)
 
     def __str__(self):
         return f"{self.company_name} - {self.job_title}"
@@ -273,4 +276,7 @@ class Jobs(models.Model):
                 id=self.STATUS_POSITIONS[self.status])
         else:
             self.status = self.POSITION_STATUSES[self.column.position]
+
+        self.applied = dict(self.STATUS_CHOICES)[
+            self.status] in self.APPLIED_STATUSES
         super().save()
