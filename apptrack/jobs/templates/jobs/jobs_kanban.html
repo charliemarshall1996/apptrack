@@ -29,19 +29,17 @@
     </div>
 
     <div class="row board">
-      
         <div class="lanes d-flex flex-nowrap overflow-auto py-3">
-        
             {% for column in columns %}
                 <div class="swim-lane card mx-2" id="{{ column.id }}">
-                    <div class="card-header text-center">
-                        <h3 class="heading">{{ column.name }}</h3>
+                    <div class="card-header text-center text-truncate">
+                        <h2 class="mb-0">{{ column.name }}</h2>
                     </div>
-                    <div class="card-body">
+                    <div class="card-body d-flex flex-nowrap justify-content-center text-truncate">
                         {% for job in jobs|column_jobs:column %}
-                        <div class="task card m-2" draggable="true" id="{{ job.id }}">
-                            <div class="card-header text-center">
-                                <h3 class="heading">{{ job.job_title }}</h3>
+                        <div class="task card m-1 align-content-center" draggable="true" id="{{ job.id }}">
+                            <div class="card-header text-center text-truncate">
+                                <h3 class="mb-0">{{ job.job_title }}</h3>
                             </div>
                             <div class="card-body">
                                 <p>{{ job.job_description }}</p>
@@ -53,7 +51,6 @@
             {% endfor %}
         </div>
     </div>
-
 </div>
 
 <!-- Create Job Modal -->
