@@ -3,10 +3,10 @@ from django.contrib.auth import views as auth_views
 from django.conf import settings
 from django.conf.urls.static import static
 from . import views
-
+app_name = 'accounts'
 urlpatterns = [
     path('register/', views.register, name='register'),
-    path('login/', auth_views.LoginView.as_view(template_name='accounts/login.html'), name='login'),
+    path('login/', views.custom_login_view, name='login'),
     path('logout/', views.logout_view, name='logout'),
     path('profile/', views.ProfileView.as_view(), name='profile'),
     path('profile-settings/', views.profile_settings_view, name='profile_settings'),
@@ -20,4 +20,8 @@ urlpatterns = [
          auth_views.PasswordResetCompleteView.as_view(
              template_name='accounts/password_reset_complete.html'),
          name='password_reset_complete'),
+    path('verify-email/<int:user_id>/<str:token>/',
+         views.verify_email, name='verify_email'),
+    path('resend-verification-email/', views.resend_verification_email,
+         name='resend_verification_email'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

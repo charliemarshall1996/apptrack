@@ -60,3 +60,12 @@ class ProfileUpdateForm(forms.ModelForm):
     class Meta:
         model = Profile
         fields = []
+
+
+class UserLoginForm(forms.Form):
+    email = forms.EmailField(required=True)
+    password = forms.CharField(required=True, widget=forms.PasswordInput)
+
+
+class ResendVerificationEmailForm(forms.Form):
+    email = forms.EmailField(required=True)

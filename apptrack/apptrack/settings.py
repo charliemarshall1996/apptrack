@@ -33,45 +33,34 @@ if ENVIRONMENT == "prod":
 else:
     DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["localhost", "apptrack.app", '127.0.0.1']
+
+AUTHENTICATION_BACKENDS = [
+    'accounts.backends.EmailVerificationBackend',  # Update to correct path
+    'django.contrib.auth.backends.ModelBackend',
+]
 
 
 # Application definition
 
-if ENVIRONMENT == "prod":
-    INSTALLED_APPS = [
-        'django.contrib.admin',
-        'django.contrib.auth',
-        'django.contrib.contenttypes',
-        'django.contrib.sessions',
-        'django.contrib.messages',
-        'django.contrib.staticfiles',
-        'accounts',
-        'core',
-        'crispy_forms',
-        'crispy_bootstrap5',
-        'django_recaptcha',
-        'jobs',
-        'django_countries',
-        'pycountry',
-    ]
-else:
-    INSTALLED_APPS = [
-        'django.contrib.admin',
-        'django.contrib.auth',
-        'django.contrib.contenttypes',
-        'django.contrib.sessions',
-        'django.contrib.messages',
-        'django.contrib.staticfiles',
-        'accounts',
-        'core',
-        'crispy_forms',
-        'crispy_bootstrap5',
-        'django_recaptcha',
-        'jobs',
-        'django_countries',
-        'pycountry',
-    ]
+
+INSTALLED_APPS = [
+    'django.contrib.admin',
+    'django.contrib.auth',
+    'django.contrib.contenttypes',
+    'django.contrib.sessions',
+    'django.contrib.messages',
+    'django.contrib.staticfiles',
+    'accounts',
+    'core',
+    'crispy_forms',
+    'crispy_bootstrap5',
+    'django_recaptcha',
+    'jobs',
+    'django_countries',
+    'pycountry',
+    'anymail',
+]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -190,12 +179,16 @@ MEDIA_URL = '/media/'
 LOGOUT_REDIRECT_URL = '/'
 
 # Email
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_USE_TLS = True
-EMAIL_PORT = 587
-EMAIL_HOST_USER = str(os.getenv('EMAIL_USER'))
-EMAIL_HOST_PASSWORD = str(os.getenv('EMAIL_PASSWORD'))
+
+EMAIL_BACKEND = "anymail.backends.brevo.EmailBackend"
+
+BREVO_API_URL = "https://api.brevo.com/v3/"  # optional
+
+ANYMAIL = {
+    "BREVO_API_KEY": str(os.getenv("BREVO_API_KEY")),  # use brevo api key
+    "IGNORE_RECIPIENT_STATUS": True,
+}
+DEFAULT_FROM_EMAIL = 'no-reply@apptrack.app'
 
 # Session Info
 MESSAGE_STORAGE = 'django.contrib.messages.storage.session.SessionStorage'

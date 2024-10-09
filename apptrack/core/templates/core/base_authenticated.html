@@ -22,7 +22,7 @@
 
   <header>
     <nav class="navbar navbar navbar-expand-md navbar-light px-3">
-      <a class="navbar-brand" href="{% url 'profile' %}">AppTrack</a>
+      <a class="navbar-brand" href="{% url 'jobs:board' %}">AppTrack</a>
 
       <!-- Toggler/collapsible Button -->
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
@@ -35,10 +35,10 @@
             <a class="nav-link active" aria-current="page" href="{% url 'jobs:board' %}">Jobs</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="{% url 'profile' %}">Profile</a>
+            <a class="nav-link" href="{% url 'accounts:profile' %}">Profile</a>
           </li>
           <li class="navbar-item ms-auto">
-            <a class="nav-link" href="{% url 'logout' %}">Logout</a>
+            <a class="nav-link" href="{% url 'accounts:logout' %}">Logout</a>
           </li>
         </ul>
       </div>
