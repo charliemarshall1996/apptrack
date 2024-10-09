@@ -17,15 +17,10 @@
           <h5>Profile Info</h5>
           {{ profile_form|crispy }}
 
+          <h5>Location</h5>
+          {{ location_form|crispy }}
+
       </fieldset>
       <button type="submit" class="btn btn-primary">Update Profile</button>
   </form>
-  
-  {% if messages %}
-    <ul>
-      {% for message in messages %}
-        <li>{{ message }}</li>
-      {% endfor %}
-    </ul>
-  {% endif %}
 {% endblock %}

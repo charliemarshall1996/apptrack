@@ -65,19 +65,30 @@ def profile_settings_view(request):
         user_form = UserUpdateForm(request.POST, instance=request.user)
         profile_form = ProfileUpdateForm(
             request.POST, instance=request.user.profile)
-        if user_form.is_valid() and profile_form.is_valid():
-            user_form.save()
-            profile_form.save()
+        location_form = LocationForm(
+            request.POST, instance=request.user.profile.location)
+        if user_form.is_valid() and profile_form.is_valid() and location_form.is_valid():
+            user = user_form.save()
+            user.save()
+            profile = profile_form.save()
+            location = location_form.save()
+            location.save()
+            profile.location = location
+            profile.user = user
+            profile.save()
+
             messages.success(request, 'Your profile has been updated!')
-            # Redirect to the profile page after saving
-            return redirect('profile')
+
+            return redirect('accounts:profile')
     else:
         user_form = UserUpdateForm(instance=request.user)
         profile_form = ProfileUpdateForm(instance=request.user.profile)
+        location_form = LocationForm(instance=request.user.profile.location)
 
     context = {
         'user_form': user_form,
-        'profile_form': profile_form
+        'profile_form': profile_form,
+        'location_form': location_form
     }
     return render(request, 'accounts/profile_settings.html', context)
 

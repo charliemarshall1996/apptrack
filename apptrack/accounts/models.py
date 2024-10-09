@@ -12,6 +12,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
 
     email = models.EmailField(_('email address'), unique=True)
     email_verified = models.BooleanField(default=False)
+
     last_verification_email_sent = models.DateTimeField(null=True, blank=True)
     first_name = models.CharField(max_length=30, blank=False, null=False)
     last_name = models.CharField(max_length=30, blank=False, null=False)
@@ -37,6 +38,7 @@ class Profile(models.Model):
         ('O', 'Other'),
     )
     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE)
+    email_comms_opt_in = models.BooleanField(default=False)
     gender = models.CharField(
         max_length=1, choices=GENDER_CHOICES, null=True, blank=True)
     location = models.ForeignKey(
