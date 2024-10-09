@@ -1,6 +1,8 @@
 from django import forms
 from django.contrib.auth import get_user_model
 from django.contrib.auth.forms import UserCreationForm
+from django.core.validators import validate_email
+from django.core.exceptions import ValidationError
 
 from .models import Profile
 
@@ -22,6 +24,14 @@ class UserRegistrationForm(UserCreationForm):
         self.fields["password2"].required = True
         self.fields["first_name"].required = True
         self.fields["last_name"].required = True
+
+    def clean_email(self):
+        email = self.cleaned_data.get('email')
+        try:
+            validate_email(email)
+        except ValidationError:
+            raise forms.ValidationError("Invalid email")
+        return email
 
     def save(self):
         return super().save(commit=False)
