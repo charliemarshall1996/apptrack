@@ -37,7 +37,7 @@
                     <div class="card-body p-0 justify-content-center text-truncate {{ column.name|lower }}">
 
                         {% for job in jobs|column_jobs:column %}
-                        <div class="task m-2 card align-content-center" draggable="true" id="{{ job.id }}">
+                        <div class="task m-2 card align-content-center job-card" draggable="true" id="{{ job.id }}">
                             <div class="card-body py-0 px-1 job-card text-truncate">
                                 <div class="row d-flex align-items-center">
                                     <div class="d-flex flex-row ">
