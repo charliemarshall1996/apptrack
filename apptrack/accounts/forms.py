@@ -14,8 +14,6 @@ class UserRegistrationForm(UserCreationForm):
     email = forms.EmailField()
     honeypot = forms.CharField(required=False, widget=forms.HiddenInput)
 
-    captcha = ReCaptchaField()
-
     class Meta:
         model = User
         fields = ['email', 'password1',
@@ -84,5 +82,3 @@ class UserLoginForm(forms.Form):
 class ResendVerificationEmailForm(forms.Form):
     honeypot = forms.CharField(required=False, widget=forms.HiddenInput)
     email = forms.EmailField(required=True)
-
-    captcha = ReCaptchaField()

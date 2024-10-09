@@ -22,4 +22,3 @@ class ContactForm(forms.Form):
     email = forms.CharField(validators=[EmailValidator()])
     phone = forms.CharField(max_length=15)
     message = forms.CharField(widget=forms.Textarea)
-    captcha = ReCaptchaField()

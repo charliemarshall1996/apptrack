@@ -6,6 +6,7 @@ from django.utils import timezone
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login, authenticate
+from django.contrib.auth import get_backends
 from django.contrib.auth.views import PasswordResetView
 from django.views.generic.detail import DetailView
 from django.contrib import messages
@@ -26,44 +27,6 @@ from .utils import get_can_resend, get_minutes_left_before_resend, get_time_sinc
 
 logger = logging.getLogger(__name__)
 User = get_user_model()
-
-
-def register(request):
-    if request.method == 'POST':
-        user_form = UserRegistrationForm(request.POST)
-        profile_form = ProfileRegistrationForm(request.POST)
-        location_form = LocationForm(request.POST)
-
-        if user_form.is_valid() and profile_form.is_valid()\
-        and location_form.is_valid():  # noqa
-
-            if user_form.cleaned_data['honeypot']:
-                # Honeypot field should be empty. If it's filled, treat it as spam.
-                messages.error(
-                    request, "Your form submission was detected as spam.")
-                # Redirect to prevent bot resubmission
-                return redirect('home')
-
-            location = location_form.save()
-            location.save()
-            user = user_form.save()
-            user.email_verified = False
-            user.save()
-            profile = profile_form.save()
-            profile.location = location
-            profile.user = user
-            profile.save()
-
-            login(request, user)
-            # Redirect to profile or job application list
-            return redirect('jobs:board')
-    else:
-        user_form = UserRegistrationForm()
-        profile_form = ProfileRegistrationForm()
-        location_form = LocationForm()
-    return render(request, 'accounts/register.html', {'user_form': user_form,
-                                                      'profile_form': profile_form,
-                                                      'location_form': location_form})
 
 
 @login_required
@@ -148,7 +111,13 @@ def custom_login_view(request):
             user = authenticate(request, email=email, password=password)
 
             if user is not None:
+
                 if user.email_verified:
+                    for backend in get_backends():
+                        if user == backend.get_user(user.id):
+                            user.backend = f'{backend.__module__}.{backend.__class__.__name__}'
+                            break
+
                     login(request, user)
                     return redirect('jobs:board')
                 else:
@@ -306,3 +275,46 @@ def delete_account_view(request):
 
     # Render the confirmation page
     return render(request, 'accounts/delete_account.html')
+
+
+def register(request):
+    if request.method == 'POST':
+        user_form = UserRegistrationForm(request.POST)
+        profile_form = ProfileRegistrationForm(request.POST)
+        location_form = LocationForm(request.POST)
+
+        if user_form.is_valid() and profile_form.is_valid()\
+        and location_form.is_valid():  # noqa
+
+            if user_form.cleaned_data['honeypot']:
+                # Honeypot field should be empty. If it's filled, treat it as spam.
+                messages.error(
+                    request, "Your form submission was detected as spam.")
+                # Redirect to prevent bot resubmission
+                return redirect('home')
+
+            location = location_form.save()
+            location.save()
+            user = user_form.save()
+            user.email_verified = False
+            user.save()
+            profile = profile_form.save()
+            profile.location = location
+            profile.user = user
+            profile.save()
+
+            # Send verification email
+            send_verification_email(user, request)
+
+            messages.success(
+                request, "Your account has been created.\nPlease check your email to verify your account.")
+
+            # Redirect to profile or job application list
+            return redirect('accounts:login')
+    else:
+        user_form = UserRegistrationForm()
+        profile_form = ProfileRegistrationForm()
+        location_form = LocationForm()
+    return render(request, 'accounts/register.html', {'user_form': user_form,
+                                                      'profile_form': profile_form,
+                                                      'location_form': location_form})
