@@ -1,0 +1,111 @@
+* {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+    font-family: sans-serif;
+     
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
+     }
+     
+*::-webkit-scrollbar {
+    display: none;
+    }
+    
+.board {
+    width: 100%;
+    min-height: 60vh;
+    overflow: scroll;
+    background-position: center;
+    background-size: cover;
+    background-color: #D3D3D3;
+    border-radius: 4px;
+        }
+
+/* ---- BOARD ---- */
+.lanes {
+    display: flex;
+    align-items: flex-start;
+    justify-content: start;
+    gap: 16px;
+        
+    padding: 24px 32px;
+        
+    overflow: scroll;
+    height: 100%;
+        }
+
+.open {
+    color: #B0C4DE;
+}
+
+.applied {
+    color: #87CEEB;
+}
+
+.shortlisted {
+    color: #5DADE2;
+}
+
+.interview {
+    color: #48C9B0;
+}
+
+.offer {
+    color: #1ABC9C;
+}
+
+.rejected {
+    color: #CD5C5C;
+}
+
+.closed {
+    color: #7F8C8D;
+}
+
+
+.heading {
+    font-size: 22px;
+    font-weight: bold;
+    margin-bottom: 8px;
+        }
+
+.card-header, .swim-lane, .card-body, .card-footer {
+    border: none!important;
+    border-radius: 5px;
+    background-color: white;;
+}
+
+.job-card {
+    color: white;
+}
+        
+.swim-lane {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    border-radius: 5px;
+    box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.25);
+    flex-shrink: 0;
+    align-items: stretch;
+        }
+
+#open.card-header:-moz-drag-over {
+    scale: 1.05;
+    color: white;
+    background-color: #B0C4DE;
+        }
+        
+.task {
+    color: white;
+    color: black;
+    box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.15);
+    border-radius: 4px;
+    font-size: 16px;
+    cursor: move;
+        }
+        
+.is-dragging {
+    scale: 1.05;
+    color: white;
+        }

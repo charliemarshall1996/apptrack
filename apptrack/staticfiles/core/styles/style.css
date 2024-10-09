@@ -24,6 +24,10 @@
     z-index: -1; /* Ensure the overlay sits behind the content */
 }
 
+.hero-heading {
+    color: white;
+}
+
 #about-image {
     max-width: 100%;
     height: auto;
@@ -35,6 +39,10 @@
     margin-top: 1%;
     padding-left: 0;
     padding-right: 0;
+}
+
+#content {
+    min-height: 75vh;
 }
 
 /* Add this to your existing CSS file */
@@ -54,7 +62,7 @@
     }
 
     p.fs-4 {
-        font-size: 1rem; /* Increase the paragraph font size */
+        font-size: .5rem; /* Increase the paragraph font size */
     }
 
     .btn-lg {
