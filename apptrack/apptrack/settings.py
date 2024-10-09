@@ -98,13 +98,9 @@ WSGI_APPLICATION = 'apptrack.wsgi.application'
 
 if ENVIRONMENT == "prod":
     DATABASES = {
-        "default": {
-            "ENGINE": "django.db.backends.postgresql",
-            "NAME": str(os.getenv("PROD_DB_NAME")),
-            "USER": str(os.getenv("PROD_DB_USER")),
-            "PASSWORD": str(os.getenv("PROD_DB_PASSWORD")),
-            "HOST": str(os.getenv("PROD_DB_HOST")),
-            "PORT": str(os.getenv("PROD_DB_PORT")),
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
         }
     }
 else:
@@ -159,7 +155,7 @@ STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 if DEBUG:
     STATICFILES_DIRS = [
-        BASE_DIR / "static",
+        BASE_DIR / "staticfiles",
     ]
 
 # Default primary key field type

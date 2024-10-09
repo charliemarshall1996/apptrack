@@ -1,90 +1,108 @@
-// Get CSRF token from the meta tag
-const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+const draggables = document.querySelectorAll(".task");
+const droppables = document.querySelectorAll(".swim-lane");
+const csrftoken = $('meta[name="csrf-token"]').attr('content');
+var task_id= '0';
+var emp_id = '0';
 
-// Select draggable jobs and columns
-const draggables = document.querySelectorAll(".job");
-const droppables = document.querySelectorAll(".card-body"); // Change to card-body where jobs are located
-let job_id = null;
+// Allow the column to accept a drop
+function allowDrop(ev) {
+  ev.preventDefault(); // Prevent the default behavior
+}
 
-// Add event listeners for dragstart and dragend
-draggables.forEach((job) => {
-  job.addEventListener("dragstart", () => {
-    job.classList.add("is-dragging");
-    job_id = job.id;  // Store the job ID when dragging starts
+// Start dragging the job card
+function drag(ev) {
+  ev.dataTransfer.setData("text", ev.target.id); // Store the dragged element's ID
+}
+
+draggables.forEach((task) => {
+  task.addEventListener("dragstart", () => {
+    task.classList.add("is-dragging");
   });
+  task.addEventListener("dragend", () => {
+    task.classList.remove("is-dragging");
+    
+    get_assign(task_id, emp_id);
 
-  job.addEventListener("dragend", () => {
-    job.classList.remove("is-dragging");
-    get_assign(job_id);  // Send job ID to backend after drop
   });
 });
 
-// Add event listeners for dragover and drop on each column
-droppables.forEach((column) => {
-  column.addEventListener("dragover", (e) => {
-    e.preventDefault();  // Allow dropping
-    const bottomJob = insertAboveJob(column, e.clientY);  // Get the position of the job
-    const curJob = document.querySelector(".is-dragging");
+droppables.forEach((zone) => {
+  zone.addEventListener("dragover", (e) => {
+    e.preventDefault();
 
-    // Append or insert dragged job at the correct location
-    if (!bottomJob) {
-      column.appendChild(curJob);
+    const bottomTask = insertAboveTask(zone, e.clientY);
+    const curTask = document.querySelector(".is-dragging");
+
+    if (!bottomTask) {
+      zone.appendChild(curTask);
     } else {
-      column.insertBefore(curJob, bottomJob);
+      zone.insertBefore(curTask, bottomTask);
     }
-  });
+    task_id = curTask.id;
+    emp_id = zone.id;
+    });
 });
 
-// Function to find the position to insert the dragged job
-const insertAboveJob = (column, mouseY) => {
-  const jobs = column.querySelectorAll(".job:not(.is-dragging)");
-
-  let closestJob = null;
+const insertAboveTask = (zone, mouseY) => {
+  const els = zone.querySelectorAll(".task:not(.is-dragging)");
+  
+  let closestTask = null;
   let closestOffset = Number.NEGATIVE_INFINITY;
 
-  jobs.forEach((job) => {
-    const { top } = job.getBoundingClientRect();
+
+  els.forEach((task) => {
+    const { top } = task.getBoundingClientRect();
+
     const offset = mouseY - top;
 
     if (offset < 0 && offset > closestOffset) {
       closestOffset = offset;
-      closestJob = job;
+      closestTask = task;
     }
   });
 
-  return closestJob;
+  return closestTask;
 };
 
-// Function to send the updated job position to the server
-function get_assign(job_id) {
-  send_request(job_id);
+function get_assign(task_id, emp_id){
+    get_request(emp_id, task_id)
+    post_request(emp_id, task_id);
 }
 
-// Setup AJAX to include CSRF token
+function csrfSafeMethod(method) {
+  return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+}
+
 $.ajaxSetup({
-  beforeSend: function (xhr, settings) {
-    if (!(/^http:.*/.test(settings.url) || /^https:.*/.test(settings.url))) {
-      xhr.setRequestHeader("X-CSRFToken", csrfToken);  // Use correct CSRF token
-    }
+  beforeSend: function(xhr, settings) {
+      if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+          xhr.setRequestHeader("X-CSRFToken", csrftoken);
+      }
   }
 });
 
-// Function to send the AJAX request to update the job position
-function send_request(job_id) {
-  $.ajax({
-    type: 'POST',  // Use POST to update data
-    url: moveJobUrl,  // Defined in the template
-    data: {
-      'job_id': job_id,  // Send job ID to the server
-      'column_id': document.querySelector(".is-dragging").closest(".card-body").getAttribute('data-column-id') // Send new column ID
-    },
-    success: function (data) {
-      console.log('Job moved successfully');
-      console.log(data);
-    },
-    error: function (data) {
-      console.error('Error moving job');
-      console.error(data);
-    }
-  });
+function get_request(emp_id, task_id){
+    $.ajax({
+      type: 'GET',
+      url: `/jobs/job-assign/${emp_id}/${task_id}/`,
+      failure: function(data){
+        console.log('failure');
+        console.log(data);
+      },
+    });
+  }
+
+  function post_request(emp_id, task_id){
+    $.ajax({
+      type: 'POST',
+      url: `/jobs/job-assign/${emp_id}/${task_id}/`,
+      success: function(data) {
+        console.log('Post successful', data);
+      },
+      error: function(xhr, status, error) {
+        console.log('Error:', error);
+        console.log('XHR:', xhr);
+        console.log('Status:', status);
+      }
+    });
 }
