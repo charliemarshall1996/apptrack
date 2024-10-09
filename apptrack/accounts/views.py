@@ -37,6 +37,13 @@ def register(request):
         if user_form.is_valid() and profile_form.is_valid()\
         and location_form.is_valid():  # noqa
 
+            if user_form.cleaned_data['honeypot']:
+                # Honeypot field should be empty. If it's filled, treat it as spam.
+                messages.error(
+                    request, "Your form submission was detected as spam.")
+                # Redirect to prevent bot resubmission
+                return redirect('home')
+
             location = location_form.save()
             location.save()
             user = user_form.save()
@@ -68,6 +75,14 @@ def profile_settings_view(request):
         location_form = LocationForm(
             request.POST, instance=request.user.profile.location)
         if user_form.is_valid() and profile_form.is_valid() and location_form.is_valid():
+
+            if user_form.cleaned_data['honeypot']:
+                # Honeypot field should be empty. If it's filled, treat it as spam.
+                messages.error(
+                    request, "Your form submission was detected as spam.")
+                # Redirect to prevent bot resubmission
+                return redirect('home')
+
             user = user_form.save()
             user.save()
             profile = profile_form.save()
@@ -121,6 +136,13 @@ def custom_login_view(request):
         form = UserLoginForm(request.POST)
 
         if form.is_valid():
+            if form.cleaned_data['honeypot']:
+                # Honeypot field should be empty. If it's filled, treat it as spam.
+                messages.error(
+                    request, "Your form submission was detected as spam.")
+                # Redirect to prevent bot resubmission
+                return redirect('home')
+
             email = form.cleaned_data['email']
             password = form.cleaned_data['password']
             user = authenticate(request, email=email, password=password)
@@ -215,6 +237,12 @@ def resend_verification_email(request):
         form = ResendVerificationEmailForm(request.POST)
 
         if form.is_valid():
+            if form.cleaned_data['honeypot']:
+                # Honeypot field should be empty. If it's filled, treat it as spam.
+                messages.error(
+                    request, "Your form submission was detected as spam.")
+                # Redirect to prevent bot resubmission
+                return redirect('home')
             email = form.cleaned_data['email']
 
             # Look up the user by email

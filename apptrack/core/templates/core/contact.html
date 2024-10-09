@@ -11,6 +11,7 @@
     <form method="POST">
         <div class="card-body">
             {% csrf_token %}
+            {{ form.honeypot }}
             {{ form|crispy }}
         </div>
         <div class="card-footer">
