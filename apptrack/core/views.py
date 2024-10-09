@@ -1,9 +1,9 @@
 from django import forms
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
 from django.views.generic.edit import FormView
 from django.contrib.messages.views import SuccessMessageMixin
-
+from django.contrib import messages
 from django.core.mail import send_mail
 from django_recaptcha.fields import ReCaptchaField
 from django_recaptcha.widgets import ReCaptchaV2Checkbox
@@ -34,6 +34,10 @@ class ContactView(SuccessMessageMixin, FormView):
 
     def form_valid(self, form):
         # Get form data
+        if form.cleaned_data['honeypot']:
+            # Redirect to prevent bot resubmission
+            return redirect('home')
+
         first_name = form.cleaned_data['first_name']
         last_name = form.cleaned_data['last_name']
         email = form.cleaned_data['email']

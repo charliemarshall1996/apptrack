@@ -3,6 +3,7 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.forms import UserCreationForm
 from django.core.validators import validate_email
 from django.core.exceptions import ValidationError
+from django_recaptcha.fields import ReCaptchaField
 
 from .models import Profile
 
@@ -11,6 +12,9 @@ User = get_user_model()
 
 class UserRegistrationForm(UserCreationForm):
     email = forms.EmailField()
+    honeypot = forms.CharField(required=False, widget=forms.HiddenInput)
+
+    captcha = ReCaptchaField()
 
     class Meta:
         model = User
@@ -63,15 +67,24 @@ class ProfileUpdateForm(forms.ModelForm):
 
 
 class UserUpdateForm(forms.ModelForm):
+    honeypot = forms.CharField(required=False, widget=forms.HiddenInput)
+
     class Meta:
         model = User
         fields = ['email', 'first_name', 'last_name']
 
 
 class UserLoginForm(forms.Form):
+
+    honeypot = forms.CharField(required=False, widget=forms.HiddenInput)
     email = forms.EmailField(required=True)
     password = forms.CharField(required=True, widget=forms.PasswordInput)
 
+    captcha = ReCaptchaField()
+
 
 class ResendVerificationEmailForm(forms.Form):
+    honeypot = forms.CharField(required=False, widget=forms.HiddenInput)
     email = forms.EmailField(required=True)
+
+    captcha = ReCaptchaField()

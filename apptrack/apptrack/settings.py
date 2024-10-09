@@ -195,7 +195,7 @@ MESSAGE_STORAGE = 'django.contrib.messages.storage.session.SessionStorage'
 
 # Recaptcha
 RECAPTCHA_PUBLIC_KEY = str(os.getenv('RECAPTCHA_PUBLIC_KEY'))
-RECAPTCHA_PRIVATE_KEY = str(os.getenv('RECAPTCHA_PRIVATE_KEY'))
+RECAPTCHA_PRIVATE_KEY = str(os.getenv('RECAPTCHA_SECRET'))
 
 # Logging
 LOGGING = {
