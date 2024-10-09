@@ -24,6 +24,10 @@
     z-index: -1; /* Ensure the overlay sits behind the content */
 }
 
+.hero-heading {
+    color: white;
+}
+
 #about-image {
     max-width: 100%;
     height: auto;
