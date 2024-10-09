@@ -1,16 +1,27 @@
 
 {% if messages %}
-
     {% for message in messages %}
-
-        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
-            {{ message }}
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
-        
-
+        {% with message_class="alert-info" %}
+            {% if message.tags == 'error' %}
+                {% with message_class="alert-danger" %}
+                {% endwith %}
+            {% elif message.tags == 'success' %}
+                {% with message_class="alert-success" %}
+                {% endwith %}
+            {% elif message.tags == 'warning' %}
+                {% with message_class="alert-warning" %}
+                {% endwith %}
+            {% elif message.tags == 'info' %}
+                {% with message_class="alert-info" %}
+                {% endwith %}
+            {% endif %}
+            
+            <div class="alert {{ message_class }} alert-dismissible fade show" role="alert">
+                {{ message|safe }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        {% endwith %}
     {% endfor %}
-
 {% endif %}
 
 <!--

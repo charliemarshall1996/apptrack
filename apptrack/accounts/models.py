@@ -11,6 +11,8 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     """Custom User model that uses email instead of username."""
 
     email = models.EmailField(_('email address'), unique=True)
+    email_verified = models.BooleanField(default=False)
+    last_verification_email_sent = models.DateTimeField(null=True, blank=True)
     first_name = models.CharField(max_length=30, blank=False, null=False)
     last_name = models.CharField(max_length=30, blank=False, null=False)
     is_active = models.BooleanField(default=True)
