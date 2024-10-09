@@ -24,4 +24,5 @@ urlpatterns = [
          views.verify_email, name='verify_email'),
     path('resend-verification-email/', views.resend_verification_email,
          name='resend_verification_email'),
+    path('delete-account/', views.delete_account_view, name='delete_account'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

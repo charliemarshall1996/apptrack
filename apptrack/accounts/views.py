@@ -292,3 +292,17 @@ class ResetPasswordView(SuccessMessageMixin, PasswordResetView):
                       " If you don't receive an email, " \
                       "please make sure you've entered the address you registered with, and check your spam folder."
     success_url = reverse_lazy('home')
+
+
+@login_required
+def delete_account_view(request):
+    # Handle the POST request (when the user confirms the deletion)
+    if request.method == 'POST':
+        user = request.user  # Get the logged-in user
+        user.delete()  # Delete the user account
+        messages.success(
+            request, "Your account has been successfully deleted.")
+        return redirect('home')  # Redirect to the homepage after deletion
+
+    # Render the confirmation page
+    return render(request, 'accounts/delete_account.html')
