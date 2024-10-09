@@ -80,8 +80,6 @@ class UserLoginForm(forms.Form):
     email = forms.EmailField(required=True)
     password = forms.CharField(required=True, widget=forms.PasswordInput)
 
-    captcha = ReCaptchaField()
-
 
 class ResendVerificationEmailForm(forms.Form):
     honeypot = forms.CharField(required=False, widget=forms.HiddenInput)
