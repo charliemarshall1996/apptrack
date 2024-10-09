@@ -89,6 +89,12 @@
     flex-shrink: 0;
     align-items: stretch;
         }
+
+#open.card-header:-moz-drag-over {
+    scale: 1.05;
+    color: white;
+    background-color: #B0C4DE;
+        }
         
 .task {
     color: white;
