@@ -18,7 +18,7 @@ jobs:
         run: pip install -r requirements.txt
       - name: Set PYTHONPATH
         env:
-          PYTHONPATH: ./path/to/your/django/project
+          PYTHONPATH: ./apptrack
         run: echo "PYTHONPATH is set to $PYTHONPATH"
       - name: Test with pytest
         run: |
