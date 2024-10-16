@@ -42,15 +42,16 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Install sshpass
-        run: sudo apt-get update && sudo apt-get install -y sshpass
+      - name: Add SSH Key
+        run: |
+          echo "${{ secrets.PYANYWHERE_PRIVATE_KEY }}" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
 
-      - name: Connect to PythonAnywhere and Pull Repo
+      - name: Deploy to PythonAnywhere
         env:
           PYANYWHERE_USER: ${{ secrets.PYANYWHERE_USER }}
-          PYANYWHERE_PASS: ${{ secrets.PYANYWHERE_PASSWORD }}
         run: |
-          sshpass -p "$PYANYWHERE_PASS" ssh -tt "$PYANYWHERE_USER"@ssh.pythonanywhere.com << EOF
+          ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_ed25519 "$PYANYWHERE_USER"@ssh.pythonanywhere.com << EOF
             cd ~/apptrack
             git pull origin main
           EOF
