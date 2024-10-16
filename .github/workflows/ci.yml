@@ -17,9 +17,7 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements.txt
       - name: Set PYTHONPATH
-        env:
-          PYTHONPATH: ../apptrack
-        run: echo "PYTHONPATH is set to $PYTHONPATH"
+        run: echo "PYTHONPATH=$PYTHONPATH:/apptrack" >> $GITHUB_ENV
       - name: Test with pytest
         run: |
           pip install pytest pytest-cov
