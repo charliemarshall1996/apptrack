@@ -48,7 +48,7 @@ jobs:
       - name: Connect to PythonAnywhere and Pull Repo
         env:
           PYANYWHERE_USER: ${{ secrets.PYANYWHERE_USER }}
-          PYANYWHERE_PASS: ${{ secrets.PYANYWHERE_PASS }}
+          PYANYWHERE_PASS: ${{ secrets.PYANYWHERE_PASSWORD }}
         run: |
           sshpass -p "$PYANYWHERE_PASS" ssh -T "$PYANYWHERE_USER"@ssh.pythonanywhere.com << EOF
             cd ~/apptrack
