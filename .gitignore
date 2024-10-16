@@ -160,3 +160,5 @@ cython_debug/
 #.idea/
 
 apptrack/apptrack/settings.py
+apptrack/db.sqlite3
+apptrack/.env
