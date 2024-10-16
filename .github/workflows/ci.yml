@@ -47,7 +47,7 @@ jobs:
           mkdir -p ~/.ssh
           echo "${{ secrets.PYANYWHERE_PRIVATE_KEY }}" > ~/.ssh/id_ed25519
           chmod 600 ~/.ssh/id_ed25519
-
+          #test
       - name: Deploy to PythonAnywhere
         env:
           PYANYWHERE_USER: ${{ secrets.PYANYWHERE_USER }}
