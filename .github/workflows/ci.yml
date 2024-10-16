@@ -50,7 +50,7 @@ jobs:
           PYANYWHERE_USER: ${{ secrets.PYANYWHERE_USER }}
           PYANYWHERE_PASS: ${{ secrets.PYANYWHERE_PASS }}
         run: |
-          sshpass -p "$PYANYWHERE_PASS" ssh "$PYANYWHERE_USER"@ssh.pythonanywhere.com << EOF
+          sshpass -p "$PYANYWHERE_PASS" ssh -T "$PYANYWHERE_USER"@ssh.pythonanywhere.com << EOF
             cd ~/apptrack
             git pull origin main
           EOF
