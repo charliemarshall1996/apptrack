@@ -6,3 +6,4 @@ class EmailVerificationTokenGenerator(PasswordResetTokenGenerator):
 
 
 email_verification_token = EmailVerificationTokenGenerator()
+password_reset_token = PasswordResetTokenGenerator()

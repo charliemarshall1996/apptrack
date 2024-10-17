@@ -11,10 +11,10 @@ urlpatterns = [
     path('profile/', views.ProfileView.as_view(), name='profile'),
     path('profile-settings/', views.profile_settings_view, name='profile_settings'),
     path('dashboard/', views.dashboard_view, name='dashboard'),
-    path('password-reset/', views.ResetPasswordView.as_view(), name='password_reset'),
+    path('password-reset/', views.password_reset_view, name='password_reset'),
     path('password-reset-confirm/<uidb64>/<token>/',
          auth_views.PasswordResetConfirmView.as_view(
-             template_name='accounts/password_reset_confirm.html'),
+             template_name='accounts/password_reset_confirm.html', success_url=reverse_lazy('accounts:password_reset_complete')),
          name='password_reset_confirm'),
     path('password-reset-complete/',
          auth_views.PasswordResetCompleteView.as_view(

@@ -15,6 +15,8 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth import get_user_model, logout
 from django.contrib.sites.shortcuts import get_current_site
 from django.http import HttpResponseRedirect
+from django.utils.http import urlsafe_base64_encode
+from django.utils.encoding import force_bytes
 from django.urls import reverse_lazy, reverse
 from django.core.mail import send_mail
 from django.urls import reverse
@@ -184,6 +186,21 @@ def send_verification_email(user, request):
               [user.email], html_message=html_message)
 
 
+def send_password_reset_email(user, request):
+    from .tokens import password_reset_token  # Import the token generator
+    token = password_reset_token.make_token(user)
+    password_reset_url = request.build_absolute_uri(
+        reverse('accounts:password_reset_confirm', kwargs={
+                'uidb64': urlsafe_base64_encode(force_bytes(user.pk)), 'token': token})
+    )
+
+    subject = "Reset your password"
+    message = f"Please click the link to reset your password: {password_reset_url}"
+    html_message = f"<p>Please click the link to reset your password: {password_reset_url}</p>"
+    send_mail(subject, message, settings.DEFAULT_FROM_EMAIL,
+              [user.email], html_message=html_message)
+
+
 def verify_email(request, user_id, token):
     from .tokens import email_verification_token  # Import the token generator
     UserModel = get_user_model()
@@ -252,18 +269,36 @@ def resend_verification_email(request):
     return render(request, 'accounts/resend_verification_email.html', {'form': form})
 
 
-class ResetPasswordView(SuccessMessageMixin, PasswordResetView):
-    template_name = 'accounts/password_reset.html'
-    email_template_name = 'accounts/password_reset_email.html'
-    subject_template_name = 'accounts/password_reset_subject.txt'
-    success_message = "We've emailed you instructions for setting your password, " \
-                      "if an account exists with the email you entered. You should receive them shortly." \
-                      " If you don't receive an email, " \
-                      "please make sure you've entered the address you registered with, and check your spam folder."
-    success_url = reverse_lazy('home')
+def password_reset_view(request):
+    if request.method == "POST":
+        form = PasswordResetForm(request.POST)
+        if form.is_valid():
+            if form.cleaned_data['honeypot']:
+                # Honeypot field should be empty. If it's filled, treat it as spam.
+                messages.error(
+                    request, "Your form submission was detected as spam.")
+                # Redirect to prevent bot resubmission
+                return redirect('home')
+            email = form.cleaned_data['email']
+            user = User.objects.filter(email=email).first()
+            if user:
+                send_password_reset_email(user, request)
+                messages.success(
+                    request, "We've emailed you instructions for setting your password, "
+                    "if an account exists with the email you entered. You should receive them shortly."
+                    " If you don't receive an email, "
+                    "please make sure you've entered the address you registered with, and check your spam folder.")
+                return redirect("accounts:password_reset")
+            else:
+                messages.error(
+                    request, "We can't find a user with that email address.")
+            return redirect('accounts:password_reset')
+    else:
+        form = PasswordResetForm()
+    return render(request, 'accounts/password_reset.html', {'form': form})
 
 
-@login_required
+@ login_required
 def delete_account_view(request):
     # Handle the POST request (when the user confirms the deletion)
     if request.method == 'POST':
