@@ -20,6 +20,8 @@ jobs:
         run: echo "PYTHONPATH=$PYTHONPATH:/apptrack" >> $GITHUB_ENV
       - name: Set up settings.py
         run: |
+          mkdir -p ~/apptrack/apptrack
+          touch ~/apptrack/apptrack/settings.py
           echo "import os" >> ~/apptrack/apptrack/settings.py
           echo "from pathlib import Path" >> ~/apptrack/apptrack/settings.py
           echo "SECRET_KEY = '${{ secrets.DJANGO_SECRET_KEY }}'" >> ~/apptrack/apptrack/settings.py
