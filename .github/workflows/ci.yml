@@ -18,6 +18,39 @@ jobs:
         run: pip install -r requirements.txt
       - name: Set PYTHONPATH
         run: echo "PYTHONPATH=$PYTHONPATH:/apptrack" >> $GITHUB_ENV
+      - name: Set up settings.py
+        run: |
+          echo "import os" >> ~/apptrack/apptrack/settings.py
+          echo "from pathlib import Path" >> ~/apptrack/apptrack/settings.py
+          echo "SECRET_KEY = '${{ secrets.DJANGO_SECRET_KEY }}'" >> ~/apptrack/apptrack/settings.py
+          echo "DATABASE_PASSWORD = '${{ secrets.DATABASE_PASSWORD }}'" >> ~/apptrack/apptrack/settings.py
+          echo "DEBUG = False" >> ~/apptrack/apptrack/settings.py
+          echo "ALLOWED_HOSTS = ["localhost", "apptrack.app", '127.0.0.1', 'www.apptrack.app']" >> ~/apptrack/apptrack/settings.py
+          echo "AUTHENTICATION_BACKENDS = ['accounts.backends.EmailVerificationBackend',  'django.contrib.auth.backends.ModelBackend',]" >> ~/apptrack/apptrack/settings.py
+          echo "BASE_DIR = Path(__file__).resolve().parent.parent" >> ~/apptrack/apptrack/settings.py
+          echo "INSTALLED_APPS = INSTALLED_APPS = ['django.contrib.admin','django.contrib.auth','django.contrib.contenttypes','django.contrib.sessions','django.contrib.messages','django.contrib.staticfiles','accounts','core','crispy_forms','crispy_bootstrap5','django_recaptcha','jobs','django_countries','pycountry','anymail',]" >> ~/apptrack/apptrack/settings.py
+          echo "MIDDLEWARE = ['django.middleware.security.SecurityMiddleware','django.contrib.sessions.middleware.SessionMiddleware','django.middleware.common.CommonMiddleware','django.middleware.csrf.CsrfViewMiddleware','django.contrib.auth.middleware.AuthenticationMiddleware','django.contrib.messages.middleware.MessageMiddleware','django.middleware.clickjacking.XFrameOptionsMiddleware',]" >> ~/apptrack/apptrack/settings.py
+          echo "ROOT_URLCONF = 'apptrack.urls'" >> ~/apptrack/apptrack/settings.py
+          echo "TEMPLATES = [{'BACKEND': 'django.template.backends.django.DjangoTemplates','DIRS': [],'APP_DIRS': True,'OPTIONS': {'context_processors': ['django.template.context_processors.debug','django.template.context_processors.request','django.contrib.auth.context_processors.auth','django.contrib.messages.context_processors.messages',],},},]" >> ~/apptrack/apptrack/settings.py
+          echo "WSGI_APPLICATION = 'apptrack.wsgi.application'" >> ~/apptrack/apptrack/settings.py
+          echo "DATABASES = {'default': {'ENGINE': 'django.db.backends.sqlite3','NAME': BASE_DIR / 'db.sqlite3',]}" >> ~/apptrack/apptrack/settings.py
+          echo "AUTH_PASSWORD_VALIDATORS = [{'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',},{'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',},{'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',},{'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',},]" >> ~/apptrack/apptrack/settings.py
+          echo "LANGUAGE_CODE = 'en-us'" >> ~/apptrack/apptrack/settings.py
+          echo "TIME_ZONE = 'UTC'" >> ~/apptrack/apptrack/settings.py
+          echo "USE_I18N = True" >> ~/apptrack/apptrack/settings.py
+          echo "USE_TZ = True" >> ~/apptrack/apptrack/settings.py
+          echo "STATIC_URL = 'static/'" >> ~/apptrack/apptrack/settings.py
+          echo "DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'" >> ~/apptrack/apptrack/settings.py
+          echo "CRISPY_ALLOWED_TEMPLATE_PACKS = 'bootstrap5'" >> ~/apptrack/apptrack/settings.py
+          echo "CRISPY_TEMPLATE_PACK = 'bootstrap5'" >> ~/apptrack/apptrack/settings.py
+          echo "MEDIA_ROOT = os.path.join(BASE_DIR, 'media')" >> ~/apptrack/apptrack/settings.py
+          echo "MEDIA_URL = '/media/'" >> ~/apptrack/apptrack/settings.py
+          echo "EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'" >> ~/apptrack/apptrack/settings.py
+          echo "BREVO_API_URL = 'https://api.brevo.com'" >> ~/apptrack/apptrack/settings.py
+          echo "ANYMAIL = {'BREVO_API_KEY': '${{ secrets.BREVO_API_KEY }}', 'IGNORE_RECIPIENT_STATUS': True}" >> ~/apptrack/apptrack/settings.py
+          echo "DEFAULT_FROM_EMAIL = 'no-reply@apptrack.app'" >> ~/apptrack/apptrack/settings.py
+          echo "AUTH_USER_MODEL = 'accounts.CustomUser'" >> ~/apptrack/apptrack/settings.py
+
       - name: Test with pytest
         run: |
           pip install pytest pytest-cov
@@ -27,6 +60,9 @@ jobs:
           pip install ruff
           ruff check --output-format=github .
         continue-on-error: true
+      - name: Cleanup settings.py
+        if: always()
+        run: rm -f ~/apptrack/apptrack/settings.py
       - name: Upload pytest test results
         uses: actions/upload-artifact@v4
         with:
