@@ -161,6 +161,6 @@ cython_debug/
 
 
 apptrack/apptrack/settings.py
-apptrack/apptrack/keys.json
-apptrack/apptrack/db.sqlite3
-apptrack/apptrack/.env
+apptrack/keys.json
+apptrack/db.sqlite3
+apptrack/.env
