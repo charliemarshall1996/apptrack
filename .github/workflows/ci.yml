@@ -91,7 +91,5 @@ jobs:
         run: |
           ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_ed25519 "$PYANYWHERE_USER"@ssh.pythonanywhere.com << EOF
             cd ~/apptrack
-            git stash
             git pull origin main --rebase --strategy-option ours
-            git stash pop
           EOF
