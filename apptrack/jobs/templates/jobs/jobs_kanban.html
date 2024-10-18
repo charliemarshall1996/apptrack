@@ -37,28 +37,24 @@
                     <div class="card-body p-0 justify-content-center text-truncate {{ column.name|lower }}">
 
                         {% for job in jobs|column_jobs:column %}
-                        <div class="task m-2 card align-content-center job-card" draggable="true" id="{{ job.id }}">
-                            <div class="card-body py-0 px-1 job-card text-truncate">
-                                <div class="row d-flex align-items-center">
-                                    <div class="d-flex flex-row ">
-                                        <h5 class="mb-0 me-auto">{{ job.job_title }},</h5>
-                                        {% if job.company %}
-                                            <h5 class="mb-0 me-auto">{{ job.company }},</h5>
-                                        {% endif %}
-                                        {% if job.location.city %}
-                                            <h5 class="mb-0 me-auto">{{ job.location.city }},</h5>
-                                        {% endif %}
-                                        <h5 class="mb-0 me-auto">{{ job.location.country }}</h5>
-                                        <a href="#" class="btn p-0 ms-auto" data-bs-toggle="modal" data-bs-target="#jobDetailModal{{ job.id }}">
+                            <div class="task m-2 card align-content-center job-card" draggable="true" id="{{ job.id }}">
+                                <div class="card-body py-0 px-1 job-card text-truncate">
+                                    <div class="d-flex justify-content-between align-items-start">
+                                        <!-- Job details -->
+                                        <div class="list-group list-group-flush me-auto">
+                                            <div class="list-group-item"><strong>Title:</strong> {{ job.job_title }}</div>
+                                            <div class="list-group-item"><strong>Company:</strong> {{ job.company }}</div>
+                                            <div class="list-group-item"><strong>City:</strong> {{ job.location.city }}</div>
+                                        </div>
+
+                                        <!-- Move the 'a' tag to the top-right -->
+                                        <a href="#" class="btn p-0 ms-auto job-detail" data-bs-toggle="modal" data-bs-target="#jobDetailModal{{ job.id }}">
                                             <i class="bi bi-three-dots"></i>
                                         </a>
                                     </div>
-                                    
                                 </div>
                             </div>
-                        </div>
                         {% endfor %}
-
                     </div>
                 </div>
             {% endfor %}
@@ -100,7 +96,7 @@
                     <div class="row">
                         <div class="col">
                             <div class="list-group list-group-flush">
-                                <h5>Job Details</h5>
+                                <p>Job Details</p>
                                 <p class="list-group-item"><strong>Job Title:</strong> {{ job.job_title }}</p>
                                 <p class="list-group-item"><strong>Job Function:</strong> {{ job.get_job_function_display }}</p>
                                 <p class="list-group-item"><strong>Location Policy:</strong> {{ job.get_location_policy_display }}</p>
@@ -109,7 +105,7 @@
                         </div>
                         <div class="col">
                             <div class="list-group list-group-flush">
-                                <h5>Job Location</h5>
+                                <p>Job Location</p>
                                 <p class="list-group-item"><strong>City:</strong> {{ job.location.city }}</p>
                                 <p class="list-group-item"><strong>Country:</strong> {{ job.location.get_country_display }}</p>
                             </div>
@@ -118,14 +114,14 @@
                     <div class="row">
                         <div class="col">
                             <div class="list-group list-group-flush">
-                                <h5>Company Details</h5>
+                                <p>Company Details</p>
                                 <p class="list-group-item"><strong>Company:</strong> {{ job.company }}</p>
                                 <p class="list-group-item"><strong>Industry:</strong> {{ job.company_industry }}</p>
                             </div>
                         </div>
                         <div class="col">
                             <div class="list-group list-group-flush me-auto">
-                                <h5>Pay Details</h5>
+                                <p>Pay Details</p>
                                 <p class="list-group-item"><strong>Minimum Pay:</strong> {{ job.min_pay }}</p>
                                 <p class="list-group-item"><strong>Maximum Pay:</strong> {{ job.max_pay }}</p>
                                 <p class="list-group-item"><strong>Pay Rate:</strong> {{ job.get_pay_rate_display }}</p>
