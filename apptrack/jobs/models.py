@@ -34,6 +34,24 @@ class Boards(models.Model):
 
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
+
+        default_columns = [
+            ('Open', 1),
+            ('Applied', 2),
+            ('Shortlisted', 3),
+            ('Interview', 4),
+            ('Offer', 5),
+            ('Rejected', 6),
+            ('Closed', 7),
+        ]
+
+        for name, position in default_columns:
+            if not Columns.objects.filter(name=name).exists():
+                column = Columns(name=name, position=position)
+                column.save()
+                self.columns.add(column)
+                print(f"Column added: {column.name}")
+
         if not self.columns.exists():
             columns_to_add = Columns.objects.all()
             self.columns.add(*columns_to_add)

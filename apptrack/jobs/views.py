@@ -54,20 +54,52 @@ def update_job_view(request, pk):
 
 @login_required
 def board_view(request):
+    default_columns = [
+        ('Open', 1),
+        ('Applied', 2),
+        ('Shortlisted', 3),
+        ('Interview', 4),
+        ('Offer', 5),
+        ('Rejected', 6),
+        ('Closed', 7),
+    ]
+
+    # Get the user's board or return 404 if not found
     board = Boards.objects.filter(user=request.user).first()
+
+    if not board:
+        # Handle case if the user doesn't have a board yet (optional)
+        return HttpResponse("Board not found", status=404)
+
+    # Check if required columns exist in the board
+    for column_name, column_position in default_columns:
+        column, created = Columns.objects.get_or_create(
+            name=column_name, position=column_position)
+
+        # If the column was just created, add it to the board
+        if created:
+            board.columns.add(column)
+            print(f"Created and added missing column: {column_name}")
+
+    # Retrieve jobs and columns for the user
     jobs = Jobs.objects.filter(user=request.user).all()
     columns = board.columns.all()
     job_form = JobForm()
     location_form = LocationForm()
 
-    if job_form.is_valid() and location_form.is_valid():
-        location = location_form.save()
-        location.save()
-        job = job_form.save()
-        job.location = location
-        job.user = request.user
-        job.save()
+    # Handle form submissions (this section depends on whether you're submitting via POST)
+    if request.method == "POST":
+        job_form = JobForm(request.POST)
+        location_form = LocationForm(request.POST)
 
+        if job_form.is_valid() and location_form.is_valid():
+            location = location_form.save()
+            job = job_form.save(commit=False)  # Don't save job yet
+            job.location = location
+            job.user = request.user
+            job.save()
+
+    # Context for rendering the template
     context = {
         'board': board,
         'columns': columns,
