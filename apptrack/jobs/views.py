@@ -74,7 +74,7 @@ def board_view(request):
     # Check if required columns exist in the board
     for column_name, column_position in default_columns:
         column, created = Columns.objects.get_or_create(
-            name=column_name, position=column_position)
+            name=column_name, boards=board, position=column_position)
 
         # If the column was just created, add it to the board
         if created:
