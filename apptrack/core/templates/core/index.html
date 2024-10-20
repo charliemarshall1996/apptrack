@@ -4,13 +4,25 @@
 {% load static %}
 
 {% block content %}
-<div class="container-fluid justify-content-center align-items-center index-header"
-     style="background-image: url('{% static 'core/resume-genius-72D3z_LfrQA-unsplash.jpg' %}');">
+<div class="container-fluid justify-content-center align-items-center index-header">
+    <div class="row text-center">
+        <div class="col-8 mx-auto">
+            <div class="row text-center">
+                <p class="hero-heading">Stay on top.</p>
+                <p class="hero-heading">Streamline your search.</p>
+                <p class="hero-heading">Secure your opportunity.</p>
+                <p class="mx-auto hero-description fs-4">Take control of your job search with AppTrack. Effortlessly organize and track every application in one place. Stay focused, stay prepared, and land your next opportunity.</p>
+            </div>
+            <div class="row text-center">
+                <div class="col-4 mx-auto">
+                    <a type="button" class="btn btn-primary btn-lg px-4 gap-3" href="{% url 'accounts:register' %}">Sign up for <strong>FREE</strong> Now!</a>
+                </div>
+            </div>
+        </div>
+    </div>
     <div class="row text-center">
         <div class="col">
-            <h1 class="hero-heading display-5">AppTrack</h1>
-            <p class="col-md-8 mx-auto fs-4">The application tracking system for candidates.</p>
-            <a type="button" class="btn btn-primary btn-lg px-4 gap-3" href="{% url 'accounts:register' %}">Register for <strong>FREE</strong> Now!</a>
+            
         </div>
     </div>
 </div>

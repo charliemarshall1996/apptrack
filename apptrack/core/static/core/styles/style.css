@@ -31,7 +31,15 @@
 }
 
 .hero-heading {
-    color: white;
+    color: #1F3B57;
+    font-size: 5vw;
+    font-weight: bold;
+}
+
+.hero-description {
+    color: black;
+    font-weight: 350;
+    font-size: 1vw;
 }
 
 #about-image {
