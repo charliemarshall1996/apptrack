@@ -8,6 +8,10 @@
     max-width: 50px;
 }
 
+.nav-link {
+    font-weight: bold;
+}
+
 /* Index */
 .index-header {
     display: flex !important;
