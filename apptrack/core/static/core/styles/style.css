@@ -2,6 +2,12 @@
 
 /* Bootstrap */
 
+/* Bases */
+
+.nav-icon {
+    max-width: 50px;
+}
+
 /* Index */
 .index-header {
     display: flex !important;
