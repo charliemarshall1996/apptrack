@@ -13,17 +13,6 @@
 }
 
 /* Index */
-.index-header {
-    display: flex !important;
-    /* position: fixed; */
-    background-size: cover;
-    background-position: center;
-    place-items: center;
-    min-height: 50vh;
-    width: 75wv;
-    color: white; /* Ensures text color is readable on overlay */
-    z-index: 1;
-}
 
 .btn-hero {
     font-size: 1rem;
