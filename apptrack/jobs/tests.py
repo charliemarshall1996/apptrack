@@ -34,3 +34,18 @@ class TestJobsListView(TestCase):
         queryset = response.context['object_list']
         self.assertEqual(response.status_code, 200)
         self.assertQuerySetEqual(queryset, jobs)
+
+    def test_view_only_gets_users_jobs(self):
+        user1 = User.objects.create_user(
+            email='testuser@test.com', password='password')
+        user2 = User.objects.create_user(
+            email='testuser2@test.com', password='password')
+        Jobs.objects.create(user=user2)
+        Jobs.objects.create(user=user1)
+        jobs = Jobs.objects.filter(user=user1)
+        self.client.login(email='testuser@test.com', password='password')
+        url = reverse('jobs:list')
+        response = self.client.get(url)
+        queryset = response.context['object_list']
+        self.assertEqual(response.status_code, 200)
+        self.assertQuerySetEqual(queryset, jobs)
