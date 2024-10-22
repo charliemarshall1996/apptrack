@@ -134,8 +134,6 @@ def add_job_view(request):
     }
     return render(request, 'jobs/jobs_kanban.html', context)
 
-# ...
-
 
 class ChangeSheetAssign(LoginRequiredMixin, View):
 
@@ -211,3 +209,15 @@ class EditJobView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
     success_message = "Job updated successfully"
     fields = ['job_title', 'job_function', 'url', 'description', 'company_name',
               'location_policy', 'min_pay', 'max_pay', 'pay_rate', 'currency',  'note']
+
+
+class JobsListView(LoginRequiredMixin, ListView):
+    model = Jobs
+    template_name = "jobs/jobs_list.html"
+    context_object_name = "jobs"
+
+    def get_queryset(self):
+        jobs = Jobs.objects.filter(user=self.request.user)
+
+    def get(self, request, *args, **kwargs) -> HttpResponse:
+        return super().get(request, *args, **kwargs)
