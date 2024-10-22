@@ -16,5 +16,5 @@ urlpatterns = [
     path("add-job/", views.add_job_view, name="add_job"),
     path("edit-job/<int:pk>/", views.EditJobView.as_view(), name="edit_job"),
     path("delete-job/<int:pk>/", views.DeleteJobView.as_view(), name="delete_job"),
-    path("list", views.JobsListView.as_view(), name="jobs_list"),
+    path("list", views.JobsListView.as_view(), name="list"),
 ]
