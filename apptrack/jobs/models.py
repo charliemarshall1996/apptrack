@@ -247,7 +247,6 @@ class Jobs(models.Model):
 
     PAY_CURRENCY_CHOICES = get_currency_choices()
 
-    id = models.BigAutoField(primary_key=True)
     user = models.ForeignKey(settings.AUTH_USER_MODEL,
                              on_delete=models.CASCADE)
 
@@ -288,7 +287,7 @@ class Jobs(models.Model):
     def __str__(self):
         return f"{self.company_name} - {self.job_title}"
 
-    def save(self):
+    def save(self, *args, **kwargs):
         if not self.column:
             self.column = Columns.objects.get(
                 id=self.STATUS_POSITIONS[self.status])
@@ -297,4 +296,4 @@ class Jobs(models.Model):
 
         self.applied = dict(self.STATUS_CHOICES)[
             self.status] in self.APPLIED_STATUSES
-        super().save()
+        super().save(*args, **kwargs)

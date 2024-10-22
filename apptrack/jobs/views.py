@@ -218,6 +218,4 @@ class JobsListView(LoginRequiredMixin, ListView):
 
     def get_queryset(self):
         jobs = Jobs.objects.filter(user=self.request.user)
-
-    def get(self, request, *args, **kwargs) -> HttpResponse:
-        return super().get(request, *args, **kwargs)
+        return jobs
