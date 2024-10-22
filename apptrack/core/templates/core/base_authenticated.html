@@ -57,10 +57,9 @@
 
   <!-- Content -->
   {% include 'core/messages.html' %}
-  <div class="container align-content-center" id="content">
-    {% block content %}
-    {% endblock %}
-  </div>
+  
+  {% block content %}
+  {% endblock %}
 
   <footer class="footer mt-auto px-0">
     <nav class="navbar navbar-expand-lg bg-body-tertiary px-3" id="footer">
