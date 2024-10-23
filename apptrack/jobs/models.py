@@ -1,9 +1,10 @@
 
 from datetime import datetime
 
-from django.db import models
 from django.contrib.auth import get_user_model
 from django.conf import settings
+from django.core.exceptions import ObjectDoesNotExist
+from django.db import models
 
 from core.models import Locations
 from core.utils import get_currency_choices
@@ -14,23 +15,11 @@ User = get_user_model()
 
 # Create your models here.
 
-class Columns(models.Model):
-    name = models.CharField(max_length=255)
-    position = models.PositiveIntegerField()
-
-    def __str__(self):
-        return self.name
-
-    class Meta:
-        ordering = ['position']
-
 
 class Boards(models.Model):
     name = models.CharField(max_length=255, null=True, blank=True)
     user = models.ForeignKey(settings.AUTH_USER_MODEL,
                              on_delete=models.CASCADE)
-    columns = models.ManyToManyField(
-        Columns)
 
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
@@ -61,6 +50,20 @@ class Boards(models.Model):
         # Remove the many-to-many relationships without affecting the columns
         self.columns.clear()  # This removes the link between board and columns
         super().delete(*args, **kwargs)  # Proceed with deleting the board
+
+
+class Columns(models.Model):
+    board = models.ForeignKey(
+        'Boards', on_delete=models.CASCADE, related_name='columns')
+    name = models.CharField(max_length=255)
+    position = models.PositiveIntegerField()
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        ordering = ['position']
+        unique_together = ('board', 'name', 'position')
 
 
 class Jobs(models.Model):
@@ -283,18 +286,57 @@ class Jobs(models.Model):
         max_length=2, choices=STATUS_CHOICES, default=OPEN)
     column = models.ForeignKey(
         Columns, related_name="jobs", on_delete=models.CASCADE, null=True, blank=True)
+    board = models.ForeignKey(
+        Boards, related_name="jobs", on_delete=models.CASCADE, null=True, blank=True)
     applied = models.BooleanField(null=True, blank=True)
 
     def __str__(self):
         return f"{self.company_name} - {self.job_title}"
 
-    def save(self):
-        if not self.column:
-            self.column = Columns.objects.get(
-                id=self.STATUS_POSITIONS[self.status])
-        else:
-            self.status = self.POSITION_STATUSES[self.column.position]
+    def save(self, *args, **kwargs):
 
-        self.applied = dict(self.STATUS_CHOICES)[
-            self.status] in self.APPLIED_STATUSES
-        super().save()
+        # If the board is not set,
+        # set it to the column's board
+        if not self.board and self.column:
+            self.board = self.column.board
+
+        try:
+            if not self.column.board:
+                self.column.board = self.board
+        except AttributeError:
+            pass
+
+        # Check if the column
+        # is not already set
+        if not self.column and self.board:
+            try:
+                position = self.STATUS_POSITIONS[self.status]
+                name = dict(self.STATUS_CHOICES)[
+                    self.POSITION_STATUSES[position]].title()
+                # Retrieve the correct column
+                # based on the position and board
+                col, created = Columns.objects.get_or_create(
+                    name=name,
+                    position=position,
+                    board=self.board
+                )
+
+                if created:
+                    col.save()
+                self.column = col
+            except ObjectDoesNotExist:
+                raise ValueError(
+                    f"Column with position {self.STATUS_POSITIONS[self.status]} for board {self.board} does not exist.")
+        elif self.column:
+            self.column.board = self.board
+            # Ensure status is updated based on column position
+            self.status = self.POSITION_STATUSES[self.column.position]
+            self.column.save()
+
+        print(self.board.name)
+        print(self.column.name)
+        # Check if the job is in an applied status
+        self.applied = self.status in self.APPLIED_STATUSES
+
+        # Call the parent's save method to persist the object
+        super().save(*args, **kwargs)
