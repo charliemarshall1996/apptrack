@@ -22,4 +22,4 @@ class JobForm(forms.ModelForm):
                   'status']
 
     def save(self, *args, **kwargs):
-        return super().save()
+        return super().save(commit=False)

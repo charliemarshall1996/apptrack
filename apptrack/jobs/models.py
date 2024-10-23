@@ -247,6 +247,7 @@ class Jobs(models.Model):
 
     PAY_CURRENCY_CHOICES = get_currency_choices()
 
+    id = models.BigAutoField(primary_key=True)
     user = models.ForeignKey(settings.AUTH_USER_MODEL,
                              on_delete=models.CASCADE)
 

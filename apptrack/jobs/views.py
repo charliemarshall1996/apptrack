@@ -8,7 +8,7 @@ from django.views.generic import ListView, View
 from django.views.generic.edit import UpdateView
 from django.contrib.messages.views import SuccessMessageMixin
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponseRedirect
 from django.contrib import messages
 from core.forms import LocationForm
 from django.template.loader import render_to_string
@@ -80,9 +80,10 @@ def board_view(request):
         if created:
             board.columns.add(column)
             print(f"Created and added missing column: {column_name}")
+        print(f"Column: {column}, created: {created}, jobs: {column.jobs}")
 
     # Retrieve jobs and columns for the user
-    jobs = Jobs.objects.filter(user=request.user).all()
+    jobs = Jobs.objects.filter(user=request.user)
     columns = board.columns.all()
     job_form = JobForm()
     location_form = LocationForm()
@@ -113,6 +114,10 @@ def board_view(request):
 
 @login_required
 def add_job_view(request):
+    referrer = request.META.get('HTTP_REFERER')
+
+    print(f"user: {request.user}")
+
     if request.method == 'POST':
         job_form = JobForm(request.POST)
         location_form = LocationForm(request.POST)
@@ -123,7 +128,12 @@ def add_job_view(request):
             job.location = location
             job.user = request.user
             job.save()
-            return redirect('jobs:board')
+
+            if referrer:
+                return HttpResponseRedirect(referrer)
+            else:
+                # Fallback to a default page if referrer is not available or unsafe
+                return redirect(reverse('jobs:board'))
     else:
         job_form = JobForm()
         location_form = LocationForm()
@@ -219,3 +229,27 @@ class JobsListView(LoginRequiredMixin, ListView):
     def get_queryset(self):
         jobs = Jobs.objects.filter(user=self.request.user)
         return jobs
+
+
+@login_required
+def jobs_list_view(request):
+    jobs = Jobs.objects.filter(user=request.user)
+    job_form = JobForm()
+    location_form = LocationForm()
+    if request.method == "POST":
+        job_form = JobForm(request.POST)
+        location_form = LocationForm(request.POST)
+
+        if job_form.is_valid() and location_form.is_valid():
+            location = location_form.save()
+            job = job_form.save(commit=False)  # Don't save job yet
+            job.location = location
+            job.user = request.user
+            job.save()
+
+    context = {
+        'jobs': jobs,
+        'job_form': job_form,
+        'location_form': location_form
+    }
+    return render(request, 'jobs/jobs_list.html', context)
