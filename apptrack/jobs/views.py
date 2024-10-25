@@ -2,6 +2,7 @@
 import logging
 import json
 
+from django.core.exceptions import MultipleObjectsReturned
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect, get_object_or_404, HttpResponse
 from django.views.generic import ListView, View
@@ -73,14 +74,20 @@ def board_view(request):
 
     # Check if required columns exist in the board
     for column_name, column_position in default_columns:
-        column, created = Columns.objects.get_or_create(
-            name=column_name, boards=board, position=column_position)
 
-        # If the column was just created, add it to the board
-        if created:
-            board.columns.add(column)
-            print(f"Created and added missing column: {column_name}")
-        print(f"Column: {column}, created: {created}, jobs: {column.jobs}")
+        try:
+            column, created = Columns.objects.get_or_create(
+                name=column_name, board=board, position=column_position)
+
+            # If the column was just created, add it to the board
+            if created:
+                column.save()
+                print(f"Created and added missing column: {column_name}")
+
+        except MultipleObjectsReturned:
+            # Handle case if multiple columns with the same name exist
+            column = Columns.objects.filter(
+                name=column_name, board=board, position=column_position).first()
 
     # Retrieve jobs and columns for the user
     jobs = Jobs.objects.filter(user=request.user)
@@ -95,7 +102,8 @@ def board_view(request):
 
         if job_form.is_valid() and location_form.is_valid():
             location = location_form.save()
-            job = job_form.save(commit=False)  # Don't save job yet
+            job = job_form.save()
+            job.board = board
             job.location = location
             job.user = request.user
             job.save()
@@ -114,10 +122,7 @@ def board_view(request):
 
 @login_required
 def add_job_view(request):
-    referrer = request.META.get('HTTP_REFERER')
-
-    print(f"user: {request.user}")
-
+    board = Boards.objects.filter(user=request.user).first()
     if request.method == 'POST':
         job_form = JobForm(request.POST)
         location_form = LocationForm(request.POST)
@@ -126,14 +131,10 @@ def add_job_view(request):
             location.save()
             job = job_form.save()
             job.location = location
+            job.board = board
             job.user = request.user
             job.save()
-
-            if referrer:
-                return HttpResponseRedirect(referrer)
-            else:
-                # Fallback to a default page if referrer is not available or unsafe
-                return redirect(reverse('jobs:board'))
+            return redirect('jobs:board')
     else:
         job_form = JobForm()
         location_form = LocationForm()
