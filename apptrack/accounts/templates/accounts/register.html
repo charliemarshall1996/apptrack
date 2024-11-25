@@ -1,4 +1,4 @@
-
+<!DOCTYPE html>
 {% extends 'core/base_unauthenticated.html' %}
 
 {% block content %} 
@@ -37,9 +37,6 @@
                 </div>
                 <div class="row">
                     <div class="col m-auto">
-                        {{ profile_form.gender|as_crispy_field }}
-                    </div>
-                    <div class="col m-auto">
                         {{ profile_form.birth_date|as_crispy_field }}
                     </div>
                 </div>
@@ -49,17 +46,6 @@
                     </div>
                     <div class="col m-auto">
                         {{ profile_form.email_comms_opt_in|as_crispy_field }}
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col m-auto">
-                        {{ location_form.country|as_crispy_field }}
-                    </div>
-                    <div class="col m-auto">
-                        {{ location_form.region|as_crispy_field }}
-                    </div>
-                    <div class="col m-auto">
-                        {{ location_form.city|as_crispy_field }}
                     </div>
                 </div>
                 <div class="row">

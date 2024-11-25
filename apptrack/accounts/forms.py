@@ -41,7 +41,7 @@ class UserRegistrationForm(UserCreationForm):
 class ProfileRegistrationForm(forms.ModelForm):
     class Meta:
         model = Profile
-        fields = ['birth_date', 'gender', 'email_comms_opt_in']
+        fields = ['birth_date', 'email_comms_opt_in']
 
         widgets = {
             'birth_date': forms.DateInput(attrs={'type': 'date'}),
@@ -60,7 +60,7 @@ class UserUpdateForm(forms.ModelForm):
 class ProfileUpdateForm(forms.ModelForm):
     class Meta:
         model = Profile
-        fields = ['birth_date', 'gender', 'email_comms_opt_in']
+        fields = ['birth_date', 'email_comms_opt_in']
 
 
 class UserUpdateForm(forms.ModelForm):

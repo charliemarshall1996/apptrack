@@ -2,27 +2,25 @@
 import logging
 from datetime import timedelta
 
-from django.utils import timezone
-from django.contrib.auth.decorators import login_required
-from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib.auth import login, authenticate
-from django.contrib.auth import get_backends
-from django.contrib.auth.views import PasswordResetView
-from django.views.generic.detail import DetailView
-from django.contrib import messages
-from django.contrib.messages.views import SuccessMessageMixin
-from django.contrib.auth.mixins import LoginRequiredMixin
-from django.contrib.auth import get_user_model, logout
-from django.contrib.sites.shortcuts import get_current_site
-from django.http import HttpResponseRedirect
-from django.utils.http import urlsafe_base64_encode
-from django.utils.encoding import force_bytes
-from django.urls import reverse_lazy, reverse
-from django.core.mail import send_mail
-from django.urls import reverse
 from django.conf import settings
+from django.contrib import messages
+from django.contrib.auth import (
+    authenticate,
+    get_backends,
+    get_user_model,
+    login,
+    logout,
+)
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.core.mail import send_mail
+from django.shortcuts import get_object_or_404, redirect, render
+from django.urls import reverse
+from django.utils import timezone
+from django.utils.encoding import force_bytes
+from django.utils.http import urlsafe_base64_encode
+from django.views.generic.detail import DetailView
 
-from core.forms import LocationForm
 
 from .forms import *
 from .utils import get_can_resend, get_minutes_left_before_resend, get_time_since_last_email
@@ -37,9 +35,7 @@ def profile_settings_view(request):
         user_form = UserUpdateForm(request.POST, instance=request.user)
         profile_form = ProfileUpdateForm(
             request.POST, instance=request.user.profile)
-        location_form = LocationForm(
-            request.POST, instance=request.user.profile.location)
-        if user_form.is_valid() and profile_form.is_valid() and location_form.is_valid():
+        if user_form.is_valid() and profile_form.is_valid():
 
             if user_form.cleaned_data['honeypot']:
                 # Honeypot field should be empty. If it's filled, treat it as spam.
@@ -51,9 +47,6 @@ def profile_settings_view(request):
             user = user_form.save()
             user.save()
             profile = profile_form.save()
-            location = location_form.save()
-            location.save()
-            profile.location = location
             profile.user = user
             profile.save()
 
@@ -63,12 +56,10 @@ def profile_settings_view(request):
     else:
         user_form = UserUpdateForm(instance=request.user)
         profile_form = ProfileUpdateForm(instance=request.user.profile)
-        location_form = LocationForm(instance=request.user.profile.location)
 
     context = {
         'user_form': user_form,
-        'profile_form': profile_form,
-        'location_form': location_form
+        'profile_form': profile_form
     }
     return render(request, 'accounts/profile_settings.html', context)
 
@@ -316,10 +307,8 @@ def register(request):
     if request.method == 'POST':
         user_form = UserRegistrationForm(request.POST)
         profile_form = ProfileRegistrationForm(request.POST)
-        location_form = LocationForm(request.POST)
 
-        if user_form.is_valid() and profile_form.is_valid()\
-        and location_form.is_valid():  # noqa
+        if user_form.is_valid() and profile_form.is_valid():
 
             if user_form.cleaned_data['honeypot']:
                 # Honeypot field should be empty. If it's filled, treat it as spam.
@@ -328,13 +317,10 @@ def register(request):
                 # Redirect to prevent bot resubmission
                 return redirect('home')
 
-            location = location_form.save()
-            location.save()
             user = user_form.save()
             user.email_verified = False
             user.save()
             profile = profile_form.save()
-            profile.location = location
             profile.user = user
             profile.save()
 
@@ -349,7 +335,5 @@ def register(request):
     else:
         user_form = UserRegistrationForm()
         profile_form = ProfileRegistrationForm()
-        location_form = LocationForm()
     return render(request, 'accounts/register.html', {'user_form': user_form,
-                                                      'profile_form': profile_form,
-                                                      'location_form': location_form})
+                                                      'profile_form': profile_form})

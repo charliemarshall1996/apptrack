@@ -17,6 +17,12 @@ def get_custom_user():
             'date_joined': timezone.now() - timedelta(days=1)}
 
 
+@pytest.fixture
+def get_profile(get_custom_user):
+    return {'user': CustomUser(**get_custom_user), 'email_comms_opt_in': True,
+            'birth_date': timezone.now() - timedelta(days=1)}
+
+
 @pytest.mark.django_db
 def test_custom_user(get_custom_user):
     model = CustomUser(**get_custom_user)
@@ -28,3 +34,12 @@ def test_custom_user(get_custom_user):
     assert model.is_active == get_custom_user['is_active']
     assert model.is_staff == get_custom_user['is_staff']
     assert model.date_joined == get_custom_user['date_joined']
+
+
+@pytest.mark.django_db
+def test_profile(get_profile):
+
+    model = Profile(**get_profile)
+    assert model.user == get_profile['user']
+    assert model.email_comms_opt_in == get_profile['email_comms_opt_in']
+    assert model.birth_date == get_profile['birth_date']
