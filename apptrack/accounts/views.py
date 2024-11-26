@@ -23,43 +23,51 @@ from django.views.generic.detail import DetailView
 
 
 from .forms import *
-from .utils import get_can_resend, get_minutes_left_before_resend, get_time_since_last_email
+from .utils import (get_can_resend, get_minutes_left_before_resend, get_time_since_last_email,
+                    MessageManager)
 
 logger = logging.getLogger(__name__)
 User = get_user_model()
 
 
 @login_required
-def profile_settings_view(request):
+def profile_settings_view(request, id):
+    # Fetch the profile using the slug
+    profile = get_object_or_404(Profile, id=id)
+
+    # Check if the logged-in user owns the profile, otherwise redirect
+    if profile.user != request.user:
+        messages.error(
+            request, "You are not authorized to view or edit this profile.")
+        return redirect('home')
+
     if request.method == 'POST':
         user_form = UserUpdateForm(request.POST, instance=request.user)
-        profile_form = ProfileUpdateForm(
-            request.POST, instance=request.user.profile)
-        if user_form.is_valid() and profile_form.is_valid():
+        profile_form = ProfileUpdateForm(request.POST, instance=profile)
 
+        if user_form.is_valid() and profile_form.is_valid():
             if user_form.cleaned_data['honeypot']:
                 # Honeypot field should be empty. If it's filled, treat it as spam.
                 messages.error(
-                    request, "Your form submission was detected as spam.")
-                # Redirect to prevent bot resubmission
+                    request, MessageManager.spam)
                 return redirect('home')
 
             user = user_form.save()
-            user.save()
             profile = profile_form.save()
             profile.user = user
             profile.save()
 
-            messages.success(request, 'Your profile has been updated!')
+            messages.success(request, MessageManager.profile_update_success)
 
-            return redirect('accounts:profile')
+            return redirect('accounts:profile', id=profile.id)
     else:
         user_form = UserUpdateForm(instance=request.user)
-        profile_form = ProfileUpdateForm(instance=request.user.profile)
+        profile_form = ProfileUpdateForm(instance=profile)
 
     context = {
         'user_form': user_form,
-        'profile_form': profile_form
+        'profile_form': profile_form,
+        'profile': profile
     }
     return render(request, 'accounts/profile_settings.html', context)
 
@@ -67,7 +75,7 @@ def profile_settings_view(request):
 class ProfileView(LoginRequiredMixin, DetailView):
     model = User
     template_name = 'accounts/profile.html'  # Adjust based on your template
-    slug_field = 'username'  # Or 'slug' if you use a custom slug field
+    slug_field = 'id'  # Or 'slug' if you use a custom slug field
     slug_url_kwarg = 'slug'  # This is the URL parameter expected
 
     # Override get_object to use the logged-in user
@@ -95,7 +103,7 @@ def custom_login_view(request):
             if form.cleaned_data['honeypot']:
                 # Honeypot field should be empty. If it's filled, treat it as spam.
                 messages.error(
-                    request, "Your form submission was detected as spam.")
+                    request, MessageManager.spam)
                 # Redirect to prevent bot resubmission
                 return redirect('home')
 
@@ -217,7 +225,7 @@ def resend_verification_email(request):
             if form.cleaned_data['honeypot']:
                 # Honeypot field should be empty. If it's filled, treat it as spam.
                 messages.error(
-                    request, "Your form submission was detected as spam.")
+                    request, MessageManager.spam)
                 # Redirect to prevent bot resubmission
                 return redirect('home')
             email = form.cleaned_data['email']
@@ -264,25 +272,26 @@ def password_reset_view(request):
     if request.method == "POST":
         form = PasswordResetForm(request.POST)
         if form.is_valid():
+
             if form.cleaned_data['honeypot']:
-                # Honeypot field should be empty. If it's filled, treat it as spam.
+                print("Honeypot field filled")
+                # Honeypot field should be empty.
+                # If it's filled, treat it as spam.
                 messages.error(
-                    request, "Your form submission was detected as spam.")
+                    request, MessageManager.spam)
                 # Redirect to prevent bot resubmission
                 return redirect('home')
+
             email = form.cleaned_data['email']
             user = User.objects.filter(email=email).first()
             if user:
                 send_password_reset_email(user, request)
                 messages.success(
-                    request, "We've emailed you instructions for setting your password, "
-                    "if an account exists with the email you entered. You should receive them shortly."
-                    " If you don't receive an email, "
-                    "please make sure you've entered the address you registered with, and check your spam folder.")
+                    request, MessageManager.password_reset_success)
                 return redirect("accounts:password_reset")
             else:
                 messages.error(
-                    request, "We can't find a user with that email address.")
+                    request, MessageManager.user_not_found)
             return redirect('accounts:password_reset')
     else:
         form = PasswordResetForm()
@@ -294,6 +303,7 @@ def delete_account_view(request):
     # Handle the POST request (when the user confirms the deletion)
     if request.method == 'POST':
         user = request.user  # Get the logged-in user
+        user.profile.delete()  # Delete the user's profile
         user.delete()  # Delete the user account
         messages.success(
             request, "Your account has been successfully deleted.")
@@ -313,7 +323,7 @@ def register(request):
             if user_form.cleaned_data['honeypot']:
                 # Honeypot field should be empty. If it's filled, treat it as spam.
                 messages.error(
-                    request, "Your form submission was detected as spam.")
+                    request, MessageManager.spam)
                 # Redirect to prevent bot resubmission
                 return redirect('home')
 
