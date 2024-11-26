@@ -9,6 +9,17 @@ from accounts.models import CustomUser
 
 
 @pytest.fixture
+def user_registration_form_data(email=None, password1=None, password2=None, first_name=None, last_name=None):
+    return {
+        "email": "8LH0L@example.com",
+        "password1": "secur3password.",
+        "password2": "secur3password.",
+        "first_name": "John",
+        "last_name": "Doe",
+    }
+
+
+@pytest.fixture
 def get_custom_user():
     return {'email': "8LH0L@example.com",
             'email_verified': True,
