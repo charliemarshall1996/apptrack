@@ -12,17 +12,19 @@ User = get_user_model()
 
 
 @pytest.mark.django_db
-def test_profile_settings_view(client, create_users):
-    user = create_users["verified_user"]
+def test_profile_settings_view(client, get_profile):
+    profile = Profile(**get_profile)
+    profile.save()
 
     response = client.post(reverse("accounts:login"), {
-        "email": user.email, "password": "securepassword"})
+        "email": profile.user.email, "password": "securepassword"})
 
     assert response.status_code == 302
 
-    print(f"user authenticated: {user.is_authenticated}")
+    print(f"user authenticated: {profile.user.is_authenticated}")
 
-    url = reverse('accounts:profile_settings', kwargs={"id": user.profile.id})
+    url = reverse('accounts:profile_settings', kwargs={
+                  "id": profile.user.profile.id})
 
     # GET request should render the profile settings page
     response = client.get(url)
@@ -34,14 +36,14 @@ def test_profile_settings_view(client, create_users):
     # POST request with valid data should update profile
     data = {
         'honeypot': '',
-        'email': user.email,
+        'email': profile.user.email,
         'first_name': 'Updated Name',
         'last_name': 'Updated Lastname',
     }
     response = client.post(url, data)
     assert response.status_code == 302  # Should redirect
     assert response.url == reverse(
-        'accounts:profile', kwargs={'id': user.profile.id})
+        'accounts:profile', kwargs={'id': profile.user.profile.id})
 
     # Check success message
     messages = list(get_messages(response.wsgi_request))
@@ -49,17 +51,19 @@ def test_profile_settings_view(client, create_users):
 
 
 @pytest.mark.django_db
-def test_profile_settings_view_spam(client, create_users):
-    user = create_users["verified_user"]
+def test_profile_settings_view_spam(client, get_profile):
+    profile = Profile(**get_profile)
+    profile.save()
 
     response = client.post(reverse("accounts:login"), {
-        "email": user.email, "password": "securepassword"})
+        "email": profile.user.email, "password": "securepassword"})
 
     assert response.status_code == 302
 
-    print(f"user authenticated: {user.is_authenticated}")
+    print(f"user authenticated: {profile.user.is_authenticated}")
 
-    url = reverse('accounts:profile_settings', kwargs={"id": user.profile.id})
+    url = reverse('accounts:profile_settings', kwargs={
+                  "id": profile.user.profile.id})
 
     # GET request should render the profile settings page
     response = client.get(url)
@@ -71,7 +75,7 @@ def test_profile_settings_view_spam(client, create_users):
     # POST request with valid data should update profile
     data = {
         'honeypot': 'spam',
-        'email': user.email,
+        'email': profile.user.email,
         'first_name': 'Updated Name',
         'last_name': 'Updated Lastname',
     }
@@ -84,28 +88,30 @@ def test_profile_settings_view_spam(client, create_users):
 
 
 @pytest.mark.django_db
-def test_profile_view(client, create_users):
-    user = create_users["verified_user"]
+def test_profile_view(client, get_profile):
+    profile = Profile(**get_profile)
+    profile.save()
 
     response = client.post(reverse("accounts:login"), {
-        "email": user.email, "password": "securepassword"})
+        "email": profile.user.email, "password": "securepassword"})
 
     assert response.status_code == 302
-    url = reverse('accounts:profile', kwargs={'id': user.profile.id})
+    url = reverse('accounts:profile', kwargs={'id': profile.user.profile.id})
 
     # GET request should show profile details
     response = client.get(url)
     assert response.status_code == 200
 
-    assert response.context['object'] == user
+    assert response.context['object'] == profile.user
 
 
 @pytest.mark.django_db
-def test_logout_view(client, create_users):
-    user = create_users["verified_user"]
+def test_logout_view(client, get_profile):
+    profile = Profile(**get_profile)
+    profile.save()
 
     response = client.post(reverse("accounts:login"), {
-        "email": user.email, "password": "securepassword"})
+        "email": profile.user.email, "password": "securepassword"})
 
     assert response.status_code == 302
     url = reverse('accounts:logout')
@@ -117,8 +123,9 @@ def test_logout_view(client, create_users):
 
 
 @pytest.mark.django_db
-def test_custom_login_view(client, create_users):
-    user = create_users["verified_user"]
+def test_custom_login_view(client, get_profile):
+    profile = Profile(**get_profile)
+    profile.save()
 
     url = reverse('accounts:login')
 
@@ -129,7 +136,8 @@ def test_custom_login_view(client, create_users):
     assert 'form' in response.context
 
     # POST with valid data should log in and redirect
-    data = {'honeypot': '', 'email': user.email, 'password': 'securepassword'}
+    data = {'honeypot': '', 'email': profile.user.email,
+            'password': 'securepassword'}
     response = client.post(url, data)
     assert response.status_code == 302
     # Assuming this is the redirect
@@ -137,9 +145,10 @@ def test_custom_login_view(client, create_users):
 
 
 @pytest.mark.django_db
-def test_custom_login_view_invalid_credentials(client, create_users):
+def test_custom_login_view_invalid_credentials(client, get_profile):
 
-    user = create_users["verified_user"]
+    profile = Profile(**get_profile)
+    profile.save()
 
     url = reverse('accounts:login')
 
@@ -150,7 +159,8 @@ def test_custom_login_view_invalid_credentials(client, create_users):
     assert 'form' in response.context
 
     # POST with invalid credentials should show error
-    data = {'honeypot': '', 'email': user.email, 'password': 'wrongpassword'}
+    data = {'honeypot': '', 'email': profile.user.email,
+            'password': 'wrongpassword'}
     response = client.post(url, data)
     assert response.status_code == 302
     assert response.url == reverse('accounts:login')
@@ -159,9 +169,10 @@ def test_custom_login_view_invalid_credentials(client, create_users):
 
 
 @pytest.mark.django_db
-def test_custom_login_view_spam(client, create_users):
+def test_custom_login_view_spam(client, get_profile):
 
-    user = create_users["verified_user"]
+    profile = Profile(**get_profile)
+    profile.save()
 
     url = reverse('accounts:login')
 
@@ -172,7 +183,7 @@ def test_custom_login_view_spam(client, create_users):
     assert 'form' in response.context
 
     # Test honeypot field for spam
-    data = {'honeypot': 'spam', 'email': user.email,
+    data = {'honeypot': 'spam', 'email': profile.user.email,
             'password': "securepassword"}
     response = client.post(url, data)
     assert response.status_code == 302  # Should redirect
@@ -182,11 +193,12 @@ def test_custom_login_view_spam(client, create_users):
 
 
 @pytest.mark.django_db
-def test_resend_verification_email_view(client, create_users):
-    user = create_users["verified_user"]
+def test_resend_verification_email_view(client, get_profile):
+    profile = Profile(**get_profile)
+    profile.save()
 
     response = client.post(reverse("accounts:login"), {
-        "email": user.email, "password": "securepassword"})
+        "email": profile.user.email, "password": "securepassword"})
 
     assert response.status_code == 302
     url = reverse('accounts:resend_verification_email')
@@ -198,7 +210,7 @@ def test_resend_verification_email_view(client, create_users):
     assert 'form' in response.context
 
     # POST with valid email should resend the email
-    data = {'honeypot': '', 'email': user.email}
+    data = {'honeypot': '', 'email': profile.user.email}
     response = client.post(url, data)
     assert response.status_code == 302  # Should redirect
     assert response.url == reverse('accounts:login')
@@ -207,11 +219,12 @@ def test_resend_verification_email_view(client, create_users):
 
 
 @pytest.mark.django_db
-def test_resend_verification_email_view_spam(client, create_users):
-    user = create_users["verified_user"]
+def test_resend_verification_email_view_spam(client, get_profile):
+    profile = Profile(**get_profile)
+    profile.save()
 
     response = client.post(reverse("accounts:login"), {
-        "email": user.email, "password": "securepassword"})
+        "email": profile.user.email, "password": "securepassword"})
 
     assert response.status_code == 302
     url = reverse('accounts:resend_verification_email')
@@ -223,7 +236,7 @@ def test_resend_verification_email_view_spam(client, create_users):
     assert 'form' in response.context
 
     # POST with valid email should resend the email
-    data = {'honeypot': 'spam', 'email': user.email}
+    data = {'honeypot': 'spam', 'email': profile.user.email}
 
     response = client.post(url, data)
     assert response.status_code == 302  # Should redirect after spam
@@ -233,11 +246,12 @@ def test_resend_verification_email_view_spam(client, create_users):
 
 
 @pytest.mark.django_db
-def test_password_reset_view(client, create_users):
-    user = create_users["verified_user"]
+def test_password_reset_view(client, get_profile):
+    profile = Profile(**get_profile)
+    profile.save()
 
     response = client.post(reverse("accounts:login"), {
-        "email": user.email, "password": "securepassword"})
+        "email": profile.user.email, "password": "securepassword"})
 
     assert response.status_code == 302
     url = reverse('accounts:password_reset')
@@ -249,7 +263,7 @@ def test_password_reset_view(client, create_users):
     assert 'form' in response.context
 
     # POST with a valid email should send a password reset email
-    data = {'honeypot': '', 'email': user.email}
+    data = {'honeypot': '', 'email': profile.user.email}
     response = client.post(url, data)
     assert response.status_code == 302  # Should redirect
     messages = list(get_messages(response.wsgi_request))
@@ -258,12 +272,13 @@ def test_password_reset_view(client, create_users):
 
 
 @pytest.mark.django_db
-def test_password_reset_view_spam(client, create_users):
+def test_password_reset_view_spam(client, get_profile):
 
-    user = create_users["verified_user"]
+    profile = Profile(**get_profile)
+    profile.save()
 
     response = client.post(reverse("accounts:login"), {
-        "email": user.email, "password": "securepassword"})
+        "email": profile.user.email, "password": "securepassword"})
 
     assert response.status_code == 302
     url = reverse('accounts:password_reset')
@@ -275,7 +290,7 @@ def test_password_reset_view_spam(client, create_users):
     assert 'form' in response.context
 
     # Test honeypot field for spam
-    data = {'honeypot': 'spam', 'email': user.email}
+    data = {'honeypot': 'spam', 'email': profile.user.email}
     response = client.post(url, data)
     assert response.status_code == 302  # Should redirect after spam
     assert response.url == reverse('home')
@@ -284,11 +299,12 @@ def test_password_reset_view_spam(client, create_users):
 
 
 @pytest.mark.django_db
-def test_delete_account_view(client, create_users):
-    user = create_users["verified_user"]
+def test_delete_account_view(client, get_profile):
+    profile = Profile(**get_profile)
+    profile.save()
 
     response = client.post(reverse("accounts:login"), {
-        "email": user.email, "password": "securepassword"})
+        "email": profile.user.email, "password": "securepassword"})
 
     assert response.status_code == 302
     url = reverse('accounts:delete_account')

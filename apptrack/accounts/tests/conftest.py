@@ -5,7 +5,9 @@ from django.contrib.auth import get_user_model
 from django.utils import timezone
 import pytest
 
-from accounts.models import CustomUser
+from accounts.models import CustomUser, Profile
+
+UserModel = get_user_model()
 
 
 @pytest.fixture
@@ -32,7 +34,10 @@ def get_custom_user():
 
 @pytest.fixture
 def get_profile(get_custom_user):
-    return {'user': CustomUser(**get_custom_user), 'email_comms_opt_in': True,
+    get_custom_user['password'] = "securepassword"
+    user = UserModel.objects.create_user(**get_custom_user)
+    user.save()
+    return {'user': user, 'email_comms_opt_in': True,
             'birth_date': timezone.now() - timedelta(days=1)}
 
 
@@ -41,15 +46,15 @@ def get_profile(get_custom_user):
 def create_users(get_custom_user):
     """Fixture to create users for testing."""
     get_custom_user['password'] = "securepassword"
-    UserModel = get_user_model()
 
+    # Clean up any existing users with the same email before creating new ones
     UserModel.objects.filter(**get_custom_user).delete()
 
-    # Verified user
+    # Create a verified user
     verified_user = UserModel.objects.create_user(**get_custom_user)
     verified_user.save()
 
-    # Unverified user
+    # Create an unverified user
     get_custom_user['email'] = "unverified@example.com"
     get_custom_user['email_verified'] = False
     unverified_user = UserModel.objects.create_user(**get_custom_user)
@@ -57,6 +62,9 @@ def create_users(get_custom_user):
 
     yield {"verified_user": verified_user, "unverified_user": unverified_user}
 
-    # Clean up after the test
-    verified_user.delete()
-    unverified_user.delete()
+    # Cleanup: Ensure profiles are deleted if they exist
+    for user in [verified_user, unverified_user]:
+        if hasattr(user, 'profile') and user.profile:
+            user.profile.save()
+            user.profile.delete()  # Only delete if profile exists
+        user.delete()  # Delete the user object itself

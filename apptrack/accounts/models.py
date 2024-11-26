@@ -37,7 +37,7 @@ class Profile(models.Model):
         ('O', 'Other'),
     )
     user = models.OneToOneField(
-        CustomUser, on_delete=models.CASCADE, related_name='profile')
+        CustomUser, on_delete=models.CASCADE, related_name='profile', unique=True)
     email_comms_opt_in = models.BooleanField(default=False)
     birth_date = models.DateField(null=True, blank=True)
 

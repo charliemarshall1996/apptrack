@@ -20,6 +20,8 @@ def test_user_registration_form_valid(user_registration_form_data):
     assert form.is_valid()
     user = form.save()
     assert user.email == user_registration_form_data['email']
+    user.save()
+    user.delete()
 
 
 @pytest.mark.django_db
@@ -38,11 +40,19 @@ def test_profile_registration_form_valid(create_users):
     }
     form = ProfileRegistrationForm(data=form_data)
     assert form.is_valid()
-    profile = form.save()
+
+    # Save the profile and associate it with the verified user
+    profile = form.save()  # Save but don't commit yet
+    # Associate with verified user
     profile.user = create_users['verified_user']
-    profile.save()
+    profile.save()  # Now save the profile
+
+    # Assertions
     assert profile.birth_date == date(2000, 1, 1)
     assert profile.email_comms_opt_in is True
+
+    # Cleanup
+    profile.delete()
 
 
 @pytest.mark.django_db
@@ -70,11 +80,17 @@ def test_user_update_form_valid():
     assert user.first_name == "UpdatedFirstName"
     assert user.last_name == "UpdatedLastName"
 
+    user.save()
+    user.delete()
+
 
 @pytest.mark.django_db
 def test_profile_update_form_valid(create_users):
-    profile = Profile.objects.create(user=create_users['verified_user'],
-                                     birth_date="2000-01-01", email_comms_opt_in=False)
+    profile, _ = Profile.objects.get_or_create(
+        user=create_users['verified_user'])
+    profile.birth_date = date(2000, 1, 1)
+    profile.email_comms_opt_in = False
+    profile.save()
     form_data = {
         "birth_date": "1995-05-15",
         "email_comms_opt_in": True,
@@ -84,6 +100,9 @@ def test_profile_update_form_valid(create_users):
     updated_profile = form.save()
     assert updated_profile.birth_date == date(1995, 5, 15)
     assert updated_profile.email_comms_opt_in is True
+    profile.delete()
+    updated_profile.save()
+    updated_profile.delete()
 
 
 def test_user_login_form_valid():
