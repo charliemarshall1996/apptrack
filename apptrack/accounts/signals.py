@@ -3,7 +3,7 @@ from django.contrib.auth.models import User
 from django.dispatch import receiver
 
 from .models import Profile
-from jobs.models import Boards
+from jobs.models import Boards, Columns
 
 
 @receiver(post_save, sender=User)
@@ -16,6 +16,26 @@ def create_profile(sender, instance, created, **kwargs):
 def create_board(sender, instance, created, **kwargs):
     if created:
         Boards.objects.create(user=instance)
+
+
+@receiver(post_save, sender=Boards)
+def create_columns(sender, instance, created, **kwargs):
+
+    default_columns = [
+        ('Open', 1),
+        ('Applied', 2),
+        ('Shortlisted', 3),
+        ('Interview', 4),
+        ('Offer', 5),
+        ('Rejected', 6),
+        ('Closed', 7),
+    ]
+
+    if created and not instance.columns.exists():
+        for name, position in default_columns:
+            column = Columns.objects.create(
+                board=instance, name=name, position=position)
+            column.save()
 
 
 @receiver(post_save, sender=User)

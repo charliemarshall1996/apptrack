@@ -35,10 +35,9 @@ class Boards(models.Model):
         ]
 
         for name, position in default_columns:
-            if not Columns.objects.filter(name=name).exists():
-                column = Columns(name=name, position=position)
+            if not Columns.objects.filter(name=name, board=self).exists():
+                column = Columns(name=name, position=position, board=self)
                 column.save()
-                self.columns.add(column)
                 print(f"Column added: {column.name}")
 
         if not self.columns.exists():

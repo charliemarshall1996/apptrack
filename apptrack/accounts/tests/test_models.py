@@ -1,26 +1,7 @@
 
-from datetime import timedelta
-from django.utils import timezone
 import pytest
 
 from accounts.models import *
-
-
-@pytest.fixture
-def get_custom_user():
-    return {'email': "8LH0L@example.com",
-            'email_verified': True,
-            'last_verification_email_sent': timezone.now() - timedelta(days=1),
-            'first_name': "John", 'last_name': "Doe",
-            'is_active': True,
-            'is_staff': False,
-            'date_joined': timezone.now() - timedelta(days=1)}
-
-
-@pytest.fixture
-def get_profile(get_custom_user):
-    return {'user': CustomUser(**get_custom_user), 'email_comms_opt_in': True,
-            'birth_date': timezone.now() - timedelta(days=1)}
 
 
 @pytest.mark.django_db
