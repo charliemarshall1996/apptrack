@@ -1,6 +1,4 @@
 
-from datetime import timedelta
-
 from django.utils import timezone
 
 
@@ -19,6 +17,7 @@ def get_minutes_left_before_resend(time_since_last_email, timeout_duration):
 
 
 class MessageManager:
+
     password_reset_success = """We've emailed you instructions for setting your password, 
         if an account exists with the email you entered. You should receive them 
         shortly. If you don't receive an email, please make sure you've entered the 

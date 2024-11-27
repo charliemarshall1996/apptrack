@@ -104,6 +104,57 @@ def logout_view(request):
     return redirect('home')
 
 
+def login_non_verified_email(request, email):
+    try:
+        user = User.objects.get(email=email)
+    except User.DoesNotExist:
+        messages.error(request, "Invalid login credentials")
+        return redirect("accounts:login")
+
+    if user.email_verified:
+        messages.error(request, "Invalid login credentials")
+        return redirect("accounts:login")
+
+    timeout_duration = timedelta(minutes=10)
+
+    if user.last_verification_email_sent:
+        time_since_last_email = get_time_since_last_email(
+            user.last_verification_email_sent)
+
+        can_resend = get_can_resend(
+            timeout_duration, time_since_last_email)
+
+        if can_resend:
+            resend_verification_url = reverse(
+                'accounts:resend_verification_email')
+            message = (f"""
+            Please verify your email before logging in.
+            Please check your email for the verification link, including spam folder.
+            If you need to resend the verification email, please click <a href='{reverse(
+            'accounts:resend_verification_email')}'>here</a>.
+            """)
+        else:
+            minutes_difference = get_minutes_left_before_resend(
+                time_since_last_email, timeout_duration)
+
+            message = ("""
+                Please verify your email before logging in.
+                Please check your email for the verification link, including spam folder.
+                You must wait {} minutes before resending the verification email.
+                """.format(round(minutes_difference)))
+    else:
+        resend_verification_url = reverse('accounts:resend_verification_email')
+        message = ("""
+            Please verify your email before logging in.
+            Please check your email for the verification link, including spam folder.
+            If you need to resend the verification email, please click
+            <a href='{}'>here</a>.
+            """.format(resend_verification_url))
+
+    messages.error(request, message)
+    return redirect('accounts:login')
+
+
 def custom_login_view(request):
     if request.method == "POST":
         form = UserLoginForm(request.POST)
@@ -111,8 +162,7 @@ def custom_login_view(request):
         if form.is_valid():
             if form.cleaned_data['honeypot']:
                 # Honeypot field should be empty. If it's filled, treat it as spam.
-                messages.error(
-                    request, MessageManager.spam)
+                messages.error(request, MessageManager.spam)
                 # Redirect to prevent bot resubmission
                 return redirect('home')
 
@@ -121,7 +171,6 @@ def custom_login_view(request):
             user = authenticate(request, email=email, password=password)
 
             if user is not None:
-
                 if user.email_verified:
                     for backend in get_backends():
                         if user == backend.get_user(user.id):
@@ -130,48 +179,10 @@ def custom_login_view(request):
 
                     login(request, user)
                     return redirect('jobs:board')
-                else:
-                    timeout_duration = timedelta(minutes=10)
 
-                    # Example time since last email logic
-                    if user.last_verification_email_sent:
-                        time_since_last_email = get_time_since_last_email(
-                            user.last_verification_email_sent)
-
-                        can_resend = get_can_resend(
-                            timeout_duration, time_since_last_email)
-
-                        if can_resend:
-                            resend_verification_url = reverse(
-                                'accounts:resend_verification_email')
-
-                            message = ("Please verify your email before logging in."
-                                       "Please check your email for the verification link, including spam folder."
-                                       f"If you need to resend the verification email, please click <a href='{resend_verification_url}'>here</a>.")
-                        else:
-
-                            minutes_difference = get_minutes_left_before_resend(
-                                time_since_last_email, timeout_duration)
-
-                            message = ("Please verify your email before logging in."
-                                       "Please check your email for the verification link, including spam folder."
-                                       f"You must wait {round(minutes_difference)} minutes before resending the verification email.")
-
-                    else:
-                        resend_verification_url = reverse(
-                            'accounts:resend_verification_email')
-
-                        message = ("Please verify your email before logging in."
-                                   "Please check your email for the verification link, including spam folder."
-                                   f"If you need to resend the verification email, please click <a href='{resend_verification_url}'>here</a>.")
-
-                    messages.error(
-                        request, message)
-                    # Redirect to the login page
-                    return redirect('accounts:login')
             else:
-                messages.error(request, "Invalid login credentials")
-                return redirect('accounts:login')
+                # Use the return value from login_non_verified_email
+                return login_non_verified_email(request, email)
     else:
         form = UserLoginForm()
 

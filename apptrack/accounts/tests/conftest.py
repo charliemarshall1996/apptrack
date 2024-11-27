@@ -62,33 +62,6 @@ def profile_data_factory():
 
 
 @pytest.fixture
-@pytest.mark.django_db
-def create_users(custom_user_data_factory) -> Dict[str, UserModel]:
-    """Fixture to create users for testing."""
-    data = custom_user_data_factory()
-    users = UserModel.objects.filter(email=data['email'])
-    for user in users:
-        if hasattr(user, "profile"):
-            user.profile.delete()
-        user.delete()
-
-    data['password'] = "securepassword"
-
-    # Create a verified user
-    verified_user = UserModel.objects.create_user(**data)
-    verified_user.save()
-
-    # Create an unverified user
-    data['email_verified'] = False
-    unverified_user = UserModel.objects.create_user(**data)
-    unverified_user.save()
-
-    print(f"VERIFIED EMAIL: {verified_user.email}")
-    print(f"UNVERIFIED EMAIL: {unverified_user.email}")
-    yield {"verified_user": verified_user, "unverified_user": unverified_user}
-
-
-@pytest.fixture
 def profile_factory(custom_user_factory, profile_data_factory):
     def factory(password=None, email_verified=True):
         user = custom_user_factory(
