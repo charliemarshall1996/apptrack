@@ -1,7 +1,7 @@
 
 import pytest
 
-from accounts.models import *
+from accounts.models import CustomUser, Profile
 
 
 @pytest.mark.django_db

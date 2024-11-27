@@ -1,6 +1,5 @@
 import pytest
 from datetime import date
-from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
 from accounts.forms import (
     UserRegistrationForm,
@@ -11,7 +10,6 @@ from accounts.forms import (
     ResendVerificationEmailForm,
     PasswordResetForm,
 )
-from accounts.models import Profile
 
 
 @pytest.mark.django_db

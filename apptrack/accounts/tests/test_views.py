@@ -3,7 +3,6 @@ from django.urls import reverse
 from django.contrib.auth import get_user_model
 from django.contrib.messages import get_messages
 
-from accounts.models import Profile
 from accounts.utils import MessageManager
 
 msg_mngr = MessageManager()

@@ -7,7 +7,7 @@ from django.utils import timezone
 from faker import Faker
 import pytest
 
-from accounts.models import CustomUser, Profile
+from accounts.models import Profile
 
 UserModel = get_user_model()
 

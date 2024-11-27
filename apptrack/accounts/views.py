@@ -22,7 +22,16 @@ from django.utils.http import urlsafe_base64_encode
 from django.views.generic.detail import DetailView
 
 
-from .forms import *
+from .forms import (
+    UserUpdateForm,
+    UserRegistrationForm,
+    UserLoginForm,
+    ProfileRegistrationForm,
+    ProfileUpdateForm,
+    ResendVerificationEmailForm,
+    PasswordResetForm
+)
+from .models import Profile
 from .utils import (get_can_resend, get_minutes_left_before_resend, get_time_since_last_email,
                     MessageManager)
 
