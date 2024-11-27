@@ -52,7 +52,7 @@ jobs:
           echo "AUTH_USER_MODEL = 'accounts.CustomUser'" >> $GITHUB_WORKSPACE/apptrack/apptrack/settings.py
 
       - name: Apply migrations
-        run: python $GITHUB_WORKSPACE/apptrack/apptrack/manage.py migrate
+        run: python $GITHUB_WORKSPACE/manage.py migrate
 
       - name: Test with pytest
         run: |
