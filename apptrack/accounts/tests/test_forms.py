@@ -51,7 +51,8 @@ def test_user_registration_form_invalid_email_raises(user_registration_form_data
 
 
 @pytest.mark.django_db
-def test_profile_registration_form_valid(create_users):
+def test_profile_registration_form_valid(custom_user_factory):
+    user = custom_user_factory()
     form_data = {
         "birth_date": "2000-01-01",
         "email_comms_opt_in": True,
@@ -62,7 +63,7 @@ def test_profile_registration_form_valid(create_users):
     # Save the profile and associate it with the verified user
     profile = form.save()  # Save but don't commit yet
     # Associate with verified user
-    profile.user = create_users['verified_user']
+    profile.user = user
     profile.save()  # Now save the profile
 
     # Assertions
@@ -103,9 +104,8 @@ def test_user_update_form_valid():
 
 
 @pytest.mark.django_db
-def test_profile_update_form_valid(create_users):
-    profile, _ = Profile.objects.get_or_create(
-        user=create_users['verified_user'])
+def test_profile_update_form_valid(profile_factory):
+    profile = profile_factory()
     profile.birth_date = date(2000, 1, 1)
     profile.email_comms_opt_in = False
     profile.save()

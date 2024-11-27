@@ -12,12 +12,14 @@ User = get_user_model()
 
 
 @pytest.mark.django_db
-def test_profile_settings_view(client, get_profile):
-    profile = Profile(**get_profile)
+def test_profile_settings_view(client, profile_factory):
+    PASSWORD = "securepassword"
+
+    profile = profile_factory(password=PASSWORD)
     profile.save()
 
     response = client.post(reverse("accounts:login"), {
-        "email": profile.user.email, "password": "securepassword"})
+        "email": profile.user.email, "password": PASSWORD})
 
     assert response.status_code == 302
 
@@ -51,12 +53,14 @@ def test_profile_settings_view(client, get_profile):
 
 
 @pytest.mark.django_db
-def test_profile_settings_view_spam(client, get_profile):
-    profile = Profile(**get_profile)
+def test_profile_settings_view_spam(client, profile_factory):
+    PASSWORD = "securepassword"
+
+    profile = profile_factory(password=PASSWORD)
     profile.save()
 
     response = client.post(reverse("accounts:login"), {
-        "email": profile.user.email, "password": "securepassword"})
+        "email": profile.user.email, "password": PASSWORD})
 
     assert response.status_code == 302
 
@@ -88,12 +92,42 @@ def test_profile_settings_view_spam(client, get_profile):
 
 
 @pytest.mark.django_db
-def test_profile_view(client, get_profile):
-    profile = Profile(**get_profile)
+def test_profile_settings_view_invalid_profile(client, profile_factory, custom_user_factory):
+    PASSWORD = "securepassword"
+
+    user = custom_user_factory(password=PASSWORD)
+    profile = profile_factory(password=PASSWORD)
     profile.save()
 
     response = client.post(reverse("accounts:login"), {
-        "email": profile.user.email, "password": "securepassword"})
+        "email": user.email, "password": PASSWORD})
+
+    assert response.status_code == 302
+    print(f"Login response {list(get_messages(response.wsgi_request))}")
+    print(f"user authenticated: {user.is_authenticated}")
+
+    url = reverse('accounts:profile_settings', kwargs={
+                  "id": profile.user.profile.id})
+
+    response = client.get(url)
+    # assert response.status_code == 302
+
+    # Check success message
+    messages = list(get_messages(response.wsgi_request))
+    print(messages)
+    assert str(
+        messages[0]) == "You are not authorized to view or edit this profile."
+
+
+@pytest.mark.django_db
+def test_profile_view(client, profile_factory):
+    PASSWORD = "securepassword"
+
+    profile = profile_factory(password=PASSWORD)
+    profile.save()
+
+    response = client.post(reverse("accounts:login"), {
+        "email": profile.user.email, "password": PASSWORD})
 
     assert response.status_code == 302
     url = reverse('accounts:profile', kwargs={'id': profile.user.profile.id})
@@ -106,12 +140,14 @@ def test_profile_view(client, get_profile):
 
 
 @pytest.mark.django_db
-def test_logout_view(client, get_profile):
-    profile = Profile(**get_profile)
+def test_logout_view(client, profile_factory):
+    PASSWORD = "securepassword"
+
+    profile = profile_factory(password=PASSWORD)
     profile.save()
 
     response = client.post(reverse("accounts:login"), {
-        "email": profile.user.email, "password": "securepassword"})
+        "email": profile.user.email, "password": PASSWORD})
 
     assert response.status_code == 302
     url = reverse('accounts:logout')
@@ -123,9 +159,14 @@ def test_logout_view(client, get_profile):
 
 
 @pytest.mark.django_db
-def test_custom_login_view(client, get_profile):
-    profile = Profile(**get_profile)
+def test_custom_login_view(client, profile_factory):
+    PASSWORD = "securepassword"
+
+    profile = profile_factory(password=PASSWORD)
     profile.save()
+
+    response = client.post(reverse("accounts:login"), {
+        "email": profile.user.email, "password": PASSWORD})
 
     url = reverse('accounts:login')
 
@@ -145,9 +186,11 @@ def test_custom_login_view(client, get_profile):
 
 
 @pytest.mark.django_db
-def test_custom_login_view_invalid_credentials(client, get_profile):
+def test_custom_login_view_invalid_credentials(client, profile_factory):
 
-    profile = Profile(**get_profile)
+    PASSWORD = "securepassword"
+
+    profile = profile_factory(password=PASSWORD)
     profile.save()
 
     url = reverse('accounts:login')
@@ -169,9 +212,11 @@ def test_custom_login_view_invalid_credentials(client, get_profile):
 
 
 @pytest.mark.django_db
-def test_custom_login_view_spam(client, get_profile):
+def test_custom_login_view_spam(client, profile_factory):
 
-    profile = Profile(**get_profile)
+    PASSWORD = "securepassword"
+
+    profile = profile_factory(password=PASSWORD)
     profile.save()
 
     url = reverse('accounts:login')
@@ -193,12 +238,14 @@ def test_custom_login_view_spam(client, get_profile):
 
 
 @pytest.mark.django_db
-def test_resend_verification_email_view(client, get_profile):
-    profile = Profile(**get_profile)
+def test_resend_verification_email_view(client, profile_factory):
+    PASSWORD = "securepassword"
+
+    profile = profile_factory(password=PASSWORD)
     profile.save()
 
     response = client.post(reverse("accounts:login"), {
-        "email": profile.user.email, "password": "securepassword"})
+        "email": profile.user.email, "password": PASSWORD})
 
     assert response.status_code == 302
     url = reverse('accounts:resend_verification_email')
@@ -219,12 +266,14 @@ def test_resend_verification_email_view(client, get_profile):
 
 
 @pytest.mark.django_db
-def test_resend_verification_email_view_spam(client, get_profile):
-    profile = Profile(**get_profile)
+def test_resend_verification_email_view_spam(client, profile_factory):
+    PASSWORD = "securepassword"
+
+    profile = profile_factory(password=PASSWORD)
     profile.save()
 
     response = client.post(reverse("accounts:login"), {
-        "email": profile.user.email, "password": "securepassword"})
+        "email": profile.user.email, "password": PASSWORD})
 
     assert response.status_code == 302
     url = reverse('accounts:resend_verification_email')
@@ -246,12 +295,14 @@ def test_resend_verification_email_view_spam(client, get_profile):
 
 
 @pytest.mark.django_db
-def test_password_reset_view(client, get_profile):
-    profile = Profile(**get_profile)
+def test_password_reset_view(client, profile_factory):
+    PASSWORD = "securepassword"
+
+    profile = profile_factory(password=PASSWORD)
     profile.save()
 
     response = client.post(reverse("accounts:login"), {
-        "email": profile.user.email, "password": "securepassword"})
+        "email": profile.user.email, "password": PASSWORD})
 
     assert response.status_code == 302
     url = reverse('accounts:password_reset')
@@ -272,13 +323,15 @@ def test_password_reset_view(client, get_profile):
 
 
 @pytest.mark.django_db
-def test_password_reset_view_spam(client, get_profile):
+def test_password_reset_view_spam(client, profile_factory):
 
-    profile = Profile(**get_profile)
+    PASSWORD = "securepassword"
+
+    profile = profile_factory(password=PASSWORD)
     profile.save()
 
     response = client.post(reverse("accounts:login"), {
-        "email": profile.user.email, "password": "securepassword"})
+        "email": profile.user.email, "password": PASSWORD})
 
     assert response.status_code == 302
     url = reverse('accounts:password_reset')
@@ -299,12 +352,14 @@ def test_password_reset_view_spam(client, get_profile):
 
 
 @pytest.mark.django_db
-def test_delete_account_view(client, get_profile):
-    profile = Profile(**get_profile)
+def test_delete_account_view(client, profile_factory):
+    PASSWORD = "securepassword"
+
+    profile = profile_factory(password=PASSWORD)
     profile.save()
 
     response = client.post(reverse("accounts:login"), {
-        "email": profile.user.email, "password": "securepassword"})
+        "email": profile.user.email, "password": PASSWORD})
 
     assert response.status_code == 302
     url = reverse('accounts:delete_account')
