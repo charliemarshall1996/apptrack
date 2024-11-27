@@ -33,6 +33,24 @@ def test_user_registration_form_invalid_email(user_registration_form_data):
 
 
 @pytest.mark.django_db
+def test_user_registration_form_clean_email(user_registration_form_data):
+    form = UserRegistrationForm(data=user_registration_form_data)
+    assert form.is_valid()
+    user = form.save()
+    assert user.email == user_registration_form_data['email']
+
+
+@pytest.mark.django_db
+def test_user_registration_form_invalid_email_raises(user_registration_form_data):
+    user_registration_form_data['email'] = "invalid-email"
+    form = UserRegistrationForm(data=user_registration_form_data)
+    assert not form.is_valid()
+    with pytest.raises(ValidationError):
+        form.clean_email()
+    assert 'Enter a valid email address.' in form.errors["email"]
+
+
+@pytest.mark.django_db
 def test_profile_registration_form_valid(create_users):
     form_data = {
         "birth_date": "2000-01-01",
