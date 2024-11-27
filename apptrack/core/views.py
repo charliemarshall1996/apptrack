@@ -5,8 +5,6 @@ from django.views.generic.edit import FormView
 from django.contrib.messages.views import SuccessMessageMixin
 from django.contrib import messages
 from django.core.mail import send_mail
-from django_recaptcha.fields import ReCaptchaField
-from django_recaptcha.widgets import ReCaptchaV2Checkbox
 from django.http import JsonResponse
 
 import pycountry
