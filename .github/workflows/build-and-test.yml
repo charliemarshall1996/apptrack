@@ -51,6 +51,9 @@ jobs:
           echo "DEFAULT_FROM_EMAIL = 'no-reply@apptrack.app'" >> $GITHUB_WORKSPACE/apptrack/apptrack/settings.py
           echo "AUTH_USER_MODEL = 'accounts.CustomUser'" >> $GITHUB_WORKSPACE/apptrack/apptrack/settings.py
 
+      - name: Apply migrations
+        run: python manage.py migrate
+
       - name: Test with pytest
         run: |
           pip install pytest pytest-cov
