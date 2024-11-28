@@ -3,7 +3,9 @@ run-name: ${{ github.actor }} is deploying a release
 
 on:
   release:
-    types: [published]
+    types:
+      - published
+      - edited
 
 jobs:
   deploy:
