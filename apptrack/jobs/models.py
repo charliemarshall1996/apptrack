@@ -312,6 +312,7 @@ class Jobs(models.Model):
                 position = self.STATUS_POSITIONS[self.status]
                 name = dict(self.STATUS_CHOICES)[
                     self.POSITION_STATUSES[position]].title()
+
                 # Retrieve the correct column
                 # based on the position and board
                 col, created = Columns.objects.get_or_create(
@@ -326,14 +327,13 @@ class Jobs(models.Model):
             except ObjectDoesNotExist:
                 raise ValueError(
                     f"Column with position {self.STATUS_POSITIONS[self.status]} for board {self.board} does not exist.")
+
         elif self.column:
             self.column.board = self.board
             # Ensure status is updated based on column position
             self.status = self.POSITION_STATUSES[self.column.position]
             self.column.save()
 
-        print(self.board.name)
-        print(self.column.name)
         # Check if the job is in an applied status
         self.applied = self.status in self.APPLIED_STATUSES
 
