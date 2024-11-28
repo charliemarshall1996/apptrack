@@ -258,7 +258,7 @@ class Jobs(models.Model):
         max_length=2, choices=JOB_FUNCTION_CHOICES, null=True, blank=True)
     description = models.TextField(blank=True, null=True)
 
-    company_name = models.CharField(max_length=100, null=True, blank=True)
+    company = models.CharField(max_length=100, null=True, blank=True)
     is_recruiter = models.BooleanField(default=False, null=True, blank=True)
 
     location_policy = models.CharField(
@@ -273,20 +273,21 @@ class Jobs(models.Model):
     currency = models.CharField(
         max_length=3, null=True, blank=True, choices=PAY_CURRENCY_CHOICES)
 
-    location = models.ForeignKey(
-        Locations, on_delete=models.SET_NULL, null=True, blank=True)
+    town = models.CharField(max_length=100, null=True, blank=True)
+    region = models.CharField(max_length=100, null=True, blank=True)
+    country = models.CharField(max_length=100, null=True, blank=True)
 
     note = models.TextField(null=True, blank=True)
     status = models.CharField(
         max_length=2, choices=STATUS_CHOICES, default=OPEN)
     column = models.ForeignKey(
-        Columns, related_name="jobs", on_delete=models.CASCADE, null=True, blank=True)
+        Columns, related_name="column", on_delete=models.CASCADE, null=True, blank=True)
     board = models.ForeignKey(
         Boards, related_name="jobs", on_delete=models.CASCADE, null=True, blank=True)
     applied = models.BooleanField(null=True, blank=True)
 
     def __str__(self):
-        return f"{self.company_name} - {self.job_title}"
+        return f"{self.company} - {self.job_title}"
 
     def save(self, *args, **kwargs):
 

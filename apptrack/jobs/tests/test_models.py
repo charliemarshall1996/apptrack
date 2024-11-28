@@ -23,7 +23,7 @@ def test_board(board_factory):
 def test_column(board_factory, column_data_factory):
     board = board_factory()
     data = column_data_factory(board=board)
-    column = Columns(board=board, **data)
+    column = Columns(**data)
     assert column.name == data["name"]
     assert column.position == data["position"]
     assert column.board.name == board.name
@@ -31,7 +31,27 @@ def test_column(board_factory, column_data_factory):
 
 
 @pytest.mark.django_db
-def test_job(custom_user_factory, board_factory, column_data_factory, jobs_form_data):
+def test_job(custom_user_factory, board_factory, column_factory, jobs_data):
     user = custom_user_factory()
     board = board_factory(user=user)
-    job = Jobs(user=user, **jobs_form_data)
+    column = column_factory(board=board)
+    job = Jobs(user=user, column=column, board=board, **jobs_data)
+
+    assert job.description == jobs_data["description"]
+    assert job.company == jobs_data["company"]
+    assert job.source == jobs_data["source"]
+    assert job.town == jobs_data["town"]
+    assert job.country == jobs_data["country"]
+    assert job.job_title == jobs_data["job_title"]
+    assert job.min_pay == jobs_data["min_pay"]
+    assert job.max_pay == jobs_data["max_pay"]
+    assert job.work_contract == jobs_data["work_contract"]
+    assert job.location_policy == jobs_data["location_policy"]
+    assert job.note == jobs_data["note"]
+    assert job.url == jobs_data["url"]
+    assert job.job_function == jobs_data["job_function"]
+    assert job.status == jobs_data["status"]
+
+    assert job.column.name == column.name
+    assert job.column.position == column.position
+    assert job.column.board.name == board.name
