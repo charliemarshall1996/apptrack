@@ -5,9 +5,5 @@ class JobsConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
     name = 'jobs'
 
-
-class JobsConfig(AppConfig):
-    name = 'jobs'
-
     def ready(self):
         import jobs.signals  # Import the signals to connect them
