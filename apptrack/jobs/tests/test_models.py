@@ -20,10 +20,18 @@ def test_board(board_factory):
 
 
 @pytest.mark.django_db
-def test_column(board_factory, column_data):
+def test_column(board_factory, column_data_factory):
     board = board_factory()
-    column = Columns(board=board, **column_data)
-    assert column.name == column_data["name"]
-    assert column.position == column_data["position"]
+    data = column_data_factory(board=board)
+    column = Columns(board=board, **data)
+    assert column.name == data["name"]
+    assert column.position == data["position"]
     assert column.board.name == board.name
     assert column.board.id == board.id
+
+
+@pytest.mark.django_db
+def test_job(custom_user_factory, board_factory, column_data_factory, jobs_form_data):
+    user = custom_user_factory()
+    board = board_factory(user=user)
+    job = Jobs(user=user, **jobs_form_data)

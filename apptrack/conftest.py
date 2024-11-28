@@ -108,13 +108,27 @@ def job_factory(jobs_form_data):
 
 @pytest.fixture()
 def board_factory(custom_user_factory):
-    def factory(password=None, email_verified=True):
-        user = custom_user_factory(
-            password=password, email_verified=email_verified)
+    def factory(user=None, password=None, email_verified=True):
+        if not user:
+            user = custom_user_factory(
+                password=password, email_verified=email_verified)
         return Boards(user=user)
     return factory
 
 
 @pytest.fixture()
-def column_data():
-    return {'name': fake.job(), 'position': random.randint(1, 9)}
+def column_data_factory():
+    def factory(name=None, position=None, board=None):
+        if not board:
+            return {'name': name or fake.job(), 'position': position or random.randint(1, 9)}
+        else:
+            return {'name': name or fake.job(), 'position': position or random.randint(1, 9), 'board': board}
+    return factory
+
+
+@pytest.fixture()
+def column_factory(column_data_factory):
+    def factory(name=None, position=None, board=None):
+        data = column_data_factory(name, position, board)
+        return Columns(**data)
+    return factory
