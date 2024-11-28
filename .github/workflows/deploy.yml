@@ -27,6 +27,7 @@ jobs:
           cd ~/apptrack
           git pull origin main --rebase --strategy-option ours
           cd apptrack
+          source .virtualenvs/.venv/.bin/activate
           python manage.py makemigrations
           python manage.py migrate
           EOF
