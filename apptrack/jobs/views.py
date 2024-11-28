@@ -32,7 +32,10 @@ def board_view(request):
     ]
 
     # Get the user's board or return 404 if not found
-    board = Board.objects.filter(user=request.user).first()
+    try:
+        board = Board.objects.get(user=request.user)
+    except MultipleObjectsReturned:
+        board = Board.objects.filter(user=request.user).first()
 
     if not board:
         # Handle case if the user doesn't have a board yet (optional)

@@ -17,10 +17,14 @@ def create_profile(sender, instance, created, **kwargs):
 @receiver(post_save, sender=User)
 def create_board(sender, instance, created, **kwargs):
     if created:
-        Board.objects.create(user=instance)
+        print(f"Signal triggered for user: {instance.email}")
+        board = Board.objects.create(user=instance, name='My Job Board')
+        board.save()
+        print(f"BOARD NAME: {board.name}")
+        print(f"BOARD USER EMAIL: {board.user.email}")
 
 
-@receiver(post_save, sender=Board)
+@ receiver(post_save, sender=Board)
 def create_columns(sender, instance, created, **kwargs):
 
     default_columns = [

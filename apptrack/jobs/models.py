@@ -14,11 +14,15 @@ User = get_user_model()
 
 
 class Board(models.Model):
-    name = models.CharField(max_length=255, null=True, blank=True)
+    name = models.CharField(max_length=255, null=True,
+                            blank=True, default="My Job Board")
     user = models.ForeignKey(settings.AUTH_USER_MODEL,
-                             on_delete=models.CASCADE)
+                             on_delete=models.CASCADE, related_name='board')
 
     def save(self, *args, **kwargs):
+        if not self.name or self.name == 'None':
+            self.name = "My Job Board"
+
         super().save(*args, **kwargs)
 
         default_columns = [
@@ -41,9 +45,6 @@ class Board(models.Model):
             columns_to_add = Column.objects.all()
             self.columns.add(*columns_to_add)
             print(f"Columns added: {columns_to_add}")
-
-        if not self.name or self.name == 'None':
-            self.name = "My Job Board"
 
 
 class Column(models.Model):
