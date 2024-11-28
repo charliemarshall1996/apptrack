@@ -92,24 +92,18 @@ def board_view(request):
 def add_job_view(request):
     board = Boards.objects.filter(user=request.user).first()
     if request.method == 'POST':
-        job_form = JobForm(request.POST)
-        location_form = LocationForm(request.POST)
-        if job_form.is_valid() and location_form.is_valid():
-            location = location_form.save()
-            location.save()
-            job = job_form.save()
-            job.location = location
+        form = JobForm(request.POST)
+        if form.is_valid():
+            job = form.save()
             job.board = board
             job.user = request.user
             job.save()
             return redirect('jobs:board')
     else:
-        job_form = JobForm()
-        location_form = LocationForm()
+        form = JobForm()
 
     context = {
-        'job_form': job_form,
-        'location_form': location_form
+        'job_form': form
     }
     return render(request, 'jobs/jobs_kanban.html', context)
 
