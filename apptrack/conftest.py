@@ -113,3 +113,8 @@ def board_factory(custom_user_factory):
             password=password, email_verified=email_verified)
         return Boards(user=user)
     return factory
+
+
+@pytest.fixture()
+def column_data():
+    return {'name': fake.job(), 'position': random.randint(1, 9)}
