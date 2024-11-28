@@ -24,7 +24,7 @@ jobs:
           ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_ed25519 "${{ secrets.PYANYWHERE_USER }}"@ssh.pythonanywhere.com << EOF
           cd ~/apptrack
           git pull origin main --rebase --strategy-option ours
-          cd apptrack/apptrack
+          cd apptrack
           python manage.py makemigrations
           python manage.py migrate
           EOF
