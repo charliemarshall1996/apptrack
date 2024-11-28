@@ -22,8 +22,6 @@ def test_profile_settings_view(client, profile_factory):
 
     assert response.status_code == 302
 
-    print(f"user authenticated: {profile.user.is_authenticated}")
-
     url = reverse('accounts:profile_settings', kwargs={
                   "id": profile.user.profile.id})
 

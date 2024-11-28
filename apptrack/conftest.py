@@ -131,8 +131,8 @@ def jobs_data():
 
 @pytest.fixture
 def job_factory(jobs_form_data):
-    def factory():
-        return Jobs(**jobs_form_data)
+    def factory(user):
+        return Jobs(user=user, **jobs_form_data)
     return factory
 
 

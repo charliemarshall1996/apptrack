@@ -1,56 +1,23 @@
 
 import logging
-import json
 
-from django.core.exceptions import MultipleObjectsReturned
-from django.contrib.auth.decorators import login_required
-from django.shortcuts import render, redirect, get_object_or_404, HttpResponse
-from django.views.generic import ListView, View
-from django.views.generic.edit import UpdateView
-from django.contrib.messages.views import SuccessMessageMixin
-from django.contrib.auth.mixins import LoginRequiredMixin
-from django.http import JsonResponse
 from django.contrib import messages
-from core.forms import LocationForm
-from django.template.loader import render_to_string
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.messages.views import SuccessMessageMixin
+from django.core.exceptions import MultipleObjectsReturned
+from django.shortcuts import render, redirect, HttpResponse
+from django.views.generic import View
+from django.views.generic.edit import UpdateView
 from django.urls import reverse, reverse_lazy
-from django.views import View
 
+from core.forms import LocationForm
 from .forms import JobForm
 from .models import Jobs, Boards, Columns
 
 logger = logging.getLogger(__name__)
 
 # Create your views here.
-
-
-@login_required
-def update_job_view(request, pk):
-    job_to_update = Jobs.objects.get(pk=pk)
-
-    if request.method == 'POST':
-        job_form = JobForm(request.POST, instance=job_to_update)
-        location_form = LocationForm(
-            request.POST, instance=job_to_update.location)
-        if job_form.is_valid() and location_form.is_valid():
-            location = location_form.save()
-            location.save()
-            job = job_form.save()
-            job.location = location
-            job.user = request.user
-            job.save()
-            messages.success(request, 'Your profile has been updated!')
-            # Redirect to the profile page after saving
-            return redirect('jobs_list')
-    else:
-        job_form = JobForm(instance=job_to_update)
-        location_form = LocationForm(instance=job_to_update.location)
-
-    context = {
-        'job_form': job_form,
-        'location_form': location_form
-    }
-    return render(request, 'jobs/update_job.html', context)
 
 
 @login_required
@@ -85,7 +52,8 @@ def board_view(request):
                 print(f"Created and added missing column: {column_name}")
 
         except MultipleObjectsReturned:
-            # Handle case if multiple columns with the same name exist
+            # Handle case if multiple columns
+            # with the same name exist
             column = Columns.objects.filter(
                 name=column_name, board=board, position=column_position).first()
 
@@ -145,8 +113,6 @@ def add_job_view(request):
     }
     return render(request, 'jobs/jobs_kanban.html', context)
 
-# ...
-
 
 class ChangeSheetAssign(LoginRequiredMixin, View):
 
@@ -163,8 +129,6 @@ class ChangeSheetAssign(LoginRequiredMixin, View):
         column.save()
 
         return redirect(reverse('jobs:board'))
-
-# render page
 
 
 class AssignJobView(LoginRequiredMixin, View):
