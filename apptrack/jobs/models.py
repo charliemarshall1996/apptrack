@@ -42,7 +42,7 @@ class Board(models.Model):
             self.columns.add(*columns_to_add)
             print(f"Columns added: {columns_to_add}")
 
-        if not self.name:
+        if not self.name or self.name == 'None':
             self.name = "My Job Board"
 
 
