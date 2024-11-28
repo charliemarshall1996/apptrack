@@ -1,6 +1,4 @@
 
-from datetime import datetime
-
 from django.contrib.auth import get_user_model
 from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist
@@ -45,10 +43,8 @@ class Boards(models.Model):
             self.columns.add(*columns_to_add)
             print(f"Columns added: {columns_to_add}")
 
-    def delete(self, *args, **kwargs):
-        # Remove the many-to-many relationships without affecting the columns
-        self.columns.clear()  # This removes the link between board and columns
-        super().delete(*args, **kwargs)  # Proceed with deleting the board
+        if not self.name:
+            self.name = "My Job Board"
 
 
 class Columns(models.Model):

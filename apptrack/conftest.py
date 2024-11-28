@@ -9,7 +9,7 @@ from faker import Faker
 import pytest
 
 from accounts.models import Profile
-from jobs.models import Jobs
+from jobs.models import Jobs, Boards, Columns
 
 UserModel = get_user_model()
 
@@ -103,4 +103,13 @@ def jobs_form_data():
 def job_factory(jobs_form_data):
     def factory():
         return Jobs(**jobs_form_data)
+    return factory
+
+
+@pytest.fixture()
+def board_factory(custom_user_factory):
+    def factory(password=None, email_verified=True):
+        user = custom_user_factory(
+            password=password, email_verified=email_verified)
+        return Boards(user=user)
     return factory
