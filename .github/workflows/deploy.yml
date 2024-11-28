@@ -29,8 +29,8 @@ jobs:
           git pull origin main --rebase --strategy-option ours
           
           source .virtualenvs/.venv/.bin/activate
+          pip install requirements.txt
           cd apptrack
-          pip install -r requirements.txt
           python manage.py makemigrations
           python manage.py migrate
           EOF
