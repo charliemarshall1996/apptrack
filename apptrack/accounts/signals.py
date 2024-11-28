@@ -2,7 +2,7 @@ from django.db.models.signals import post_save
 from django.contrib.auth import get_user_model
 from django.dispatch import receiver
 
-from jobs.models import Boards, Columns
+from jobs.models import Board, Column
 
 User = get_user_model()
 
@@ -17,10 +17,10 @@ def create_profile(sender, instance, created, **kwargs):
 @receiver(post_save, sender=User)
 def create_board(sender, instance, created, **kwargs):
     if created:
-        Boards.objects.create(user=instance)
+        Board.objects.create(user=instance)
 
 
-@receiver(post_save, sender=Boards)
+@receiver(post_save, sender=Board)
 def create_columns(sender, instance, created, **kwargs):
 
     default_columns = [
@@ -35,7 +35,7 @@ def create_columns(sender, instance, created, **kwargs):
 
     if created and not instance.columns.exists():
         for name, position in default_columns:
-            column = Columns.objects.create(
+            column = Column.objects.create(
                 board=instance, name=name, position=position)
             column.save()
 

@@ -1,7 +1,7 @@
 
 import pytest
 
-from jobs.models import Jobs, Boards, Columns
+from jobs.models import Job, Column
 
 
 @pytest.mark.django_db
@@ -23,7 +23,7 @@ def test_board(board_factory):
 def test_column(board_factory, column_data_factory):
     board = board_factory()
     data = column_data_factory(board=board)
-    column = Columns(**data)
+    column = Column(**data)
     assert column.name == data["name"]
     assert column.position == data["position"]
     assert column.board.name == board.name
@@ -35,7 +35,7 @@ def test_job(custom_user_factory, board_factory, column_factory, jobs_data):
     user = custom_user_factory()
     board = board_factory(user=user)
     column = column_factory(board=board)
-    job = Jobs(user=user, column=column, board=board, **jobs_data)
+    job = Job(user=user, column=column, board=board, **jobs_data)
 
     assert job.description == jobs_data["description"]
     assert job.company == jobs_data["company"]

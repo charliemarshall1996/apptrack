@@ -44,7 +44,7 @@
                                         <div class="list-group list-group-flush me-auto">
                                             <div class="list-group-item"><strong>Title:</strong> {{ job.job_title }}</div>
                                             <div class="list-group-item"><strong>Company:</strong> {{ job.company }}</div>
-                                            <div class="list-group-item"><strong>City:</strong> {{ job.location.city }}</div>
+                                            <div class="list-group-item"><strong>City:</strong> {{ job.town }}</div>
                                         </div>
 
                                         <!-- Move the 'a' tag to the top-right -->
@@ -75,7 +75,6 @@
                 <form method="POST" id="addJobForm" action="{% url 'jobs:add_job' %}">
                     {% csrf_token %}
                     {{ job_form|crispy }}
-                    {{ location_form|crispy }}
                     <button type="submit" class="btn btn-primary">Submit</button>
                 </form>
             </div>
@@ -106,8 +105,9 @@
                         <div class="col">
                             <div class="list-group list-group-flush">
                                 <p>Job Location</p>
-                                <p class="list-group-item"><strong>City:</strong> {{ job.location.city }}</p>
-                                <p class="list-group-item"><strong>Country:</strong> {{ job.location.get_country_display }}</p>
+                                <p class="list-group-item"><strong>City:</strong> {{ job.town }}</p>
+                                <p class="list-group-item"><strong>Region:</strong> {{ job.region }}</p>
+                                <p class="list-group-item"><strong>Country:</strong> {{ job.get_country_display }}</p>
                             </div>
                         </div>
                     </div>

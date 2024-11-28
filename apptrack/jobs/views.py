@@ -11,9 +11,8 @@ from django.views.generic import View
 from django.views.generic.edit import UpdateView
 from django.urls import reverse, reverse_lazy
 
-from core.forms import LocationForm
 from .forms import JobForm
-from .models import Jobs, Boards, Columns
+from .models import Job, Board, Column
 
 logger = logging.getLogger(__name__)
 
@@ -33,7 +32,7 @@ def board_view(request):
     ]
 
     # Get the user's board or return 404 if not found
-    board = Boards.objects.filter(user=request.user).first()
+    board = Board.objects.filter(user=request.user).first()
 
     if not board:
         # Handle case if the user doesn't have a board yet (optional)
@@ -43,7 +42,7 @@ def board_view(request):
     for column_name, column_position in default_columns:
 
         try:
-            column, created = Columns.objects.get_or_create(
+            column, created = Column.objects.get_or_create(
                 name=column_name, board=board, position=column_position)
 
             # If the column was just created, add it to the board
@@ -54,25 +53,21 @@ def board_view(request):
         except MultipleObjectsReturned:
             # Handle case if multiple columns
             # with the same name exist
-            column = Columns.objects.filter(
+            column = Column.objects.filter(
                 name=column_name, board=board, position=column_position).first()
 
     # Retrieve jobs and columns for the user
-    jobs = Jobs.objects.filter(user=request.user).all()
+    jobs = Job.objects.filter(user=request.user).all()
     columns = board.columns.all()
     job_form = JobForm()
-    location_form = LocationForm()
 
-    # Handle form submissions (this section depends on whether you're submitting via POST)
+    # Handle form submissions
     if request.method == "POST":
         job_form = JobForm(request.POST)
-        location_form = LocationForm(request.POST)
 
-        if job_form.is_valid() and location_form.is_valid():
-            location = location_form.save()
+        if job_form.is_valid():
             job = job_form.save()
             job.board = board
-            job.location = location
             job.user = request.user
             job.save()
 
@@ -82,7 +77,6 @@ def board_view(request):
         'columns': columns,
         'jobs': jobs,
         'job_form': job_form,
-        'location_form': location_form
     }
 
     return render(request, 'jobs/jobs_kanban.html', context)
@@ -90,7 +84,7 @@ def board_view(request):
 
 @login_required
 def add_job_view(request):
-    board = Boards.objects.filter(user=request.user).first()
+    board = Board.objects.filter(user=request.user).first()
     if request.method == 'POST':
         form = JobForm(request.POST)
         if form.is_valid():
@@ -119,8 +113,8 @@ class AssignJobView(LoginRequiredMixin, View):
         col_id = kwargs['col_id']
         job_id = kwargs['job_id']
         print(f"col_id: {col_id}, job_id: {job_id}")
-        column = Columns.objects.get(id=col_id)
-        job = Jobs.objects.get(id=job_id)
+        column = Column.objects.get(id=col_id)
+        job = Job.objects.get(id=job_id)
         print(f"column: {column}, job: {job}")
 
         job.column = column
@@ -137,7 +131,7 @@ class AssignJobView(LoginRequiredMixin, View):
 
 class DeleteJobView(LoginRequiredMixin, SuccessMessageMixin, View):
 
-    model = Jobs
+    model = Job
     success_url = reverse_lazy('jobs:board')
     success_message = 'Job deleted successfully'
 
@@ -151,7 +145,7 @@ class DeleteJobView(LoginRequiredMixin, SuccessMessageMixin, View):
 
 
 class EditJobView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
-    model = Jobs
+    model = Job
     template_name = "jobs/edit_job.html"
     success_url = reverse_lazy("jobs:board")
     success_message = "Job updated successfully"

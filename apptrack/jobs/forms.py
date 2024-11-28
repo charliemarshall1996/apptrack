@@ -3,12 +3,12 @@ from datetime import datetime
 
 from django import forms
 
-from .models import Jobs
+from .models import Job
 
 
 class JobForm(forms.ModelForm):
     class Meta:
-        model = Jobs
+        model = Job
         fields = ['url',
                   'source',
                   'job_title',

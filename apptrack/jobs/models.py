@@ -4,8 +4,7 @@ from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist
 from django.db import models
 
-from core.models import Locations
-from core.utils import get_currency_choices
+from core.utils import get_currency_choices, get_country_choices
 
 
 User = get_user_model()
@@ -14,7 +13,7 @@ User = get_user_model()
 # Create your models here.
 
 
-class Boards(models.Model):
+class Board(models.Model):
     name = models.CharField(max_length=255, null=True, blank=True)
     user = models.ForeignKey(settings.AUTH_USER_MODEL,
                              on_delete=models.CASCADE)
@@ -33,13 +32,13 @@ class Boards(models.Model):
         ]
 
         for name, position in default_columns:
-            if not Columns.objects.filter(name=name, board=self).exists():
-                column = Columns(name=name, position=position, board=self)
+            if not Column.objects.filter(name=name, board=self).exists():
+                column = Column(name=name, position=position, board=self)
                 column.save()
                 print(f"Column added: {column.name}")
 
         if not self.columns.exists():
-            columns_to_add = Columns.objects.all()
+            columns_to_add = Column.objects.all()
             self.columns.add(*columns_to_add)
             print(f"Columns added: {columns_to_add}")
 
@@ -47,9 +46,9 @@ class Boards(models.Model):
             self.name = "My Job Board"
 
 
-class Columns(models.Model):
+class Column(models.Model):
     board = models.ForeignKey(
-        'Boards', on_delete=models.CASCADE, related_name='columns')
+        'Board', on_delete=models.CASCADE, related_name='columns')
     name = models.CharField(max_length=255)
     position = models.PositiveIntegerField()
 
@@ -61,7 +60,7 @@ class Columns(models.Model):
         unique_together = ('board', 'name', 'position')
 
 
-class Jobs(models.Model):
+class Job(models.Model):
 
     WEB = "WW"
     HEADHUNTER = "HH"
@@ -244,6 +243,7 @@ class Jobs(models.Model):
     APPLIED_STATUSES = [APPLIED, SHORTLISTED, INTERVIEW, OFFER, REJECTED]
 
     PAY_CURRENCY_CHOICES = get_currency_choices()
+    COUNTRY_CHOICES = get_country_choices()
 
     id = models.BigAutoField(primary_key=True)
     user = models.ForeignKey(settings.AUTH_USER_MODEL,
@@ -275,15 +275,16 @@ class Jobs(models.Model):
 
     town = models.CharField(max_length=100, null=True, blank=True)
     region = models.CharField(max_length=100, null=True, blank=True)
-    country = models.CharField(max_length=100, null=True, blank=True)
+    country = models.CharField(
+        max_length=2, choices=COUNTRY_CHOICES, null=True, blank=True)
 
     note = models.TextField(null=True, blank=True)
     status = models.CharField(
         max_length=2, choices=STATUS_CHOICES, default=OPEN)
     column = models.ForeignKey(
-        Columns, related_name="column", on_delete=models.CASCADE, null=True, blank=True)
+        Column, related_name="column", on_delete=models.CASCADE, null=True, blank=True)
     board = models.ForeignKey(
-        Boards, related_name="jobs", on_delete=models.CASCADE, null=True, blank=True)
+        Board, related_name="jobs", on_delete=models.CASCADE, null=True, blank=True)
     applied = models.BooleanField(null=True, blank=True)
 
     def __str__(self):
@@ -312,7 +313,7 @@ class Jobs(models.Model):
 
                 # Retrieve the correct column
                 # based on the position and board
-                col, created = Columns.objects.get_or_create(
+                col, created = Column.objects.get_or_create(
                     name=name,
                     position=position,
                     board=self.board
