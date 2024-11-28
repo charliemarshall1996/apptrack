@@ -127,3 +127,42 @@ def test_delete_job_view(client, job_factory, profile_factory, board_factory):
         print(response.url)
 
     assert job.DoesNotExist
+
+
+@pytest.mark.django_db
+def test_edit_job_view(client, job_factory, profile_factory, board_factory, jobs_form_data):
+    PASSWORD = "securepassword"
+
+    profile = profile_factory(password=PASSWORD)
+    profile.save()
+
+    board = board_factory(user=profile.user)
+    board.save()
+
+    job = job_factory(user=profile.user)
+    job.board = board
+    job.save()
+
+    data = jobs_form_data
+    response = client.post(reverse("accounts:login"), {
+        "email": profile.user.email, "password": PASSWORD})
+
+    assert response.status_code == 302
+
+    url = reverse("jobs:edit_job", kwargs={"pk": job.pk})
+
+    response = client.get(url, data)
+
+    assert job.url == data['url']
+    assert job.source == data['source']
+    assert job.job_title == data['job_title']
+    assert job.job_function == data['job_function']
+    assert job.description == data['description']
+    assert job.location_policy == data['location_policy']
+    assert job.work_contract == data['work_contract']
+    assert job.company == data["company"]
+    assert job.min_pay == data['min_pay']
+    assert job.max_pay == data["max_pay"]
+    assert job.pay_rate == data["pay_rate"]
+    assert job.currency == data["currency"]
+    assert job.note == data["note"]

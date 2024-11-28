@@ -155,5 +155,5 @@ class EditJobView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
     template_name = "jobs/edit_job.html"
     success_url = reverse_lazy("jobs:board")
     success_message = "Job updated successfully"
-    fields = ['job_title', 'job_function', 'url', 'description', 'company_name',
+    fields = ['job_title', 'job_function', 'url', 'description', 'company',
               'location_policy', 'min_pay', 'max_pay', 'pay_rate', 'currency',  'note']

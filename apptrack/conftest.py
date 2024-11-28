@@ -96,6 +96,7 @@ def jobs_form_data():
         'currency': random.choice(CURRENCIES),
         'note': fake.text(),
         'status': random.choice(STATUSES),
+        'company': fake.company()
     }
 
 
