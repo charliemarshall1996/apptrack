@@ -112,13 +112,7 @@ class AssignJobView(LoginRequiredMixin, View):
 
     @staticmethod
     def get(request, *args, **kwargs):
-        employees = Columns.objects.all()
-        jobs = Jobs.objects.all()
-
-        context = {'employees': employees,
-                   'tasks': jobs}
-
-        return render(request, 'jobs/jobs_kanban.html', context)
+        return render(request, 'jobs/jobs_kanban.html')
 
     @staticmethod
     def post(request, *args, **kwargs):
