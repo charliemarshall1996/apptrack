@@ -108,23 +108,6 @@ def add_job_view(request):
     return render(request, 'jobs/jobs_kanban.html', context)
 
 
-class ChangeSheetAssign(LoginRequiredMixin, View):
-
-    @staticmethod
-    def get(request, *args, **kwargs):
-        col_id = kwargs['col_id']
-        job_id = kwargs['job_id']
-
-        column = Columns.objects.get(id=col_id)
-        job = Jobs.objects.get(id=job_id)
-
-        job.column = column
-        job.save()
-        column.save()
-
-        return redirect(reverse('jobs:board'))
-
-
 class AssignJobView(LoginRequiredMixin, View):
 
     @staticmethod
