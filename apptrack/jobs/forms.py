@@ -23,3 +23,9 @@ class JobForm(forms.ModelForm):
 
     def save(self, *args, **kwargs):
         return super().save(*args, commit=False, **kwargs)
+
+
+class DownloadJobsForm(forms.Form):
+    start_date = forms.DateField(
+        widget=forms.DateInput(attrs={'type': 'date'}))
+    end_date = forms.DateField(widget=forms.DateInput(attrs={'type': 'date'}))

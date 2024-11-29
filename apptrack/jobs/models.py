@@ -297,6 +297,8 @@ class Job(models.Model):
 
     def save(self, *args, **kwargs):
 
+        # Update only if a value is not passed
+
         # If the board is not set,
         # set it to the column's board
         if not self.board and self.column:

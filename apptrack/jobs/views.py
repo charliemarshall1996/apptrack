@@ -1,7 +1,8 @@
 
+import csv
+from datetime import datetime
 import logging
 
-from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.messages.views import SuccessMessageMixin
@@ -10,8 +11,9 @@ from django.shortcuts import render, redirect, HttpResponse
 from django.views.generic import View
 from django.views.generic.edit import UpdateView
 from django.urls import reverse, reverse_lazy
+from django.utils.timezone import make_aware
 
-from .forms import JobForm
+from .forms import JobForm, DownloadJobsForm
 from .models import Job, Board, Column
 
 logger = logging.getLogger(__name__)
@@ -154,3 +156,34 @@ class EditJobView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
     success_message = "Job updated successfully"
     fields = ['job_title', 'job_function', 'url', 'description', 'company',
               'location_policy', 'min_pay', 'max_pay', 'pay_rate', 'currency',  'note']
+
+
+def download_jobs_view(request):
+    # Handle GET request (date input form rendering)
+    if request.method == "GET":
+        form = DownloadJobsForm()
+        return render(request, "jobs/download_jobs.html", {"form": form})
+
+    # Handle POST request (CSV file generation)
+    start_date = request.POST.get("start_date")
+    end_date = request.POST.get("end_date")
+
+    # Filter jobs based on the `updated` field
+    jobs = Job.objects.filter(updated__range=(
+        start_date, end_date)).order_by("id")
+
+    filename = f"jobs_{start_date}_{end_date}.csv"
+    # Prepare the response
+    response = HttpResponse(
+        content_type="text/csv", headers={"Content-Disposition": f"attachment; filename={filename}"})
+
+    # Write the CSV file
+    writer = csv.writer(response)
+    writer.writerow(["ID", "Job Title", "Company", "URL",
+                    "Status", "Updated"])  # CSV headers
+
+    for job in jobs:
+        writer.writerow([job.id, job.job_title, job.company,
+                        job.url, job.get_status_display(), job.updated])
+
+    return response

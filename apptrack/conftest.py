@@ -128,10 +128,46 @@ def jobs_data():
     }
 
 
-@pytest.fixture
-def job_factory(jobs_form_data):
-    def factory(user):
+@pytest.fixture()
+def job_data_factory():
+    def factory(updated_days_previous=None):
+        return {
+            'url': fake.url(),
+            'source': random.choice(SOURCES),
+            'job_title': fake.job(),
+            'job_function': random.choice(JOB_FUNCTIONS),
+            'description': fake.text(),
+            'location_policy': random.choice(LOCATION_POLICIES),
+            'work_contract': random.choice(WORK_CONTRACT),
+            'min_pay': random.randint(0, 10000),
+            'max_pay': random.randint(10000, 100000),
+            'pay_rate': random.choice(PAY_RATES),
+            'currency': random.choice(CURRENCIES),
+            'note': fake.text(),
+            'status': random.choice(STATUSES),
+            'company': fake.company(),
+            'town': fake.city(),
+            'country': random.choice(COUNTRIES),
+            'region': fake.state(),
+            'updated': timezone.now() - timedelta(days=updated_days_previous)
+            if updated_days_previous else None,
+        }
+    return factory
+
+
+@pytest.fixture()
+def job_form_factory(jobs_form_data):
+    def factory(user=None):
         return Job(user=user, **jobs_form_data)
+    return factory
+
+
+@pytest.fixture
+def job_factory(job_data_factory):
+
+    def factory(user, updated_days_previous=None):
+        data = job_data_factory(updated_days_previous)
+        return Job(user=user, **data)
     return factory
 
 
