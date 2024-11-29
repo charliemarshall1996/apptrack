@@ -6,6 +6,7 @@ on:
     types:
       - published
       - edited
+  workflow_dispatch:
 
 jobs:
   deploy:
@@ -26,8 +27,10 @@ jobs:
           ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_ed25519 "${{ secrets.PYANYWHERE_USER }}"@ssh.pythonanywhere.com << EOF
           cd ~/apptrack
           git pull origin main --rebase --strategy-option ours
-          cd apptrack
+          
           source .virtualenvs/.venv/.bin/activate
+          pip install -r requirements.txt
+          cd apptrack
           python manage.py makemigrations
           python manage.py migrate
           EOF

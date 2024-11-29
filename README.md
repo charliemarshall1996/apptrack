@@ -1,4 +1,5 @@
 # AppTrack
+[![Build and Test](https://github.com/charliemarshall1996/apptrack/actions/workflows/build-and-test.yml/badge.svg?event=push)](https://github.com/charliemarshall1996/apptrack/actions/workflows/build-and-test.yml)
 
 AppTrack is a web application designed to help candidates track job applications. It allows users to manage the stages of their job search by organizing applications into a structured workflow. The app provides users with an easy-to-use Kanban board, where they can track their progress through various job application stages.
 
