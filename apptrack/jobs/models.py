@@ -249,6 +249,13 @@ class Job(models.Model):
     id = models.BigAutoField(primary_key=True)
     user = models.ForeignKey(settings.AUTH_USER_MODEL,
                              on_delete=models.CASCADE)
+    column = models.ForeignKey(
+        Column, related_name="column", on_delete=models.CASCADE, null=True, blank=True)
+    board = models.ForeignKey(
+        Board, related_name="jobs", on_delete=models.CASCADE, null=True, blank=True)
+
+    created = models.DateTimeField(auto_now_add=True)
+    updated = models.DateTimeField(auto_now=True)
 
     url = models.URLField(blank=True, null=True)
     source = models.CharField(
@@ -282,10 +289,7 @@ class Job(models.Model):
     note = models.TextField(null=True, blank=True)
     status = models.CharField(
         max_length=2, choices=STATUS_CHOICES, default=OPEN)
-    column = models.ForeignKey(
-        Column, related_name="column", on_delete=models.CASCADE, null=True, blank=True)
-    board = models.ForeignKey(
-        Board, related_name="jobs", on_delete=models.CASCADE, null=True, blank=True)
+
     applied = models.BooleanField(null=True, blank=True)
 
     def __str__(self):
