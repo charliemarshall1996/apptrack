@@ -38,16 +38,16 @@
       <div class="collapse navbar-collapse" id="navbarNav">
         <ul class="navbar-nav w-100">
           <li class="nav-item">
-            <a class="nav-link active" aria-current="page" href="{% url 'jobs:board' %}">Board</a>
+            <a class="nav-link {% if request.path == '/jobs/board/' %}active{% endif %}" href="{% url 'jobs:board' %}">Board</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="{% url 'jobs:download' %}">Download Report</a>
+            <a class="nav-link {% if request.path == '/jobs/download/' %}active{% endif %}" href="{% url 'jobs:download' %}">Download Report</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="{% url 'accounts:profile' user.profile.id %}">Profile</a>
+            <a class="nav-link {% if request.path == '/accounts/profile/{{ user.profile.id }}' %}active{% endif %}" href="{% url 'accounts:profile' user.profile.id %}">Profile</a>
           </li>
           <li class="navbar-item ms-auto">
-            <a class="nav-link" href="{% url 'accounts:logout' %}">Logout</a>
+            <a class="nav-link {% if request.path == '/accounts/logout/' %}active{% endif %}" href="{% url 'accounts:logout' %}">Logout</a>
           </li>
         </ul>
       </div>
