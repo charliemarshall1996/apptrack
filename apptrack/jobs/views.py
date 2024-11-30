@@ -1,6 +1,5 @@
 
 import csv
-from datetime import datetime
 import logging
 
 from django.contrib.auth.decorators import login_required
@@ -11,7 +10,6 @@ from django.shortcuts import render, redirect, HttpResponse
 from django.views.generic import View
 from django.views.generic.edit import UpdateView
 from django.urls import reverse, reverse_lazy
-from django.utils.timezone import make_aware
 
 from .forms import JobForm, DownloadJobsForm
 from .models import Job, Board, Column

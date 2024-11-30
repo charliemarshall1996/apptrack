@@ -184,11 +184,3 @@ class PayRateChoices(ChoiceBase):
     WEEKLY = "WK", "Weekly"
     MONTHLY = "MO", "Monthly"
     YEARLY = "YR", "Yearly"
-
-
-class WorkContractChoices(ChoiceBase):
-    UNKNOWN = "UK", "Unknown"
-    FULLTIME = "FT", "Fulltime"
-    PARTTIME = "PT", "Parttime"
-    CONTRACT = "CO", "Contract"
-    SECONDMENT = "SE", "Secondment"

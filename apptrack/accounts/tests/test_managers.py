@@ -1,6 +1,5 @@
 
 from django.contrib.auth import get_user_model
-from django.utils import timezone
 import pytest
 
 User = get_user_model()
@@ -13,9 +12,9 @@ def test_create_user(custom_user_data_factory):
     assert user.email == data['email']
     assert user.first_name == data['first_name']
     assert user.last_name == data["last_name"]
-    assert user.is_active == True
-    assert user.is_staff == False
-    assert user.is_superuser == False
+    assert user.is_active
+    assert not user.is_staff
+    assert not user.is_superuser
     assert str(user) == data["email"]
 
 
@@ -37,9 +36,9 @@ def test_create_superuser(custom_user_data_factory):
     assert user.email == email
     assert user.first_name == data['first_name']
     assert user.last_name == data["last_name"]
-    assert user.is_active == True
-    assert user.is_staff == True
-    assert user.is_superuser == True
+    assert user.is_active
+    assert user.is_staff
+    assert user.is_superuser
     assert str(user) == email
 
 
