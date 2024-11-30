@@ -8,20 +8,30 @@ from faker import Faker
 import pytest
 
 from accounts.models import Profile
+from jobs.choices import (
+    CurrencyChoices,
+    CountryChoices,
+    JobFunctionChoices,
+    LocationPolicyChoices,
+    WorkContractChoices,
+    PayRateChoices,
+    StatusChoices,
+    SourceChoices,
+)
 from jobs.models import Job, Board, Column
 
 UserModel = get_user_model()
 
 fake = Faker()
 
-SOURCES = [source[0] for source in Job.SOURCE_CHOICES]
-JOB_FUNCTIONS = [job[0] for job in Job.JOB_FUNCTION_CHOICES]
-LOCATION_POLICIES = [loc[0] for loc in Job.LOCATION_POLICY_CHOICES]
-WORK_CONTRACT = [work[0] for work in Job.WORK_CONTRACT_CHOICES]
-PAY_RATES = [pay[0] for pay in Job.PAY_RATE_CHOICES]
-CURRENCIES = [currency[0] for currency in Job.PAY_CURRENCY_CHOICES]
-STATUSES = [status[0] for status in Job.STATUS_CHOICES]
-COUNTRIES = [country[0] for country in Job.COUNTRY_CHOICES]
+SOURCES = [source[0] for source in SourceChoices.choices()]
+JOB_FUNCTIONS = [job[0] for job in JobFunctionChoices.choices()]
+LOCATION_POLICIES = [loc[0] for loc in LocationPolicyChoices.choices()]
+WORK_CONTRACT = [work[0] for work in WorkContractChoices.choices()]
+PAY_RATES = [pay[0] for pay in PayRateChoices.choices()]
+CURRENCIES = [currency[0] for currency in CurrencyChoices.choices()]
+STATUSES = [status[0] for status in StatusChoices.choices()]
+COUNTRIES = [country[0] for country in CountryChoices.choices()]
 
 
 @pytest.fixture

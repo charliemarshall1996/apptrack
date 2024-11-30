@@ -1,4 +1,5 @@
 
+import logging
 import csv
 from datetime import timedelta
 from io import StringIO
@@ -6,6 +7,9 @@ from io import StringIO
 from django.urls import reverse
 from django.utils import timezone
 import pytest
+
+logger = logging.getLogger(__name__)
+logging.basicConfig(level=logging.INFO)
 
 
 @pytest.mark.django_db
@@ -185,15 +189,15 @@ def test_download_jobs_view(client, profile_factory, job_factory):
     job3.save()
 
     end_date = timezone.now()
-    start_date = end_date - timedelta(days=14)
+    start_date = end_date - timedelta(days=15)
 
-    url = reverse("jobs:jobs_download")
+    url = reverse("jobs:download")
 
     response = client.get(url)
 
     assert response.status_code == 200
 
-    url = reverse("jobs:jobs_download")  # Replace with your view's URL name
+    url = reverse("jobs:download")  # Replace with your view's URL name
     response = client.post(
         url, {"start_date": start_date, "end_date": end_date})
 
@@ -218,10 +222,12 @@ def test_download_jobs_view(client, profile_factory, job_factory):
     file = StringIO(content)
     r = csv.reader(file, delimiter=",")
 
+    i = 0
     for row in r:
+        i += 1
         id, job_title, company, url, status, updated = row
-        print(
-            f"ID: {id}, Job Title: {job_title}, Company: {company}, URL: {url}, Status: {status}, Updated: {updated}")
+        logger.info("ID: %s, Job Title: %s, Company: %s, URL: %s, Status: %s, Updated: %s",
+                    id, job_title, company, url, status, updated)
 
         if id == str(job1.id):
             job = job1
@@ -249,3 +255,5 @@ def test_download_jobs_view(client, profile_factory, job_factory):
                 f"ID: {job.id}, Job Title: {job.job_title}, Company: {job.company}, URL: {job.url}, Status: {job.get_status_display()}, Updated: {job.updated}")
             print(
                 f"id: {id}, job_title: {job_title}, company: {company}, url: {url}, status: {status}, updated: {updated}")
+
+    assert i == 3
