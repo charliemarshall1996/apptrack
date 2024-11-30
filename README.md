@@ -8,3 +8,4 @@ AppTrack is a web application designed to help candidates track job applications
 - **Job Tracking:** Organize job applications into predefined stages: Open, Applied, Shortlisted, Interview, Offer, Rejected, Closed.
 - **Kanban Board:** Visualize job applications in different stages using a drag-and-drop interface.
 - **User Accounts:** Each user has their own job tracking board and can manage multiple job applications.
+- **User Reports:** Each user can download a .csv file of all the jobs reports from within a given start and end date. This is great if you are claiming JSA or something similar, whereby you must show proof of jobs you have been working towards.
