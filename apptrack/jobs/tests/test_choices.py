@@ -1,4 +1,4 @@
-import pytest
+
 from jobs.choices import (
     CurrencyChoices,
     CountryChoices,
