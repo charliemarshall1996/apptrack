@@ -10,7 +10,7 @@
             <a href="{% url 'blog:post' post.id %}" class="list-group-item list-group-item-action">
                 <h5 class="mb-1">{{ post.title }}</h5>
                 <p class="mb-1">{{ post.summary }}</p>
-                <small>{{ post.published_date|date:"F j, Y" }}</small>
+                <small>{{ post.published|date:"F j, Y" }}</small>
             </a>
         {% empty %}
             <p>No posts available.</p>
