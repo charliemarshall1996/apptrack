@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+
+{% extends 'core/base_unauthenticated.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1>Blog Posts</h1>
+    <div class="list-group">
+        {% for post in posts %}
+            <a href="{% url 'blog:post' post.id %}" class="list-group-item list-group-item-action">
+                <h5 class="mb-1">{{ post.title }}</h5>
+                <p class="mb-1">{{ post.summary }}</p>
+                <small>{{ post.published_date|date:"F j, Y" }}</small>
+            </a>
+        {% empty %}
+            <p>No posts available.</p>
+        {% endfor %}
+    </div>
+
+    <!-- Pagination -->
+    <nav aria-label="Page navigation" class="mt-4">
+        <ul class="pagination justify-content-center">
+            {% if posts.has_previous %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ posts.previous_page_number }}" aria-label="Previous">
+                        <span aria-hidden="true">&laquo;</span>
+                    </a>
+                </li>
+            {% else %}
+                <li class="page-item disabled">
+                    <span class="page-link">&laquo;</span>
+                </li>
+            {% endif %}
+
+            {% for num in posts.paginator.page_range %}
+                <li class="page-item {% if posts.number == num %}active{% endif %}">
+                    <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+                </li>
+            {% endfor %}
+
+            {% if posts.has_next %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ posts.next_page_number }}" aria-label="Next">
+                        <span aria-hidden="true">&raquo;</span>
+                    </a>
+                </li>
+            {% else %}
+                <li class="page-item disabled">
+                    <span class="page-link">&raquo;</span>
+                </li>
+            {% endif %}
+        </ul>
+    </nav>
+</div>
+
+{% endblock content %}

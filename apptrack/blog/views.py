@@ -1,3 +1,19 @@
 from django.shortcuts import render
-
+from django.core.paginator import Paginator
 # Create your views here.
+
+from .models import BlogPost
+
+
+def home(request):
+    posts_list = BlogPost.objects.all()
+    paginator = Paginator(posts_list, 5)  # Show 5 posts per page
+
+    page_number = request.GET.get('page')
+    posts = paginator.get_page(page_number)
+
+    return render(request, 'blog/home.html', {'posts': posts})
+
+
+def post(request):
+    return render(request, 'blog/post.html')

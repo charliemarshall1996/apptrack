@@ -8,5 +8,8 @@ class BlogPost(models.Model):
     content = CKEditor5Field()
     published = models.DateTimeField()
 
+    class Meta:
+        ordering = ['-published']
+
     def __str__(self):
         return self.title
