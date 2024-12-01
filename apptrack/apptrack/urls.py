@@ -26,6 +26,7 @@ urlpatterns = [
     path('jobs/', include('jobs.urls')),
     path('ckeditor/', include('ckeditor_uploader.urls')),
     path('blog/', include('blog.urls')),
+    path('interview/', include('interview.urls')),
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

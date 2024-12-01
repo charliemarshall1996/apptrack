@@ -156,6 +156,7 @@ class EditJobView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
               'location_policy', 'min_pay', 'max_pay', 'pay_rate', 'currency',  'note']
 
 
+@login_required
 def download_jobs_view(request):
     # Handle GET request (date input form rendering)
     if request.method == "GET":

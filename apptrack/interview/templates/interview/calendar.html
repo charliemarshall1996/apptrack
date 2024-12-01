@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+
+{% extends 'core/base_authenticated.html' %}
+{% load static %}
+{% block content %}
+
+
+<div class="container">
+    <div class="row">
+        <div class="col">
+            <h1>Interview Calendar</h1>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <button type="button" class="btn btn-primary" id="addInterviewButton" data-bs-toggle="modal" data-bs-target="#addInterview">
+                Add Job
+            </button>
+        </div>
+    </div>
+    <div id="calendar"></div>
+</div>
+
+
+<div class="modal fade" id="addInterview" tabindex="-1" aria-labelledby="addInterviewLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <p class="modal-title" id="addInterviewLabel">Add Interview</p>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                {% load crispy_forms_tags %}
+                <form method="POST" id="addInterviewForm">
+                    {% csrf_token %}
+                    <input type="hidden" name="form_type" value="add">
+                    {{ add_form|crispy }}
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="viewInterview" tabindex="-1" aria-labelledby="viewInterviewLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <p class="modal-title" id="viewInterviewLabel">Add Interview</p>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- FullCalendar JS -->
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js"></script>
+<!-- <script src="{% static 'interview/scripts/calendar.js' %}" defer></script> -->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+    var calendarEl = document.getElementById('calendar');
+    var events = JSON.parse('{{ interviews|escapejs }}');
+    var calendar = new FullCalendar.Calendar(calendarEl, {
+      initialView: 'dayGridMonth',
+      events: events,
+      selectable: true,
+      eventClick: function(info) {
+                var event = info.event;
+                var eventId = event.id;
+                console.log("Event ID:", eventId);
+
+                // Make an AJAX request to fetch interview details
+                fetch(`/interview/detail/${eventId}/`)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.error) {
+                            alert('Error: ' + data.error);
+                        } else {
+                            // Populate the modal with interview data
+                            document.getElementById('viewInterviewLabel').textContent = `Interview Details for ${data.title}`;
+                            var modalBody = document.querySelector('#viewInterview .modal-body');
+                            
+                            // Clear previous content (if any)
+                            modalBody.innerHTML = '';
+
+                            // Fill modal with interview data
+                            modalBody.innerHTML += `<p><strong>Job Title:</strong> ${data.title}</p>`;
+                            modalBody.innerHTML += `<p><strong>Date:</strong> ${data.date}</p>`;
+                            modalBody.innerHTML += `<p><strong>Start Time:</strong> ${data.start_time}</p>`;
+                            modalBody.innerHTML += `<p><strong>End Time:</strong> ${data.end_time}</p>`;
+                            modalBody.innerHTML += `<p><strong>Notes:</strong> ${data.notes}</p>`;
+
+                            // Show the modal
+                            var viewInterviewModal = new bootstrap.Modal(document.getElementById('viewInterview'));
+                            viewInterviewModal.show();
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error fetching interview details:', error);
+                        alert('An error occurred while fetching the interview details.');
+                    });
+            }
+    });
+    
+    calendar.render();
+  });
+</script>
+
+{% endblock content %}

@@ -43,6 +43,9 @@
             <a class="nav-link {% if request.path == '/jobs/board/' %}active{% endif %}" href="{% url 'jobs:board' %}">Board</a>
           </li>
           <li class="nav-item">
+            <a class="nav-link {% if request.path == 'interview:calendar' %}active{% endif %}" href="{% url 'interview:calendar' %}">Interview Calendar</a>
+          </li>
+          <li class="nav-item">
             <a class="nav-link {% if request.path == '/jobs/download/' %}active{% endif %}" href="{% url 'jobs:download' %}">Download Report</a>
           </li>
           <li class="nav-item">
