@@ -37,6 +37,8 @@
             <li class="nav-item">
               <a class="nav-link {% if request.path == '/contact/' %}active{% endif %}" href="{% url 'contact' %}">Contact</a>
             </li>
+            <li class="nav-item">
+              <a class="nav-link {% if request.path == 'blog:home' %}active{% endif %}" href="{% url 'blog:home' %}">Blog</a>
             <li class="nav-item ms-auto px-1">
               <a class="btn btn-primary" href="{% url 'accounts:login' %}">Login</a>
             </li>
@@ -55,7 +57,7 @@
     {% include 'core/messages.html' %}
   </div>
 
-  <div class="container-fluid justify-self-center align-content-center mt-auto" id="content">
+  <div class="container-fluid justify-self-center mt-auto" id="content">
     {% block content %}
     {% endblock %}
   </div>
