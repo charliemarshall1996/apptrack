@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+{% extends 'core/base_unauthenticated.html' %}
+
+{% block content %}
+    <div class="container">
+        <h1>{{ post.title }}</h1>
+        <i>Published on {{ post.published|date:"F j, Y" }}</i>
+        <div id="post-content">
+            {{ post.content|safe }}
+        </div>
+    </div>
+    
+    <script>
+        // Add Bootstrap's img-fluid class to all images in the post content
+        document.addEventListener('DOMContentLoaded', function () {
+            var images = document.querySelectorAll('#post-content img');
+            images.forEach(function (img) {
+                img.classList.add('img-fluid');
+            });
+        });
+    </script>
+
+{% endblock content %}
