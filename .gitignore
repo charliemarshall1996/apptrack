@@ -164,3 +164,4 @@ apptrack/apptrack/settings.py
 apptrack/keys.json
 apptrack/db.sqlite3
 apptrack/.env
+*experimental/

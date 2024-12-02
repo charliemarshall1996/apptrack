@@ -7,17 +7,21 @@ from .models import Job
 class JobForm(forms.ModelForm):
     class Meta:
         model = Job
-        fields = ['url',
-                  'source',
+        fields = ['company'
                   'job_title',
                   'job_function',
+                  'town',
+                  'region',
+                  'country',
+                  'source',
+                  'url',
                   'description',
                   'location_policy',
                   'work_contract',
                   'min_pay', 'max_pay',
                   'pay_rate', 'currency',
                   'note',
-                  'status', 'company']
+                  'status']
 
     def save(self, *args, **kwargs):
         return super().save(*args, commit=False, **kwargs)
