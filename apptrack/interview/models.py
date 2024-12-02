@@ -4,6 +4,16 @@ from django.conf import settings
 # Create your models here.
 
 
+class InterviewTask(models.Model):
+    name = models.CharField(max_length=255)
+    interview = models.ForeignKey(
+        'Interview', on_delete=models.CASCADE, related_name='tasks')
+    is_completed = models.BooleanField(default=False)
+
+    def __str__(self):
+        return self.name
+
+
 class Interview(models.Model):
     interview_round = models.IntegerField(default=1)
     job = models.ForeignKey(
@@ -23,6 +33,25 @@ class Interview(models.Model):
 
     def __str__(self):
         return f"Interview for {self.job.job_title} at {self.job.company}"
+
+    def create_default_tasks(self):
+        default_tasks = [
+            "Prepare for interview",
+            "Review job description",
+            "Research the company",
+            "Prepare questions for the interviewer",
+            "Dress appropriately",
+            "Plan your route to the interview",
+        ]
+        for task in default_tasks:
+            InterviewTask.objects.create(interview=self, name=task)
+
+    def save(self, *args, **kwargs):
+        if not self.pk:  # This ensures tasks are added only once when the interview is created
+            super().save(*args, **kwargs)
+            self.create_default_tasks()
+        else:
+            super().save(*args, **kwargs)
 
 
 class Interviewer(models.Model):

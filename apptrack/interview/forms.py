@@ -1,7 +1,7 @@
 
 from typing import Any
 from django import forms
-from .models import Interview
+from .models import Interview, InterviewTask
 
 
 class AddInterviewForm(forms.ModelForm):
@@ -16,3 +16,9 @@ class AddInterviewForm(forms.ModelForm):
 
     def save(self) -> Any:
         return super().save(commit=False)
+
+
+class TaskForm(forms.ModelForm):
+    class Meta:
+        model = InterviewTask
+        fields = ['name', 'is_completed']
