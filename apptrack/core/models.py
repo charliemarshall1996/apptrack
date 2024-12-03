@@ -7,14 +7,17 @@ from .utils import get_country_choices
 # Set up the geolocator with a basic user agent
 geolocator = Nominatim(user_agent="your_app_name_or_email")
 
+
 class Locations(models.Model):
     COUNTRY_CHOICES = get_country_choices()
 
     city = models.CharField(max_length=100)
     region = models.CharField(max_length=100, null=True, blank=True)
     country = models.CharField(max_length=2, choices=COUNTRY_CHOICES)
-    latitude = models.DecimalField(max_digits=9, decimal_places=6, null=True, blank=True)
-    longitude = models.DecimalField(max_digits=9, decimal_places=6, null=True, blank=True)
+    latitude = models.DecimalField(
+        max_digits=9, decimal_places=6, null=True, blank=True)
+    longitude = models.DecimalField(
+        max_digits=9, decimal_places=6, null=True, blank=True)
 
     def save(self, *args, **kwargs):
         # Build the location string for geocoding
@@ -22,7 +25,7 @@ class Locations(models.Model):
 
         if self.region:
             location_query = f"{self.region}, {self.country}"
-        
+
         if self.city:
             location_query = f"{self.city}, {self.region}, {self.country}"
 
@@ -42,4 +45,10 @@ class Locations(models.Model):
         # Call the parent class's save method
         super().save(*args, **kwargs)
 
-    
+
+class Task(models.Model):
+    name = models.CharField(max_length=100)
+    is_completed = models.BooleanField(default=False)
+
+    def __str__(self):
+        return self.name

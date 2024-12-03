@@ -5,6 +5,8 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.db import models
 from django.utils import timezone
 
+from core.models import Task
+
 from .choices import (
     CurrencyChoices,
     CountryChoices,
@@ -71,6 +73,11 @@ class Column(models.Model):
         unique_together = ('board', 'name', 'position')
 
 
+class JobTask(Task):
+    job = models.ForeignKey(
+        'Job', on_delete=models.CASCADE, related_name='tasks')
+
+
 class Job(models.Model):
 
     id = models.BigAutoField(primary_key=True)
@@ -123,10 +130,7 @@ class Job(models.Model):
     def __str__(self):
         return f"{self.company} - {self.job_title}"
 
-    def save(self, *args, **kwargs):
-
-        # Update only if the status has changed
-        # or if the note has changed
+    def _update_if_changed(self):
         if self.pk:
             original = Job.objects.filter(pk=self.pk).first()
             if original and original.status != self.status:
@@ -136,6 +140,31 @@ class Job(models.Model):
             else:
                 self.updated = timezone.now()
 
+    def _create_default_tasks(self):
+
+        if self.status == StatusChoices.OPEN:
+            default_tasks = [
+                "Prepare for interview",
+                "Review job description",
+                "Research the company",
+                "Prepare questions for the interviewer",
+                "Dress appropriately",
+                "Plan your route to the interview",
+            ]
+        elif self.status == StatusChoices.APPLIED:
+            pass
+        elif self.status == StatusChoices.SHORTLISTED:
+            pass
+        elif self.status == StatusChoices.INTERVIEW:
+            default_tasks = ["Create Interview Event"]
+        elif self.status == StatusChoices.OFFER:
+            pass
+        elif self.status == StatusChoices.REJECTED:
+            pass
+        for task in default_tasks:
+            JobTask.objects.create(interview=self, name=task)
+
+    def _manage_columns_and_boards(self):
         # If the board is not set,
         # set it to the column's board
         if not self.board and self.column:
@@ -175,8 +204,19 @@ class Job(models.Model):
             self.status = StatusChoices.get_column_status(self.column.position)
             self.column.save()
 
-        # Check if the job is in an applied status
-        self.applied = self.status in StatusChoices.get_applied_statuses()
+    def _set_applied(self):
+        if self.status in StatusChoices.get_applied_statuses():
+            self.applied = True
+        else:
+            self.applied = False
+
+    def save(self, *args, **kwargs):
+
+        self._update_if_changed()
+
+        self._manage_columns_and_boards()
+
+        self._set_applied()
 
         # Call the parent's save method to persist the object
         super().save(*args, **kwargs)
