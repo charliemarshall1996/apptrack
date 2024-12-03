@@ -5,8 +5,6 @@ from core.utils import get_country_choices, get_currency_choices
 class ChoiceBase:
     @classmethod
     def choices(cls):
-        print(f"CHOICES KEYS: {cls.__dict__.keys()}")
-        print(f"CHOICES VALUES: {cls.__dict__.values()}")
         # Filter attributes that are tuples of length 2 (value and label)
         return [
             (value[0], value[1])

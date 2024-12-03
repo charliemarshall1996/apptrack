@@ -1,6 +1,7 @@
 from django.db import models
 from django.conf import settings
-from core.models import Task
+
+from core.models import Task, Alert
 # Create your models here.
 
 
@@ -57,5 +58,10 @@ class Interviewer(models.Model):
     title = models.CharField(max_length=20)
     notes = models.TextField(blank=True, null=True)
 
-    def __str__(self):
-        return f"Interview for {self.job.title} at {self.job.company}"
+
+class InterviewAlert(Alert):
+    interview = models.ForeignKey(Interview, on_delete=models.CASCADE)
+
+    @property
+    def message(self):
+        return f"Reminder: Interview for {self.interview.job.job_title} at {self.interview.job.company} in {self.alert_before} {self.alert_before_unit}"
