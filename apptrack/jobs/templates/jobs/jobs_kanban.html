@@ -116,7 +116,6 @@
                             <div class="list-group list-group-flush">
                                 <p>Company Details</p>
                                 <p class="list-group-item"><strong>Company:</strong> {{ job.company }}</p>
-                                <p class="list-group-item"><strong>Industry:</strong> {{ job.company_industry }}</p>
                             </div>
                         </div>
                         <div class="col">
@@ -136,7 +135,7 @@
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
 
                     {% if job.url and job.url != '' %}
-                        <a href="#" class="btn btn-primary">Apply</a>
+                        <a href="{{ job.url }}" class="btn btn-primary">Apply</a>
                     {% endif %}
                 </div>
             </div>
