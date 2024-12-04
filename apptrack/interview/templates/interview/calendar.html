@@ -36,12 +36,41 @@
                     {% csrf_token %}
                     <input type="hidden" name="form_type" value="add">
                     {{ add_form|crispy }}
-                    <button type="submit" class="btn btn-primary">Submit</button>
+
+                    <h5>Alerts</h5>
+                    <ul class="list-group" id="alertList">
+                        <!-- Alerts will be dynamically populated here -->
+                        <li class="list-group-item text-center" id="addAlertAction">
+                            <button type="button" class="btn btn-link" data-bs-toggle="modal" data-bs-target="#addAlertModal">
+                                + Add Alert
+                            </button>
+                        </li>
+                    </ul>
+
+                    <button type="submit" class="btn btn-primary mt-3">Submit</button>
                 </form>
             </div>
         </div>
     </div>
 </div>
+
+<div class="modal fade" id="addAlertModal" tabindex="-1" aria-labelledby="addAlertModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <p class="modal-title" id="addAlertModalLabel">Add Alert</p>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="addAlertForm">
+                    {{ add_alert_form|crispy }}
+                    <button type="button" class="btn btn-primary" id="saveAlert">Save Alert</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
 
 <div class="modal fade" id="viewInterview" tabindex="-1" aria-labelledby="viewInterviewLabel" aria-hidden="true">
     <div class="modal-dialog">
@@ -207,5 +236,92 @@
     calendar.render();
   });
 </script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+    const addInterviewModal = document.getElementById('addInterview');
+    const addInterviewForm = document.getElementById('addInterviewForm');
 
+    // Object to store form data
+    const formData = {};
+
+    // Save form data when the modal is hidden
+    addInterviewModal.addEventListener('hide.bs.modal', function () {
+        const formElements = addInterviewForm.elements;
+        for (const element of formElements) {
+            if (element.name) {
+                formData[element.name] = element.value;
+            }
+        }
+    });
+
+    // Restore form data when the modal is shown
+    addInterviewModal.addEventListener('show.bs.modal', function () {
+        const formElements = addInterviewForm.elements;
+        for (const element of formElements) {
+            if (element.name && formData[element.name] !== undefined) {
+                element.value = formData[element.name];
+            }
+        }
+    });
+});
+</script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+    const alertList = document.getElementById('alertList');
+    const addAlertForm = document.getElementById('addAlertForm');
+    const saveAlertButton = document.getElementById('saveAlert');
+    const addAlertAction = document.getElementById('addAlertAction');
+
+    const alerts = [];
+
+    saveAlertButton.addEventListener('click', function () {
+        const formData = new FormData(addAlertForm);
+        const alertData = {};
+
+        // Extract form data
+        formData.forEach((value, key) => {
+            alertData[key] = value;
+        });
+
+        // Push alert data to the list
+        alerts.push(alertData);
+
+        // Update the alert list
+        const listItem = document.createElement('li');
+        listItem.className = 'list-group-item d-flex justify-content-between align-items-center';
+        listItem.textContent = alertData.message; // Assuming "message" is a field in alert_form
+        listItem.innerHTML += `
+            <button type="button" class="btn btn-danger btn-sm" onclick="removeAlert(${alerts.length - 1})">
+                Remove
+            </button>
+        `;
+        alertList.insertBefore(listItem, addAlertAction);
+
+        // Close the modal
+        const addAlertModal = bootstrap.Modal.getInstance(document.getElementById('addAlertModal'));
+        const addInterviewModel = bootstrap.Modal.getInstance(document.getElementById('addInterview'));
+        addAlertModal.hide();
+        
+        addInterviewModel.show();
+        // Reset the alert form
+        addAlertForm.reset();
+    });
+
+    window.removeAlert = function (index) {
+        alerts.splice(index, 1); // Remove from the array
+        alertList.children[index].remove(); // Remove the corresponding list item
+    };
+
+    // On form submission, attach the alerts to the form as hidden inputs
+    const addInterviewForm = document.getElementById('addInterviewForm');
+    addInterviewForm.addEventListener('submit', function (e) {
+        // Serialize alerts as a JSON string
+        const hiddenInput = document.createElement('input');
+        hiddenInput.type = 'hidden';
+        hiddenInput.name = 'alerts';
+        hiddenInput.value = JSON.stringify(alerts); // Convert alerts array to JSON string
+        addInterviewForm.appendChild(hiddenInput);
+    });
+});
+</script>
 {% endblock content %}

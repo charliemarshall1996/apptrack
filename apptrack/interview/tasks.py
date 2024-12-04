@@ -55,3 +55,6 @@ def check_upcoming_interviews():
                     html_message = f"<p>{alert.message}</p>"
                     send_mail(subject, message, settings.DEFAULT_FROM_EMAIL,
                               [user.email], html_message=html_message)
+
+                    alert.emailed = True
+                    alert.save()

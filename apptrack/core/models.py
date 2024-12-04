@@ -71,15 +71,8 @@ class Alert(models.Model):
     alert_before = models.IntegerField(default=1)
     alert_before_unit = models.CharField(
         max_length=1, choices=ALERT_BEFORE_UNITS)
-    alert_type = models.CharField(max_length=20)
 
-    alert_via_email = models.BooleanField(default=False)
-
-    alert_via_push = models.BooleanField(default=False)
     emailed = models.BooleanField(default=False, blank=True)
-
-    persistent = models.BooleanField(default=False)
-    persistent_until_read = models.BooleanField(default=False)
     message = models.TextField()
     read = models.BooleanField(default=False)
 
