@@ -367,6 +367,23 @@ def register(request):
 
             # Redirect to profile or job application list
             return redirect('accounts:login')
+        else:
+            logger.info("Invalid user_form or profile_form")
+            if user_form.errors:
+                error_data = user_form.errors.as_data()
+                email_error = error_data.get("email")
+                password_error = error_data.get("password")
+                logger.info("User form errors: %s", error_data)
+                if email_error:
+                    logger.info("Email address is invalid")
+                    messages.error(
+                        request, "Please enter a valid email address.")
+                if password_error:
+                    logger.info("Password is invalid")
+                    messages.error(request, "Please enter a valid password.")
+
+            return redirect('accounts:register')
+
     else:
         user_form = UserRegistrationForm()
         profile_form = ProfileRegistrationForm()
