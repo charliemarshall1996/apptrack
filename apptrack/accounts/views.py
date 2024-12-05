@@ -105,9 +105,12 @@ def logout_view(request):
 
 
 def login_non_verified_email(request, email):
+    logger.debug(f"Email: {email}")
     try:
         user = User.objects.get(email=email)
+        logger.debug(f"User: {user}")
     except User.DoesNotExist:
+        logger.debug("User does not exist")
         messages.error(request, "Invalid login credentials")
         return redirect("accounts:login")
 
@@ -156,10 +159,12 @@ def login_non_verified_email(request, email):
 
 
 def custom_login_view(request):
+    logger.debug(f"Login request. Method: {request.method}")
     if request.method == "POST":
         form = UserLoginForm(request.POST)
 
         if form.is_valid():
+            logger.debug("Form is valid")
             if form.cleaned_data['honeypot']:
                 # Honeypot field should be empty. If it's filled, treat it as spam.
                 messages.error(request, MessageManager.spam)
@@ -171,6 +176,7 @@ def custom_login_view(request):
             user = authenticate(request, email=email, password=password)
 
             if user is not None:
+                logger.debug(f"User exitsts for email: {email}")
                 if user.email_verified:
                     for backend in get_backends():
                         if user == backend.get_user(user.id):
@@ -183,6 +189,8 @@ def custom_login_view(request):
             else:
                 # Use the return value from login_non_verified_email
                 return login_non_verified_email(request, email)
+        else:
+            logger.debug(f"Form is not valid {form.errors}")
     else:
         form = UserLoginForm()
 
@@ -294,7 +302,7 @@ def password_reset_view(request):
         if form.is_valid():
 
             if form.cleaned_data['honeypot']:
-                print("Honeypot field filled")
+                logger.debug("Honeypot field filled")
                 # Honeypot field should be empty.
                 # If it's filled, treat it as spam.
                 messages.error(

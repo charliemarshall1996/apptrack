@@ -5,8 +5,6 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.db import models
 from django.utils import timezone
 
-from core.models import Task
-
 from .choices import (
     CurrencyChoices,
     CountryChoices,
@@ -73,11 +71,6 @@ class Column(models.Model):
         unique_together = ('board', 'name', 'position')
 
 
-class JobTask(Task):
-    job = models.ForeignKey(
-        'Job', on_delete=models.CASCADE, related_name='tasks')
-
-
 class Job(models.Model):
 
     id = models.BigAutoField(primary_key=True)
@@ -139,30 +132,6 @@ class Job(models.Model):
                 self.note = original.note
             else:
                 self.updated = timezone.now()
-
-    def _create_default_tasks(self):
-
-        if self.status == StatusChoices.OPEN:
-            default_tasks = [
-                "Prepare for interview",
-                "Review job description",
-                "Research the company",
-                "Prepare questions for the interviewer",
-                "Dress appropriately",
-                "Plan your route to the interview",
-            ]
-        elif self.status == StatusChoices.APPLIED:
-            pass
-        elif self.status == StatusChoices.SHORTLISTED:
-            pass
-        elif self.status == StatusChoices.INTERVIEW:
-            default_tasks = ["Create Interview Event"]
-        elif self.status == StatusChoices.OFFER:
-            pass
-        elif self.status == StatusChoices.REJECTED:
-            pass
-        for task in default_tasks:
-            JobTask.objects.create(interview=self, name=task)
 
     def _manage_columns_and_boards(self):
         # If the board is not set,
