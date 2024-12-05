@@ -344,6 +344,7 @@ def register(request):
         profile_form = ProfileRegistrationForm(request.POST)
 
         if user_form.is_valid() and profile_form.is_valid():
+
             logger.info("Valid user_form and profile_form")
             if user_form.cleaned_data['honeypot']:
                 logger.info("Honeypot field filled")
@@ -373,7 +374,8 @@ def register(request):
             if user_form.errors:
                 error_data = user_form.errors.as_data()
                 email_error = error_data.get("email")
-                password_error = error_data.get("password")
+                password_error = error_data.get(
+                    "password2") or error_data.get("password1")
                 logger.info("User form errors: %s", error_data)
                 if email_error:
                     logger.info("Email address is invalid")
