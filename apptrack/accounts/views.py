@@ -94,11 +94,6 @@ class ProfileView(LoginRequiredMixin, DetailView):
 
 
 @login_required
-def dashboard_view(request):
-    return render(request, 'accounts/dashboard.html')
-
-
-@login_required
 def logout_view(request):
     logout(request)
     return redirect('home')
