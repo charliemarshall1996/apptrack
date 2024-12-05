@@ -337,12 +337,14 @@ def delete_account_view(request):
 
 
 def register(request):
+    logger.debug("Register request. Method: %s", request.method)
     if request.method == 'POST':
+        logger.info("Register request. Method: %s", request.method)
         user_form = UserRegistrationForm(request.POST)
         profile_form = ProfileRegistrationForm(request.POST)
 
         if user_form.is_valid() and profile_form.is_valid():
-
+            logger.info("Valid user_form and profile_form")
             if user_form.cleaned_data['honeypot']:
                 # Honeypot field should be empty. If it's filled, treat it as spam.
                 messages.error(

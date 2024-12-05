@@ -419,3 +419,22 @@ def test_delete_account_view(client, profile_factory):
     assert response.url == reverse('home')
     messages = list(get_messages(response.wsgi_request))
     assert str(messages[0]) == "Your account has been successfully deleted."
+
+
+@pytest.mark.django_db
+def test_register_view_valid(client, user_registration_form_data):
+    email = user_registration_form_data['email']
+    password = user_registration_form_data['password1']
+
+    response = client.get(reverse("accounts:register"))
+    assert response.status_code == 200
+
+    url = reverse('accounts:register')
+
+    # GET request should render the register form
+    response = client.post(url, user_registration_form_data)
+    user = User.objects.get(email=email)
+    assert response.status_code == 302
+    assert response.url == reverse('accounts:login')
+    assert user
+    assert user.profile
