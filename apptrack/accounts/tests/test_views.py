@@ -475,10 +475,28 @@ def test_register_view_spam(client, user_registration_form_data):
 
 
 @pytest.mark.django_db
-def test_register_view_mismatched_email(client, user_registration_form_data):
+def test_register_view_mismatched_password(client, user_registration_form_data):
     response = client.get(reverse("accounts:register"))
     assert response.status_code == 200
     user_registration_form_data["password2"] = "incorrect_password"
+    url = reverse('accounts:register')
+
+    # GET request should render the register form
+    response = client.post(url, user_registration_form_data)
+    assert response.status_code == 302
+    assert response.url == reverse('accounts:register')
+
+    messages = list(get_messages(response.wsgi_request))
+    print(str(messages[0]))
+    assert str(messages[0]) == "Please enter a valid password."
+
+
+@pytest.mark.django_db
+def test_register_view_password_too_common(client, user_registration_form_data):
+    response = client.get(reverse("accounts:register"))
+    assert response.status_code == 200
+    user_registration_form_data["password1"] = "password1"
+    user_registration_form_data["password2"] = "password1"
     url = reverse('accounts:register')
 
     # GET request should render the register form

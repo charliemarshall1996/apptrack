@@ -382,8 +382,8 @@ def register(request):
                     messages.error(
                         request, "Please enter a valid email address.")
                 if password_error:
-                    logger.info("Password is invalid")
-                    messages.error(request, "Please enter a valid password.")
+                    messages.error(
+                        request, "Please enter a valid password.")
 
             return redirect('accounts:register')
 
