@@ -346,6 +346,7 @@ def register(request):
         if user_form.is_valid() and profile_form.is_valid():
             logger.info("Valid user_form and profile_form")
             if user_form.cleaned_data['honeypot']:
+                logger.info("Honeypot field filled")
                 # Honeypot field should be empty. If it's filled, treat it as spam.
                 messages.error(
                     request, MessageManager.spam)
