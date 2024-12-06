@@ -206,10 +206,15 @@ def board_factory(board_data_factory):
 @pytest.fixture()
 def column_data_factory():
     def factory(name=None, position=None, board=None):
+        if not name:
+            name = random.choice(STATUSES)
+            position = StatusChoices.get_status_column_position(name)
+        elif not position:
+            position = StatusChoices.get_status_column_position(name)
         if not board:
-            return {'name': name or fake.job(), 'position': position or random.randint(1, 9)}
+            return {'name': name or random.choice(STATUSES), 'position': position or random.randint(1, 7)}
         else:
-            return {'name': name or fake.job(), 'position': position or random.randint(1, 9), 'board': board}
+            return {'name': name or random.choice(STATUSES), 'position': position or random.randint(1, 7), 'board': board}
     return factory
 
 

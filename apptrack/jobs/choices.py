@@ -71,6 +71,16 @@ class StatusChoices(ChoiceBase):
     OFFER = "OF", "Offer"
     CLOSED = "CL", "Closed"
 
+    STATUS_NAMES = {
+        OPEN[0]: OPEN[1],
+        APPLIED[0]: APPLIED[1],
+        REJECTED[0]: REJECTED[1],
+        SHORTLISTED[0]: SHORTLISTED[1],
+        INTERVIEW[0]: INTERVIEW[1],
+        OFFER[0]: OFFER[1],
+        CLOSED[0]: CLOSED[1]
+    }
+
     STATUS_COLUMNS = {
         OPEN[0]: 1,
         APPLIED[0]: 2,
@@ -91,19 +101,24 @@ class StatusChoices(ChoiceBase):
         7: CLOSED
     }
 
-    APPLIED_STATUSES = [APPLIED, SHORTLISTED, INTERVIEW, OFFER, REJECTED]
+    APPLIED_STATUSES = [APPLIED[0], SHORTLISTED[0],
+                        INTERVIEW[0], OFFER[0], REJECTED[0]]
 
     @classmethod
-    def get_status_column(cls, status):
+    def get_status_column_position(cls, status):
         return cls.STATUS_COLUMNS[status]
 
     @classmethod
-    def get_column_status(cls, position: int):
+    def get_column_position_status(cls, position: int):
         return cls.COLUMN_STATUSES[position][0]
 
     @classmethod
-    def get_column_name(cls, position: int):
+    def get_column_position_status_name(cls, position: int):
         return cls.COLUMN_STATUSES[position][1]
+
+    @classmethod
+    def get_status_name(cls, status):
+        return cls.STATUS_NAMES[status]
 
     @classmethod
     def get_applied_statuses(cls):

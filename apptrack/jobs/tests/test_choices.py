@@ -285,7 +285,7 @@ def test_get_status_column():
     ]
 
     for status, column in status_columns:
-        assert StatusChoices.get_status_column(status) == column
+        assert StatusChoices.get_status_column_position(status) == column
 
 
 def test_get_column_status():
@@ -308,7 +308,7 @@ def test_get_column_status():
     ]
 
     for status, column in status_columns:
-        assert StatusChoices.get_column_status(column) == status
+        assert StatusChoices.get_column_position_status(column) == status
 
 
 def test_get_column_name():
@@ -324,4 +324,4 @@ def test_get_column_name():
     ]
 
     for column, name in status_columns:
-        assert StatusChoices.get_column_name(column) == name
+        assert StatusChoices.get_column_position_status_name(column) == name

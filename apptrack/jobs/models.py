@@ -19,6 +19,7 @@ from .choices import (
 )
 
 logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)
 
 User = get_user_model()
 
@@ -102,32 +103,21 @@ class Job(models.Model):
     def _update_if_changed(self):
         if self.pk:
             original = Job.objects.filter(pk=self.pk).first()
-            if original and original.status != self.status:
-                self.updated = timezone.now()  # Update timestamp if status changes
-            elif original and original.note != self.note:
-                self.note = original.note
-            else:
+            if (original and original.status != self.status) \
+                    or (original and original.note != self.note):
                 self.updated = timezone.now()
 
     def _manage_columns_and_boards(self):
-        # If the board is not set,
-        # set it to the column's board
-        if not self.board and self.column:
-            self.board = self.column.board
-            self.board.save()
-
-        try:
-            if not self.column.board:
-                self.column.board = self.board
-        except AttributeError:
-            pass
+        logger.info("Managing columns and boards...")
 
         # Check if the column
         # is not already set
         if not self.column and self.board:
+            self.board.save()
             try:
-                position = StatusChoices.get_status_column(self.status)
-                name = StatusChoices.get_column_name(position)
+                position = StatusChoices.get_status_column_position(
+                    self.status)
+                name = StatusChoices.get_column_position_status_name(position)
 
                 # Retrieve the correct column
                 # based on the position and board
@@ -142,22 +132,34 @@ class Job(models.Model):
                 self.column = col
             except ObjectDoesNotExist:
                 raise ValueError(
-                    f"Column with position {StatusChoices.get_status_column(self.status)} for board {self.board} does not exist.")
+                    f"Column with position {StatusChoices.get_status_column_position(self.status)} for board {self.board} does not exist.")
 
         elif self.column:
+            logger.info("Column exists")
             self.board.save()
             self.column.board = self.board
             self.column.save()
 
-            logger.info("Column name %s, position %s",
-                        self.column.name, self.column.position)
-            # Ensure status is updated based on column position
-            self.status = StatusChoices.get_column_status(self.column.position)
+            original = Job.objects.filter(pk=self.pk).first()
+
+            if original and original.status != self.status:
+                self.column = Column.objects.filter(
+                    board=self.board, position=StatusChoices.get_status_column_position(self.status)).first()
+            elif original and original.column != self.column:
+                self.status = StatusChoices.get_column_position_status(
+                    self.column.position
+                )
 
     def _set_applied(self):
+        logger.info("Setting applied...")
+        logger.debug("Status: %s", self.status)
+        logger.debug("Applied Statuses: %s",
+                     StatusChoices.get_applied_statuses())
         if self.status in StatusChoices.get_applied_statuses():
+            logger.info("Job is applied")
             self.applied = True
         else:
+            logger.info("Job is not applied")
             self.applied = False
 
     def save(self, *args, **kwargs):

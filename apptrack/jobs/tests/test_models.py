@@ -96,7 +96,7 @@ def test_job_updated(custom_user_factory, board_factory, column_factory, jobs_da
     i = 0
     for status in statuses:
         logger.info("status: %s", status)
-        job.status = status
+        job.status = status[0]
         job.save()
         if i > 0:
             assert original_updated
@@ -105,3 +105,37 @@ def test_job_updated(custom_user_factory, board_factory, column_factory, jobs_da
             assert job.updated
         original_updated = job.updated
         i += 1
+
+
+@pytest.mark.django_db
+def test_job_status_no_column(custom_user_factory, board_factory, jobs_data):
+    user = custom_user_factory()
+    board = board_factory(user=user)
+    job = Job(user=user, board=board, **jobs_data)
+    job.save()
+
+    assert job.column
+    assert StatusChoices.get_status_name(job.status) == job.column.name
+    assert StatusChoices.get_status_column_position(
+        job.status) == job.column.position
+
+
+@pytest.mark.django_db
+def test_job_status_applied(custom_user_factory, board_factory, jobs_data):
+    applied_statuses = StatusChoices.get_applied_statuses()
+
+    for status in applied_statuses:
+        jobs_data["status"] = StatusChoices.OPEN[0]
+        logger.info("status: %s", status)
+        logger.info("jobs_data: %s", jobs_data)
+        user = custom_user_factory()
+        board = board_factory(user=user)
+        job = Job(user=user, board=board, **jobs_data)
+        job.save()
+
+        assert not job.applied
+        job.status = status
+        logger.info("job.status: %s", job.status)
+        job.save()
+        assert job.status == status
+        assert job.applied
