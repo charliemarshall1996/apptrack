@@ -1,16 +1,6 @@
 
 from core.utils import get_country_choices, get_currency_choices
-
-
-class ChoiceBase:
-    @classmethod
-    def choices(cls):
-        # Filter attributes that are tuples of length 2 (value and label)
-        return [
-            (value[0], value[1])
-            for value in cls.__dict__.values()
-            if isinstance(value, tuple) and len(value) == 2
-        ]
+from core.choices import ChoiceBase
 
 
 class CurrencyChoices(ChoiceBase):

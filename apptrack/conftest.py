@@ -8,6 +8,7 @@ from faker import Faker
 import pytest
 
 from accounts.models import Profile
+from core.choices import ReminderUnitChoices
 from jobs.choices import (
     CurrencyChoices,
     CountryChoices,
@@ -223,4 +224,26 @@ def column_factory(column_data_factory):
     def factory(name=None, position=None, board=None):
         data = column_data_factory(name, position, board)
         return Column(**data)
+    return factory
+
+
+@pytest.fixture()
+def task_data_factory():
+    def factory(name=None, is_completed=False):
+        return {'name': name or ' '.join(fake.words(3)), 'is_completed': is_completed}
+    return factory
+
+
+@pytest.fixture()
+def reminder_data_factory(custom_user_factory):
+    def factory(user=None, password=None, read=False, emailed=False):
+        if not user:
+            user = custom_user_factory(
+                password=password)
+        return {'user': user,
+                'unit': random.choice(ReminderUnitChoices.choices()),
+                'offset': random.randint(1, 10),
+                'emailed': emailed,
+                'read': read
+                }
     return factory
