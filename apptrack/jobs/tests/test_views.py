@@ -38,9 +38,6 @@ def test_add_job_view(client, board_factory, profile_factory, jobs_form_data):
     profile = profile_factory(password=PASSWORD)
     profile.save()
 
-    board = board_factory(user=profile.user)
-    board.save()
-
     data = jobs_form_data
 
     response = client.post(reverse("accounts:login"), {
@@ -68,8 +65,7 @@ def test_assign_job_view(client, board_factory, profile_factory, job_form_factor
     profile = profile_factory(password=PASSWORD)
     profile.save()
 
-    board = board_factory(user=profile.user)
-    board.save()
+    board = profile.user.board
 
     columns = [col.id for col in board.columns.all()]
 
@@ -114,8 +110,7 @@ def test_delete_job_view(client, job_form_factory, profile_factory, board_factor
     profile = profile_factory(password=PASSWORD)
     profile.save()
 
-    board = board_factory(user=profile.user)
-    board.save()
+    board = profile.user.board
 
     job = job_form_factory(user=profile.user)
     job.board = board
@@ -144,8 +139,7 @@ def test_edit_job_view(client, job_form_factory, profile_factory, board_factory,
     profile = profile_factory(password=PASSWORD)
     profile.save()
 
-    board = board_factory(user=profile.user)
-    board.save()
+    board = profile.user.board
 
     job = job_form_factory(user=profile.user)
     job.board = board

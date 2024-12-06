@@ -10,8 +10,9 @@ logger = logging.getLogger(__name__)
 
 
 @pytest.mark.django_db
-def test_board(board_factory):
-    board = board_factory(no_name=True)
+def test_board(custom_user_factory):
+    user = custom_user_factory()
+    board = user.board
     board.save()
     board_columns = [column.name for column in board.columns.all()]
     assert board.name == "My Job Board"
@@ -49,9 +50,9 @@ def test_column(board_factory, column_data_factory):
 
 
 @pytest.mark.django_db
-def test_job(custom_user_factory, board_factory, column_factory, jobs_data):
+def test_job(custom_user_factory, column_factory, jobs_data):
     user = custom_user_factory()
-    board = board_factory(user=user)
+    board = user.board
     column = column_factory(board=board)
     job = Job(user=user, column=column, board=board, **jobs_data)
 
@@ -76,9 +77,9 @@ def test_job(custom_user_factory, board_factory, column_factory, jobs_data):
 
 
 @pytest.mark.django_db
-def test_job_updated(custom_user_factory, board_factory, column_factory, jobs_data):
+def test_job_updated(custom_user_factory, column_factory, jobs_data):
     user = custom_user_factory()
-    board = board_factory(user=user)
+    board = user.board
     column = column_factory(board=board)
     job = Job(user=user, column=column, board=board, **jobs_data)
 
@@ -108,9 +109,9 @@ def test_job_updated(custom_user_factory, board_factory, column_factory, jobs_da
 
 
 @pytest.mark.django_db
-def test_job_status_no_column(custom_user_factory, board_factory, jobs_data):
+def test_job_status_no_column(custom_user_factory, jobs_data):
     user = custom_user_factory()
-    board = board_factory(user=user)
+    board = user.board
     job = Job(user=user, board=board, **jobs_data)
     job.save()
 
@@ -121,7 +122,7 @@ def test_job_status_no_column(custom_user_factory, board_factory, jobs_data):
 
 
 @pytest.mark.django_db
-def test_job_status_applied(custom_user_factory, board_factory, jobs_data):
+def test_job_status_applied(custom_user_factory, jobs_data):
     applied_statuses = StatusChoices.get_applied_statuses()
 
     for status in applied_statuses:
@@ -129,7 +130,7 @@ def test_job_status_applied(custom_user_factory, board_factory, jobs_data):
         logger.info("status: %s", status)
         logger.info("jobs_data: %s", jobs_data)
         user = custom_user_factory()
-        board = board_factory(user=user)
+        board = user.board
         job = Job(user=user, board=board, **jobs_data)
         job.save()
 

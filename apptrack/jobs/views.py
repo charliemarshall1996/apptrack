@@ -31,12 +31,7 @@ def board_view(request):
         ('Closed', 7),
     ]
 
-    # Get the user's board or return 404 if not found
     board = Board.objects.get(user=request.user)
-
-    if not board:
-        # Handle case if the user doesn't have a board yet (optional)
-        return HttpResponse("Board not found", status=404)
 
     # Check if required columns exist in the board
     for column_name, column_position in default_columns:
