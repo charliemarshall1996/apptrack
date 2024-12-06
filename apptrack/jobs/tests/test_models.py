@@ -1,7 +1,12 @@
 
+import logging
+
 import pytest
 
 from jobs.models import Job, Column, Board
+from jobs.choices import StatusChoices
+
+logger = logging.getLogger(__name__)
 
 
 @pytest.mark.django_db
@@ -68,3 +73,35 @@ def test_job(custom_user_factory, board_factory, column_factory, jobs_data):
     assert job.column.name == column.name
     assert job.column.position == column.position
     assert job.column.board.name == board.name
+
+
+@pytest.mark.django_db
+def test_job_updated(custom_user_factory, board_factory, column_factory, jobs_data):
+    user = custom_user_factory()
+    board = board_factory(user=user)
+    column = column_factory(board=board)
+    job = Job(user=user, column=column, board=board, **jobs_data)
+
+    job.save()
+
+    original_updated = job.updated
+    statuses = [
+        StatusChoices.APPLIED,
+        StatusChoices.SHORTLISTED,
+        StatusChoices.INTERVIEW,
+        StatusChoices.OFFER,
+        StatusChoices.REJECTED,
+        StatusChoices.CLOSED,
+    ]
+    i = 0
+    for status in statuses:
+        logger.info("status: %s", status)
+        job.status = status
+        job.save()
+        if i > 0:
+            assert original_updated
+            assert job.updated > original_updated
+        else:
+            assert job.updated
+        original_updated = job.updated
+        i += 1

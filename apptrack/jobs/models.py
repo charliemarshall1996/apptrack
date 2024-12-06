@@ -114,6 +114,7 @@ class Job(models.Model):
         # set it to the column's board
         if not self.board and self.column:
             self.board = self.column.board
+            self.board.save()
 
         try:
             if not self.column.board:
@@ -144,10 +145,14 @@ class Job(models.Model):
                     f"Column with position {StatusChoices.get_status_column(self.status)} for board {self.board} does not exist.")
 
         elif self.column:
+            self.board.save()
             self.column.board = self.board
+            self.column.save()
+
+            logger.info("Column name %s, position %s",
+                        self.column.name, self.column.position)
             # Ensure status is updated based on column position
             self.status = StatusChoices.get_column_status(self.column.position)
-            self.column.save()
 
     def _set_applied(self):
         if self.status in StatusChoices.get_applied_statuses():
