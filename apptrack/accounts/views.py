@@ -186,6 +186,8 @@ def custom_login_view(request):
                 return login_non_verified_email(request, email)
         else:
             logger.debug(f"Form is not valid {form.errors}")
+            messages.error(request, "Login form is not valid")
+            return redirect("accounts:login")
     else:
         form = UserLoginForm()
 
