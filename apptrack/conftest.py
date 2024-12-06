@@ -181,13 +181,25 @@ def job_factory(job_data_factory):
     return factory
 
 
-@pytest.fixture()
-def board_factory(custom_user_factory):
-    def factory(user=None, password=None, email_verified=True):
+@pytest.fixture
+def board_data_factory(custom_user_factory):
+    def factory(user=None, password=None, email_verified=True, name=None, no_name=False):
         if not user:
             user = custom_user_factory(
                 password=password, email_verified=email_verified)
-        return Board(user=user)
+
+        if no_name:
+            return {'user': user}
+        return {'user': user, 'name': name or fake.job()}
+    return factory
+
+
+@pytest.fixture()
+def board_factory(board_data_factory):
+    def factory(user=None, password=None, email_verified=True, name=None, no_name=False):
+        data = board_data_factory(
+            user, password, email_verified, name, no_name)
+        return Board(**data)
     return factory
 
 

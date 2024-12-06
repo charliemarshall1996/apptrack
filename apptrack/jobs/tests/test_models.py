@@ -1,12 +1,12 @@
 
 import pytest
 
-from jobs.models import Job, Column
+from jobs.models import Job, Column, Board
 
 
 @pytest.mark.django_db
 def test_board(board_factory):
-    board = board_factory()
+    board = board_factory(no_name=True)
     board.save()
     board_columns = [column.name for column in board.columns.all()]
     assert board.name == "My Job Board"
@@ -17,6 +17,19 @@ def test_board(board_factory):
     assert "Offer" in board_columns
     assert "Rejected" in board_columns
     assert "Closed" in board_columns
+    expected_columns = [
+        ('Open', 1),
+        ('Applied', 2),
+        ('Shortlisted', 3),
+        ('Interview', 4),
+        ('Offer', 5),
+        ('Rejected', 6),
+        ('Closed', 7),
+    ]
+
+    for name, position in expected_columns:
+        assert Column.objects.filter(
+            name=name, position=position, board=board).exists()
 
 
 @pytest.mark.django_db

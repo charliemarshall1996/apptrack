@@ -1,4 +1,6 @@
 
+import logging
+
 from django.contrib.auth import get_user_model
 from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist
@@ -16,6 +18,7 @@ from .choices import (
     SourceChoices,
 )
 
+logger = logging.getLogger(__name__)
 
 User = get_user_model()
 
@@ -28,33 +31,6 @@ class Board(models.Model):
                             blank=True, default="My Job Board")
     user = models.ForeignKey(settings.AUTH_USER_MODEL,
                              on_delete=models.CASCADE, related_name='board')
-
-    def save(self, *args, **kwargs):
-        if not self.name or self.name == 'None':
-            self.name = "My Job Board"
-
-        super().save(*args, **kwargs)
-
-        default_columns = [
-            ('Open', 1),
-            ('Applied', 2),
-            ('Shortlisted', 3),
-            ('Interview', 4),
-            ('Offer', 5),
-            ('Rejected', 6),
-            ('Closed', 7),
-        ]
-
-        for name, position in default_columns:
-            if not Column.objects.filter(name=name, board=self).exists():
-                column = Column(name=name, position=position, board=self)
-                column.save()
-                print(f"Column added: {column.name}")
-
-        if not self.columns.exists():
-            columns_to_add = Column.objects.all()
-            self.columns.add(*columns_to_add)
-            print(f"Columns added: {columns_to_add}")
 
 
 class Column(models.Model):
