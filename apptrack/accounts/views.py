@@ -236,10 +236,6 @@ def verify_email(request, user_id, token):
         messages.success(
             request, 'Your email has been verified. You can now log in.')
         return redirect('accounts:login')
-    else:
-        messages.error(
-            request, 'The verification link is invalid or has expired.')
-        return redirect('accounts:login')
 
 
 def resend_verification_email(request):

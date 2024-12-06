@@ -11,7 +11,6 @@ msg_mngr = MessageManager()
 User = get_user_model()
 
 
-@pytest.mark.skip
 @pytest.mark.django_db
 def test_profile_settings_view(client, profile_factory):
     PASSWORD = "securepassword"
@@ -51,7 +50,6 @@ def test_profile_settings_view(client, profile_factory):
     assert str(messages[0]) == msg_mngr.profile_update_success
 
 
-@pytest.mark.skip
 @pytest.mark.django_db
 def test_profile_settings_view_spam(client, profile_factory):
     PASSWORD = "securepassword"
@@ -91,7 +89,6 @@ def test_profile_settings_view_spam(client, profile_factory):
     assert str(messages[0]) == msg_mngr.spam
 
 
-@pytest.mark.skip
 @pytest.mark.django_db
 def test_profile_settings_view_invalid_profile(client, profile_factory, custom_user_factory):
     PASSWORD = "securepassword"
@@ -120,7 +117,6 @@ def test_profile_settings_view_invalid_profile(client, profile_factory, custom_u
         messages[0]) == "You are not authorized to view or edit this profile."
 
 
-@pytest.mark.skip
 @pytest.mark.django_db
 def test_profile_view(client, profile_factory):
     PASSWORD = "securepassword"
@@ -141,7 +137,6 @@ def test_profile_view(client, profile_factory):
     assert response.context['object'] == profile.user
 
 
-@pytest.mark.skip
 @pytest.mark.django_db
 def test_logout_view(client, profile_factory):
     PASSWORD = "securepassword"
@@ -161,7 +156,6 @@ def test_logout_view(client, profile_factory):
     assert response.url == reverse('home')
 
 
-@pytest.mark.skip
 @pytest.mark.django_db
 def test_custom_login_view(client, profile_factory):
     PASSWORD = "securepassword"
@@ -186,7 +180,6 @@ def test_custom_login_view(client, profile_factory):
     assert response.url == reverse('jobs:board')
 
 
-@pytest.mark.skip
 @pytest.mark.django_db
 def test_custom_login_view_unverified_email(client, profile_factory):
     PASSWORD = "securepassword"
@@ -211,7 +204,6 @@ def test_custom_login_view_unverified_email(client, profile_factory):
     assert str(messages[0]) == MESSAGE
 
 
-@pytest.mark.skip
 @pytest.mark.django_db
 def test_custom_login_view_invalid_credentials(client, profile_factory):
 
@@ -238,7 +230,6 @@ def test_custom_login_view_invalid_credentials(client, profile_factory):
     assert str(messages[0]) == 'Invalid login credentials'
 
 
-@pytest.mark.skip
 @pytest.mark.django_db
 def test_custom_login_view_spam(client, profile_factory):
 
@@ -265,7 +256,6 @@ def test_custom_login_view_spam(client, profile_factory):
     assert str(messages[0]) == msg_mngr.spam
 
 
-@pytest.mark.skip
 @pytest.mark.django_db
 def test_custom_login_view_email_does_not_exist(client, profile_factory):
 
@@ -318,7 +308,6 @@ def test_custom_login_view_invalid_form(client, profile_factory):
     assert str(messages[0]) == "Login form is not valid"
 
 
-@pytest.mark.skip
 @pytest.mark.django_db
 def test_resend_verification_email_view(client, profile_factory):
     PASSWORD = "securepassword"
@@ -347,7 +336,6 @@ def test_resend_verification_email_view(client, profile_factory):
     assert str(messages[0]) == "A verification email has been sent."
 
 
-@pytest.mark.skip
 @pytest.mark.django_db
 def test_resend_verification_email_view_spam(client, profile_factory):
     PASSWORD = "securepassword"
@@ -377,7 +365,6 @@ def test_resend_verification_email_view_spam(client, profile_factory):
     assert str(messages[0]) == msg_mngr.spam
 
 
-@pytest.mark.skip
 @pytest.mark.django_db
 def test_password_reset_view(client, profile_factory):
     PASSWORD = "securepassword"
@@ -406,7 +393,6 @@ def test_password_reset_view(client, profile_factory):
         messages[0]) == msg_mngr.password_reset_success
 
 
-@pytest.mark.skip
 @pytest.mark.django_db
 def test_password_reset_view_spam(client, profile_factory):
 
@@ -436,7 +422,6 @@ def test_password_reset_view_spam(client, profile_factory):
     assert str(messages[0]) == msg_mngr.spam
 
 
-@pytest.mark.skip
 @pytest.mark.django_db
 def test_delete_account_view(client, profile_factory):
     PASSWORD = "securepassword"
@@ -463,7 +448,6 @@ def test_delete_account_view(client, profile_factory):
     assert str(messages[0]) == "Your account has been successfully deleted."
 
 
-@pytest.mark.skip
 @pytest.mark.django_db
 def test_register_view_valid(client, user_registration_form_data):
     email = user_registration_form_data['email']
@@ -482,7 +466,6 @@ def test_register_view_valid(client, user_registration_form_data):
     assert user.profile
 
 
-@pytest.mark.skip
 @pytest.mark.django_db
 def test_register_view_invalid_email(client, user_registration_form_data):
     user_registration_form_data['email'] = "invalid_email"
@@ -501,7 +484,6 @@ def test_register_view_invalid_email(client, user_registration_form_data):
     assert str(messages[0]) == "Please enter a valid email address."
 
 
-@pytest.mark.skip
 @pytest.mark.django_db
 def test_register_view_spam(client, user_registration_form_data):
 
@@ -519,7 +501,6 @@ def test_register_view_spam(client, user_registration_form_data):
     assert str(messages[0]) == msg_mngr.spam
 
 
-@pytest.mark.skip
 @pytest.mark.django_db
 def test_register_view_mismatched_password(client, user_registration_form_data):
     response = client.get(reverse("accounts:register"))
@@ -537,7 +518,6 @@ def test_register_view_mismatched_password(client, user_registration_form_data):
     assert str(messages[0]) == "Please enter a valid password."
 
 
-@pytest.mark.skip
 @pytest.mark.django_db
 def test_register_view_password_too_common(client, user_registration_form_data):
     response = client.get(reverse("accounts:register"))
@@ -556,7 +536,6 @@ def test_register_view_password_too_common(client, user_registration_form_data):
     assert str(messages[0]) == "Please enter a valid password."
 
 
-@pytest.mark.skip
 @pytest.mark.django_db
 def test_email_verification_view(client, custom_user_factory):
     user = custom_user_factory(email_verified=False)
