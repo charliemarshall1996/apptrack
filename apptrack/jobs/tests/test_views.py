@@ -14,7 +14,6 @@ logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO)
 
 
-@pytest.mark.skip
 @pytest.mark.django_db
 def test_board_view(client, profile_factory):
 
@@ -34,7 +33,6 @@ def test_board_view(client, profile_factory):
     assert response.status_code == 200
 
 
-@pytest.mark.skip
 @pytest.mark.django_db
 def test_add_job_view(client, board_factory, profile_factory, jobs_form_data):
     PASSWORD = "securepassword"
@@ -62,7 +60,6 @@ def test_add_job_view(client, board_factory, profile_factory, jobs_form_data):
     assert response.url == reverse('jobs:board')
 
 
-@pytest.mark.skip
 @pytest.mark.django_db
 def test_assign_job_view(client, board_factory, profile_factory, job_form_factory):
     PASSWORD = "securepassword"
@@ -108,7 +105,6 @@ def test_assign_job_view(client, board_factory, profile_factory, job_form_factor
         print(f"JOB COLUMN {job.column.id}\nI1 COLUMN: {columns[1]}")
 
 
-@pytest.mark.skip
 @pytest.mark.django_db
 def test_delete_job_view(client, job_form_factory, profile_factory, board_factory):
     PASSWORD = "securepassword"
@@ -138,7 +134,6 @@ def test_delete_job_view(client, job_form_factory, profile_factory, board_factor
     assert job.DoesNotExist
 
 
-@pytest.mark.skip
 @pytest.mark.django_db
 def test_edit_job_view(client, job_form_factory, profile_factory, board_factory, jobs_form_data):
     PASSWORD = "securepassword"
@@ -177,7 +172,6 @@ def test_edit_job_view(client, job_form_factory, profile_factory, board_factory,
     assert job.note == data["note"]
 
 
-@pytest.mark.skip
 @pytest.mark.django_db
 def test_download_jobs_view(client, profile_factory, job_factory):
     profile = profile_factory()
