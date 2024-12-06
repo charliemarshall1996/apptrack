@@ -2,6 +2,7 @@
 import csv
 import logging
 
+from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.messages.views import SuccessMessageMixin
@@ -38,6 +39,8 @@ def board_view(request):
             job.board = board
             job.user = request.user
             job.save()
+            messages.success(request, "Job added successfully")
+            return redirect('jobs:board')
 
     # Context for rendering the template
     context = {
