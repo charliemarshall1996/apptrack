@@ -21,35 +21,8 @@ logger = logging.getLogger(__name__)
 
 @login_required
 def board_view(request):
-    default_columns = [
-        ('Open', 1),
-        ('Applied', 2),
-        ('Shortlisted', 3),
-        ('Interview', 4),
-        ('Offer', 5),
-        ('Rejected', 6),
-        ('Closed', 7),
-    ]
 
     board = Board.objects.get(user=request.user)
-
-    # Check if required columns exist in the board
-    for column_name, column_position in default_columns:
-
-        try:
-            column, created = Column.objects.get_or_create(
-                name=column_name, board=board, position=column_position)
-
-            # If the column was just created, add it to the board
-            if created:
-                column.save()
-                print(f"Created and added missing column: {column_name}")
-
-        except MultipleObjectsReturned:
-            # Handle case if multiple columns
-            # with the same name exist
-            column = Column.objects.filter(
-                name=column_name, board=board, position=column_position).first()
 
     # Retrieve jobs and columns for the user
     jobs = Job.objects.filter(user=request.user).all()
