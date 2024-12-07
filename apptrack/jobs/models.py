@@ -103,10 +103,16 @@ class Job(models.Model):
 
     def _update_if_changed(self):
         if self.pk:
+            logger.debug("PK exists")
             original = Job.objects.filter(pk=self.pk).first()
-            if original:
+            if not original:
+                logger.debug("Original does not exist")
+                self.updated = timezone.now()
+            else:
+                logger.debug("Original exists")
                 if original.status != self.status \
                         or original.note != self.note:
+                    logger.debug("Status or note has changed")
                     logger.info("Updating job...")
                     self.updated = timezone.now()
 
@@ -155,9 +161,6 @@ class Job(models.Model):
 
     def _set_applied(self):
         logger.info("Setting applied...")
-        logger.debug("Status: %s", self.status)
-        logger.debug("Applied Statuses: %s",
-                     StatusChoices.get_applied_statuses())
         if self.status in StatusChoices.get_applied_statuses():
             logger.info("Job is applied")
             self.applied = True
@@ -166,12 +169,10 @@ class Job(models.Model):
             self.applied = False
 
     def save(self, *args, **kwargs):
+        self._manage_columns_and_boards()
+        # Call the parent's save method to persist the object
 
         self._update_if_changed()
 
-        self._manage_columns_and_boards()
-
         self._set_applied()
-
-        # Call the parent's save method to persist the object
         super().save(*args, **kwargs)
