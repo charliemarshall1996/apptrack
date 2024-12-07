@@ -7,6 +7,6 @@ class ContactForm(forms.Form):
     honeypot = forms.CharField(required=False, widget=forms.HiddenInput)
     first_name = forms.CharField(required=True)
     last_name = forms.CharField(required=True)
-    email = forms.CharField(validators=[EmailValidator()])
-    phone = forms.CharField(max_length=15)
+    email = forms.CharField(validators=[EmailValidator()], required=True)
+    phone = forms.CharField(max_length=25)
     message = forms.CharField(widget=forms.Textarea)

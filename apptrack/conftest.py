@@ -247,3 +247,16 @@ def reminder_data_factory(custom_user_factory):
                 'read': read
                 }
     return factory
+
+
+@pytest.fixture()
+def contact_form_data_factory():
+    def factory(honeypot=''):
+        return {'honeypot': honeypot,
+                'first_name': fake.file_name(),
+                'last_name': fake.file_name(),
+                'email': fake.email(),
+                'phone': fake.phone_number(),
+                'message': fake.text()
+                }
+    return factory

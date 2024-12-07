@@ -104,10 +104,11 @@ class Job(models.Model):
     def _update_if_changed(self):
         if self.pk:
             original = Job.objects.filter(pk=self.pk).first()
-            if (original and original.status != self.status) \
-                    or (original and original.note != self.note):
-                logger.info("Updating job...")
-                self.updated = timezone.now()
+            if original:
+                if original.status != self.status \
+                        or original.note != self.note:
+                    logger.info("Updating job...")
+                    self.updated = timezone.now()
 
     def _manage_columns_and_boards(self):
         logger.info("Managing columns and boards...")
