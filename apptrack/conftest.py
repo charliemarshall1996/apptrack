@@ -280,3 +280,24 @@ def blog_post_factory(blog_post_data_factory):
         data = blog_post_data_factory()
         return BlogPost(**data)
     return factory
+
+
+@pytest.fixture()
+def interview_data_factory(job_factory, custom_user_factory):
+    def factory():
+        user = custom_user_factory()
+        job = job_factory(user)
+        return {'user': user,
+                'job': job,
+                'interview_round': random.randint(1, 5),
+                'start_date': fake.date_time(),
+                'end_date': fake.date_time(),
+                'post_code': fake.postcode(),
+                'building': fake.building_number(),
+                'street': fake.street_name(),
+                'town': fake.city(),
+                'region': fake.state(),
+                'country': random.choice(COUNTRIES),
+                'notes': fake.text()
+                }
+    return factory

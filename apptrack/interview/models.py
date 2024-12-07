@@ -12,10 +12,12 @@ class InterviewTask(Task):
 
 class Interview(models.Model):
     interview_round = models.IntegerField(default=1)
+
     job = models.ForeignKey(
         'jobs.Job', on_delete=models.CASCADE, related_name='interviews')
     user = models.ForeignKey(settings.AUTH_USER_MODEL,
                              on_delete=models.CASCADE)
+
     start_date = models.DateTimeField()
     end_date = models.DateTimeField()
     post_code = models.CharField(max_length=10, blank=True, null=True)
