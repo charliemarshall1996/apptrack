@@ -260,3 +260,14 @@ def contact_form_data_factory():
                 'message': fake.text()
                 }
     return factory
+
+
+@pytest.fixture()
+def blog_post_data_factory():
+    def factory(honeypot=''):
+        return {'title': fake.text(50),
+                'content': fake.text(),
+                'summary': fake.text(),
+                'published': fake.date_time()
+                }
+    return factory
