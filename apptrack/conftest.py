@@ -20,6 +20,7 @@ from jobs.choices import (
     SourceChoices,
 )
 from jobs.models import Job, Board, Column
+from blog.models import BlogPost
 
 UserModel = get_user_model()
 
@@ -264,10 +265,18 @@ def contact_form_data_factory():
 
 @pytest.fixture()
 def blog_post_data_factory():
-    def factory(honeypot=''):
+    def factory():
         return {'title': fake.text(50),
                 'content': fake.text(),
                 'summary': fake.text(),
                 'published': fake.date_time()
                 }
+    return factory
+
+
+@pytest.fixture()
+def blog_post_factory(blog_post_data_factory):
+    def factory():
+        data = blog_post_data_factory()
+        return BlogPost(**data)
     return factory
