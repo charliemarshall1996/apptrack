@@ -21,6 +21,7 @@ from jobs.choices import (
 )
 from jobs.models import Job, Board, Column
 from blog.models import BlogPost
+from interview.models import Interview
 
 UserModel = get_user_model()
 
@@ -300,4 +301,22 @@ def interview_data_factory(job_factory, custom_user_factory):
                 'country': random.choice(COUNTRIES),
                 'notes': fake.text()
                 }
+    return factory
+
+
+@pytest.fixture
+def interview_factory(interview_data_factory):
+    def factory():
+        data = interview_data_factory()
+        return Interview(**data)
+    return factory
+
+
+@pytest.fixture
+def interview_task_data_factory(interview_factory, task_data_factory):
+    def factory():
+        interview = interview_factory()
+        data = task_data_factory()
+        data['interview'] = interview
+        return data
     return factory
