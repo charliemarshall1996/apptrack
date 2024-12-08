@@ -108,3 +108,7 @@ a.display-5 {
   --bs-btn-disabled-border-color: #1F3B57;
   --bs-gradient: none;
 }
+
+.modal-dialog {
+  --bs-modal-width: 75%;
+}

@@ -8,9 +8,10 @@ class JobForm(forms.ModelForm):
     class Meta:
         model = Job
         fields = ['company',
+                  'is_recruiter',
                   'job_title',
                   'job_function',
-                  'town',
+                  'city',
                   'region',
                   'country',
                   'source',
@@ -22,6 +23,9 @@ class JobForm(forms.ModelForm):
                   'pay_rate', 'currency',
                   'note',
                   'status']
+
+        widgets = {
+            'is_recruiter': forms.CheckboxInput()}
 
     def save(self, *args, **kwargs):
         return super().save(*args, commit=False, **kwargs)

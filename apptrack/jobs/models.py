@@ -68,7 +68,7 @@ class Job(models.Model):
 
     job_title = models.CharField(max_length=100, blank=True, null=True)
     job_function = models.CharField(
-        max_length=2, choices=JobFunctionChoices.choices(), null=True, blank=True)
+        max_length=4, choices=JobFunctionChoices.choices(), null=True, blank=True)
     description = models.TextField(blank=True, null=True)
 
     company = models.CharField(max_length=100, null=True, blank=True)
@@ -86,13 +86,12 @@ class Job(models.Model):
     currency = models.CharField(
         max_length=3, null=True, blank=True, choices=CurrencyChoices.choices())
 
-    town = models.CharField(max_length=100, null=True, blank=True)
+    city = models.CharField(max_length=100, null=True, blank=True)
     region = models.CharField(max_length=100, null=True, blank=True)
     country = models.CharField(
         max_length=2, choices=CountryChoices.choices(), null=True, blank=True)
 
     note = models.TextField(null=True, blank=True)
-    print(StatusChoices.choices())
     status = models.CharField(
         max_length=2, choices=StatusChoices.choices(), default=StatusChoices.default())
 
