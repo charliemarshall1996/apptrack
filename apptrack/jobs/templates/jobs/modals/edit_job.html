@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+
+{% load crispy_forms_tags %}
+
+{% for key, val in edit_forms.items %}
+    {% for job in jobs %}
+        {% if key == job.id %}
+            <div class="modal fade" id="editJobModal{{ job.id }}" tabindex="-1" aria-labelledby="editJobModalLabel{{ job.id }}" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <p class="modal-title" id="editJobModalLabel{{ job.id }}">Edit Job</p>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <form method="POST" id="editJobForm{{ job.id }}" action="{% url 'jobs:edit_job' job.id %}">
+                                {% csrf_token %}
+                                {{ val|crispy }}
+                                <button type="submit" class="btn btn-primary">Submit</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+    
+    {% endfor %}
+{% endfor %}

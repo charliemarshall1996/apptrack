@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-
+{% load static %}
 {% for job in jobs %}
     <div class="modal fade" id="jobDetailModal{{ job.id }}" tabindex="-1" aria-labelledby="jobDetailModalLabel{{ job.id }}" aria-hidden="true">
         <div class="modal-dialog">
@@ -46,8 +46,8 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <a href="{% url 'jobs:edit_job' job.id %}" class="btn btn-primary">Edit</a>
-                    <a href="#" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#jobDeleteConfirm{{ job.id }}">Delete</a>
+                    <a class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#editJobModal{{ job.id }}">Edit</a>
+                    <a class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#jobDeleteConfirm{{ job.id }}">Delete</a>
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
 
                     {% if job.url and job.url != '' %}
@@ -57,4 +57,5 @@
             </div>
         </div>
     </div>
+<script src="{% static 'jobs/scripts/edit_job.js' %}"></script>
 {% endfor %}

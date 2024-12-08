@@ -6,8 +6,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.messages.views import SuccessMessageMixin
-from django.core.exceptions import MultipleObjectsReturned
-from django.shortcuts import render, redirect, HttpResponse
+from django.shortcuts import render, redirect, HttpResponse, get_object_or_404
 from django.views.generic import View
 from django.views.generic.edit import UpdateView
 from django.urls import reverse, reverse_lazy
@@ -29,7 +28,7 @@ def board_view(request):
     jobs = Job.objects.filter(user=request.user).all()
     columns = board.columns.all()
     job_form = JobForm()
-
+    edit_forms = {job.id: JobForm(instance=job) for job in jobs}
     # Handle form submissions
     if request.method == "POST":
         job_form = JobForm(request.POST)
@@ -48,6 +47,7 @@ def board_view(request):
         'columns': columns,
         'jobs': jobs,
         'job_form': job_form,
+        'edit_forms': edit_forms
     }
 
     return render(request, 'jobs/jobs_kanban.html', context)
@@ -117,11 +117,16 @@ class DeleteJobView(LoginRequiredMixin, SuccessMessageMixin, View):
 
 class EditJobView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
     model = Job
-    template_name = "jobs/edit_job.html"
+    template_name = "jobs/jobs_kanban.html"
     success_url = reverse_lazy("jobs:board")
     success_message = "Job updated successfully"
     fields = ['job_title', 'job_function', 'url', 'description', 'company',
               'location_policy', 'min_pay', 'max_pay', 'pay_rate', 'currency',  'note']
+
+    def get_object(self):
+        # Custom logic to retrieve the object
+        obj = get_object_or_404(self.model, pk=self.kwargs['pk'])
+        return obj
 
 
 @login_required
