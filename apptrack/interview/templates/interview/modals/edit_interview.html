@@ -16,10 +16,8 @@
                     </div>
                     <div class="modal-body">
                         {% load crispy_forms_tags %}
-                        <form method="POST" id="editInterviewForm">
+                        <form method="POST" id="editInterviewForm" action="{% url 'interview:edit_interview' interview.id %}">
                             {% csrf_token %}
-                            <input type="hidden" name="form_type" value="edit">
-                            <input type="hidden" name="interview_id" value="{{interview.id}}">
                             {{ val|crispy }}
 
                             <h5>Reminders</h5>

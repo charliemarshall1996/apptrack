@@ -60,7 +60,7 @@ document.addEventListener('DOMContentLoaded', function () {
         // Serialize Reminders as a JSON string
         const hiddenInput = document.createElement('input');
         hiddenInput.type = 'hidden';
-        hiddenInput.name = 'Reminders';
+        hiddenInput.name = 'reminders';
         hiddenInput.value = JSON.stringify(reminders); // Convert Reminders array to JSON string
         addInterviewForm.appendChild(hiddenInput);
     });

@@ -62,7 +62,8 @@ class Interviewer(models.Model):
 
 
 class InterviewReminder(Reminder):
-    interview = models.ForeignKey(Interview, on_delete=models.CASCADE)
+    interview = models.ForeignKey(
+        Interview, on_delete=models.CASCADE, related_name='reminders')
 
     @property
     def message(self):

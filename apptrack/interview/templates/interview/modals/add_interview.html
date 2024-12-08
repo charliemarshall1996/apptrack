@@ -2,7 +2,7 @@
 
 {% load static %}
 
-    <div class="modal fade" id="addInterview{{ interview.id }}" tabindex="-1" aria-labelledby="addInterviewLabel" aria-hidden="true">
+    <div class="modal fade" id="addInterview" tabindex="-1" aria-labelledby="addInterviewLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
@@ -11,9 +11,8 @@
                 </div>
                 <div class="modal-body">
                     {% load crispy_forms_tags %}
-                    <form method="POST" id="addInterviewForm">
+                    <form method="POST" id="addInterviewForm" action="{% url 'interview:add_interview' %}">
                         {% csrf_token %}
-                        <input type="hidden" name="form_type" value="add">
                         {{ add_form|crispy }}
 
                         <h5>Reminders</h5>
