@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+
+<div class="modal fade" id="addInterview" tabindex="-1" aria-labelledby="addInterviewLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <p class="modal-title" id="addInterviewLabel">Add Interview</p>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                {% load crispy_forms_tags %}
+                <form method="POST" id="addInterviewForm">
+                    {% csrf_token %}
+                    <input type="hidden" name="form_type" value="add">
+                    {{ add_form|crispy }}
+
+                    <h5>Alerts</h5>
+                    <ul class="list-group" id="alertList">
+                        <!-- Alerts will be dynamically populated here -->
+                        <li class="list-group-item text-center" id="addAlertAction">
+                            <button type="button" class="btn btn-link" data-bs-toggle="modal" data-bs-target="#addAlertModal">
+                                + Add Alert
+                            </button>
+                        </li>
+                    </ul>
+
+                    <button type="submit" class="btn btn-primary mt-3">Submit</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

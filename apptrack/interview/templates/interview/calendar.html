@@ -23,83 +23,9 @@
 </div>
 
 
-<div class="modal fade" id="addInterview" tabindex="-1" aria-labelledby="addInterviewLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <p class="modal-title" id="addInterviewLabel">Add Interview</p>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                {% load crispy_forms_tags %}
-                <form method="POST" id="addInterviewForm">
-                    {% csrf_token %}
-                    <input type="hidden" name="form_type" value="add">
-                    {{ add_form|crispy }}
-
-                    <h5>Alerts</h5>
-                    <ul class="list-group" id="alertList">
-                        <!-- Alerts will be dynamically populated here -->
-                        <li class="list-group-item text-center" id="addAlertAction">
-                            <button type="button" class="btn btn-link" data-bs-toggle="modal" data-bs-target="#addAlertModal">
-                                + Add Alert
-                            </button>
-                        </li>
-                    </ul>
-
-                    <button type="submit" class="btn btn-primary mt-3">Submit</button>
-                </form>
-            </div>
-        </div>
-    </div>
-</div>
-
-<div class="modal fade" id="addAlertModal" tabindex="-1" aria-labelledby="addAlertModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <p class="modal-title" id="addAlertModalLabel">Add Alert</p>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <form id="addAlertForm">
-                    {{ add_alert_form|crispy }}
-                    <button type="button" class="btn btn-primary" id="saveAlert">Save Alert</button>
-                </form>
-            </div>
-        </div>
-    </div>
-</div>
-
-
-<div class="modal fade" id="viewInterview" tabindex="-1" aria-labelledby="viewInterviewLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <p class="modal-title" id="viewInterviewLabel">Add Interview</p>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <div class="modal-body-content">
-
-                </div>
-                <div class="row">
-                    <div class="col">
-                        <h5>Tasks</h5>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col">
-                        <div class="list-group">
-
-                        </div>
-                    </div>
-                </div>
-                
-            </div>
-        </div>
-    </div>
-</div>
+{% include 'interview/modals/add_interview.html' %}
+{% include 'interview/modals/add_alert.html' %}
+{% include 'interview/modals/view_interview.html' %}
 
 
 <!-- FullCalendar JS -->
