@@ -1,7 +1,7 @@
 
 from typing import Any
 from django import forms
-from .models import Interview, InterviewTask
+from .models import Interview, InterviewTask, InterviewReminder
 
 
 class AddInterviewForm(forms.ModelForm):
@@ -16,6 +16,12 @@ class AddInterviewForm(forms.ModelForm):
 
     def save(self) -> Any:
         return super().save(commit=False)
+
+
+class AddReminderForm(forms.ModelForm):
+    class Meta:
+        model = InterviewReminder
+        fields = ['offset', 'unit']
 
 
 class TaskForm(forms.ModelForm):

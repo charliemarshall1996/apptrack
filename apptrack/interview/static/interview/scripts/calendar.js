@@ -24,6 +24,7 @@ document.addEventListener('DOMContentLoaded', function() {
 					// Populate the modal with interview data
 					document.getElementById('viewInterviewLabel').textContent = `Interview Details for ${data.title}`;
 					var modalBodyContent = document.querySelector('#viewInterview .modal-body-content');
+					var modalFooter = document.querySelector("#viewInterview .modal-footer");
 					var taskList = document.querySelector('#viewInterview .list-group');
 
 					
@@ -36,6 +37,8 @@ document.addEventListener('DOMContentLoaded', function() {
 					modalBodyContent.innerHTML += `<div class="row"><div class="col"><p><strong>Start Time:</strong> ${data.start_time}</p></div><div class="col"><p><strong>End Time:</strong> ${data.end_time}</p></div></div>`;
 					modalBodyContent.innerHTML += `<div class="row"><div class="col"><p><strong>Notes:</strong> ${data.notes}</p></div></div>`;
 					
+					modalFooter.innerHTML = "";
+					modalFooter.innerHTML += `<div class="row"><div class="col"><button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#editInterview${data.id}">Edit</button></div>`;
 					// Show the modal
 					
 					taskList.innerHTML = '';

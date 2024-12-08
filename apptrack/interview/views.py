@@ -4,9 +4,10 @@ import json
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from django.shortcuts import render, redirect
+from django.views.decorators.http import require_POST
 
 from .models import Interview, InterviewTask
-from .forms import AddInterviewForm
+from .forms import AddInterviewForm, AddReminderForm
 
 # Create your views here.
 
@@ -45,6 +46,8 @@ def calendar(request):
             print(f"invalid form type {form_type}")
 
     add_form = AddInterviewForm()
+
+    add_reminder_form = AddReminderForm()
     # Handle GET requests or invalid POST submissions
     all_interviews = Interview.objects.filter(user=request.user)
     interviews = []
@@ -57,14 +60,20 @@ def calendar(request):
         }
         interviews.append(interview_data)
 
+    edit_forms = {i.id: AddInterviewForm(instance=i) for i in all_interviews}
+
     context = {
         "add_form": add_form,
+        "add_reminder_form": add_reminder_form,
         "interviews": json.dumps(interviews),
+        "all_interviews": all_interviews,
+        "edit_forms": edit_forms
     }
     return render(request, 'interview/calendar.html', context)
 
 
 @login_required
+@require_POST
 def add_interview(request):
     if request.method == "POST":
         form = AddInterviewForm(request.POST)
@@ -73,12 +82,6 @@ def add_interview(request):
             interview.user = request.user
             interview.save()
             return redirect("interview:calendar")
-    else:
-        form = AddInterviewForm()
-
-    return render(request, "interview/calendar.html", {"form": form})
-
-# views.py
 
 
 def interview_event_detail(request, interview_id):
@@ -90,6 +93,7 @@ def interview_event_detail(request, interview_id):
                            for task in interview.tasks.all()]
         # Return interview data as JSON
         response_data = {
+            'id': interview.id,
             'title': interview.job.job_title,
             'company': interview.job.company,
             # Just the date part (YYYY-MM-DD)

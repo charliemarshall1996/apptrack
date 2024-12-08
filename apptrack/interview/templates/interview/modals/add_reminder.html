@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+{% load static %}
+<div class="modal fade" id="addReminderModal" tabindex="-1" aria-labelledby="addReminderModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <p class="modal-title" id="addReminderModalLabel">Add Reminder</p>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                {% load crispy_forms_tags %}
+                <form id="addReminderForm">
+                    {{ add_reminder_form|crispy }}
+                    <button type="button" class="btn btn-primary" id="saveReminder">Save Reminder</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="{% static 'interview/scripts/interviewReminder.js' %}" defer></script>
