@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+
+{% for job in jobs %}
+    <div class="modal fade" id="jobDetailModal{{ job.id }}" tabindex="-1" aria-labelledby="jobDetailModalLabel{{ job.id }}" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col">
+                            <div class="list-group list-group-flush">
+                                <p>Job Details</p>
+                                <p class="list-group-item"><strong>Job Title:</strong> {{ job.job_title }}</p>
+                                <p class="list-group-item"><strong>Job Function:</strong> {{ job.get_job_function_display }}</p>
+                                <p class="list-group-item"><strong>Location Policy:</strong> {{ job.get_location_policy_display }}</p>
+                                <p class="list-group-item"><strong>Job Description:</strong> {{ job.job_description }}</p>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="list-group list-group-flush">
+                                <p>Job Location</p>
+                                <p class="list-group-item"><strong>City:</strong> {{ job.town }}</p>
+                                <p class="list-group-item"><strong>Region:</strong> {{ job.region }}</p>
+                                <p class="list-group-item"><strong>Country:</strong> {{ job.get_country_display }}</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <div class="list-group list-group-flush">
+                                <p>Company Details</p>
+                                <p class="list-group-item"><strong>Company:</strong> {{ job.company }}</p>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="list-group list-group-flush me-auto">
+                                <p>Pay Details</p>
+                                <p class="list-group-item"><strong>Minimum Pay:</strong> {{ job.min_pay }}</p>
+                                <p class="list-group-item"><strong>Maximum Pay:</strong> {{ job.max_pay }}</p>
+                                <p class="list-group-item"><strong>Pay Rate:</strong> {{ job.get_pay_rate_display }}</p>
+                                <p class="list-group-item"><strong>Pay Currency:</strong> {{ job.get_pay_currency_display }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <a href="{% url 'jobs:edit_job' job.id %}" class="btn btn-primary">Edit</a>
+                    <a href="#" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#jobDeleteConfirm{{ job.id }}">Delete</a>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+
+                    {% if job.url and job.url != '' %}
+                        <a href="{{ job.url }}" target="_blank" class="btn btn-primary">Apply</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+{% endfor %}
