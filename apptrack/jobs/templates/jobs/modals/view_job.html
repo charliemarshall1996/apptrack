@@ -10,37 +10,121 @@
                 <div class="modal-body">
                     <div class="row">
                         <div class="col">
-                            <div class="list-group list-group-flush">
-                                <p>Job Details</p>
-                                <p class="list-group-item"><strong>Job Title:</strong> {{ job.job_title }}</p>
-                                <p class="list-group-item"><strong>Job Function:</strong> {{ job.get_job_function_display }}</p>
-                                <p class="list-group-item"><strong>Location Policy:</strong> {{ job.get_location_policy_display }}</p>
-                                <p class="list-group-item"><strong>Job Description:</strong> {{ job.job_description }}</p>
-                            </div>
+                            <h5>Company</h5>
                         </div>
                         <div class="col">
-                            <div class="list-group list-group-flush">
-                                <p>Job Location</p>
-                                <p class="list-group-item"><strong>City:</strong> {{ job.town }}</p>
-                                <p class="list-group-item"><strong>Region:</strong> {{ job.region }}</p>
-                                <p class="list-group-item"><strong>Country:</strong> {{ job.get_country_display }}</p>
-                            </div>
+                            <h5>Job</h5>
                         </div>
                     </div>
                     <div class="row">
                         <div class="col">
-                            <div class="list-group list-group-flush">
-                                <p>Company Details</p>
-                                <p class="list-group-item"><strong>Company:</strong> {{ job.company }}</p>
+                            <div class="row">
+                                <div class="col">
+                                    <strong>Company:</strong> {{ job.company }}
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col">
+                                    <strong>Recruiter:</strong> {{ job.is_recruiter }}
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col">
+                                    <strong>City:</strong> {{ job.city }}
+                                </div>
+                                <div class="col">
+                                    <strong>Region:</strong> {{ job.region }}
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col">
+                                    <strong>Country:</strong> {{ job.get_country_display }}
+                                </div>
                             </div>
                         </div>
                         <div class="col">
-                            <div class="list-group list-group-flush me-auto">
-                                <p>Pay Details</p>
-                                <p class="list-group-item"><strong>Minimum Pay:</strong> {{ job.min_pay }}</p>
-                                <p class="list-group-item"><strong>Maximum Pay:</strong> {{ job.max_pay }}</p>
-                                <p class="list-group-item"><strong>Pay Rate:</strong> {{ job.get_pay_rate_display }}</p>
-                                <p class="list-group-item"><strong>Pay Currency:</strong> {{ job.get_pay_currency_display }}</p>
+                            <div class="row">
+                                <div class="col-8">
+                                    <strong>Job Title:</strong> {{ job.job_title }}
+                                </div>
+                                <div class="col-4">
+                                    <strong>Job Function:</strong> {{ job.get_job_function_display }}
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col">
+                                    <strong>Description:</strong> {{ job.description }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col">
+                            <h5>Pay</h5>
+                        </div>
+                        <div class="col">
+                            <h5>Contract</h5>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col">
+                            <div class="row">
+                                <div class="col">
+                                    <strong>Min Pay:</strong> {{ job.min_pay }}
+                                </div>
+                                <div class="col">
+                                    <strong>Max Pay:</strong> {{ job.max_pay }}
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col">
+                                    <strong>Pay Rate:</strong> {{ job.pay_rate }}
+                                </div>
+                                <div class="col">
+                                    <strong>Currency:</strong> {{ job.currency }}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="row">
+                                <div class="col">
+                                    <strong>Work Contract:</strong> {{ job.work_contract }}
+                                </div>
+                                <div class="col">
+                                    <strong>Location Policy:</strong> {{ job.location_policy }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col">
+                            <h5>Application Info</h5>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col">
+                            <strong>Note:</strong> {{ job.note }}
+                        </div>
+                        <div class="col">
+                            <div class="row">
+                                <div class="col">
+                                    <strong>Status:</strong> {{ job.get_status_display }}
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col">
+                                    <strong>URL:</strong> {{ job.url }}
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col">
+                                    <strong>Source:</strong> {{ job.get_source_display }}
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -57,5 +141,5 @@
             </div>
         </div>
     </div>
-<script src="{% static 'jobs/scripts/edit_job.js' %}"></script>
+
 {% endfor %}

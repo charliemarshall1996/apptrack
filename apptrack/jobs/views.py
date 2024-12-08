@@ -76,10 +76,6 @@ def add_job_view(request):
 class AssignJobView(LoginRequiredMixin, View):
 
     @staticmethod
-    def get(request, *args, **kwargs):
-        return render(request, 'jobs/jobs_kanban.html')
-
-    @staticmethod
     def post(request, *args, **kwargs):
         col_id = kwargs['col_id']
         job_id = kwargs['job_id']
@@ -97,7 +93,7 @@ class AssignJobView(LoginRequiredMixin, View):
         except Exception as e:
             print(f"Error: {e}")
 
-        return redirect(reverse('jobs:board'))
+        return redirect('jobs:board')
 
 
 class DeleteJobView(LoginRequiredMixin, SuccessMessageMixin, View):

@@ -65,7 +65,6 @@ const insertAboveTask = (zone, mouseY) => {
 };
 
 function get_assign(task_id, emp_id){
-    get_request(emp_id, task_id)
     post_request(emp_id, task_id);
 }
 
@@ -81,28 +80,19 @@ $.ajaxSetup({
   }
 });
 
-function get_request(emp_id, task_id){
-    $.ajax({
-      type: 'GET',
-      url: `/jobs/job-assign/${emp_id}/${task_id}/`,
-      failure: function(data){
-        console.log('failure');
-        console.log(data);
-      },
-    });
-  }
 
-  function post_request(emp_id, task_id){
-    $.ajax({
-      type: 'POST',
-      url: `/jobs/job-assign/${emp_id}/${task_id}/`,
-      success: function(data) {
-        console.log('Post successful', data);
-      },
-      error: function(xhr, status, error) {
-        console.log('Error:', error);
-        console.log('XHR:', xhr);
-        console.log('Status:', status);
-      }
-    });
+function post_request(emp_id, task_id){
+  $.ajax({
+    type: 'POST',
+    url: `/jobs/job-assign/${emp_id}/${task_id}/`,
+    success: function(data) {
+      window.location.reload();
+      console.log('Post successful', data);
+    },
+    error: function(xhr, status, error) {
+      console.log('Error:', error);
+      console.log('XHR:', xhr);
+      console.log('Status:', status);
+    }
+  });
 }

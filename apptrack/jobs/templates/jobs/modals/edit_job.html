@@ -9,13 +9,132 @@
                 <div class="modal-dialog">
                     <div class="modal-content">
                         <div class="modal-header">
-                            <p class="modal-title" id="editJobModalLabel{{ job.id }}">Edit Job</p>
+                            <h4 class="modal-title" id="editJobModalLabel{{ job.id }}">Edit Job</h4>
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
                         <div class="modal-body">
                             <form method="POST" id="editJobForm{{ job.id }}" action="{% url 'jobs:edit_job' job.id %}">
                                 {% csrf_token %}
-                                {{ val|crispy }}
+                                <div class="row">
+                                    <div class="col">
+                                        <h5>Company</h5>
+                                    </div>
+                                    <div class="col">
+                                        <h5>Job</h5>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col">
+                                        <div class="row">
+                                            <div class="col">
+                                                {{ val.company|as_crispy_field }}
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col">
+                                                {{ val.is_recruiter|as_crispy_field }}
+                                            </div>
+                                        </div>
+            
+                                        <div class="row">
+                                            <div class="col">
+                                                {{ val.city|as_crispy_field }}
+                                            </div>
+                                            <div class="col">
+                                                {{ val.region|as_crispy_field }}
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col">
+                                                {{ val.country|as_crispy_field }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col">
+                                        <div class="row">
+                                            <div class="col-8">
+                                                {{ val.job_title|as_crispy_field }}
+                                            </div>
+                                            <div class="col-4">
+                                                {{ val.job_function|as_crispy_field }}
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col">
+                                                {{ val.description|as_crispy_field }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+            
+                                <div class="row">
+                                    <div class="col">
+                                        <h5>Pay</h5>
+                                    </div>
+                                    <div class="col">
+                                        <h5>Contract</h5>
+                                    </div>
+                                </div>
+            
+                                <div class="row">
+                                    <div class="col">
+                                        <div class="row">
+                                            <div class="col">
+                                                {{ val.min_pay|as_crispy_field }}
+                                            </div>
+                                            <div class="col">
+                                                {{ val.max_pay|as_crispy_field }}
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col">
+                                                {{ val.pay_rate|as_crispy_field }}
+                                            </div>
+                                            <div class="col">
+                                                {{ val.currency|as_crispy_field }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col">
+                                        <div class="row">
+                                            <div class="col">
+                                                {{ val.work_contract|as_crispy_field }}
+                                            </div>
+                                            <div class="col">
+                                                {{ val.location_policy|as_crispy_field }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+            
+                                <div class="row">
+                                    <div class="col">
+                                        <h5>Application Info</h5>
+                                    </div>
+                                </div>
+            
+                                <div class="row">
+                                    <div class="col">
+                                        {{ val.note|as_crispy_field }}
+                                    </div>
+                                    <div class="col">
+                                        <div class="row">
+                                            <div class="col">
+                                                {{ val.status|as_crispy_field }}
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col">
+                                                {{ val.url|as_crispy_field }}
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col">
+                                                {{ val.source|as_crispy_field }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                                 <button type="submit" class="btn btn-primary">Submit</button>
                             </form>
                         </div>
