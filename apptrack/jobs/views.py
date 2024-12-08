@@ -7,11 +7,12 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.messages.views import SuccessMessageMixin
 from django.shortcuts import render, redirect, HttpResponse, get_object_or_404
-from django.views.generic import View
+from django.views.decorators.http import require_POST
+from django.views.generic import View, ListView
 from django.views.generic.edit import UpdateView
 from django.urls import reverse, reverse_lazy
 
-from .forms import JobForm, DownloadJobsForm
+from .forms import JobForm, DownloadJobsForm, JobFilterForm
 from .models import Job, Board, Column
 
 logger = logging.getLogger(__name__)
@@ -54,8 +55,10 @@ def board_view(request):
 
 
 @login_required
+@require_POST
 def add_job_view(request):
     board = Board.objects.filter(user=request.user).first()
+    referer_url = request.META.get('HTTP_REFERER', '/')
     if request.method == 'POST':
         form = JobForm(request.POST)
         if form.is_valid():
@@ -63,14 +66,7 @@ def add_job_view(request):
             job.board = board
             job.user = request.user
             job.save()
-            return redirect('jobs:board')
-    else:
-        form = JobForm()
-
-    context = {
-        'job_form': form
-    }
-    return render(request, 'jobs/jobs_kanban.html', context)
+            return redirect(referer_url)
 
 
 class AssignJobView(LoginRequiredMixin, View):
@@ -155,3 +151,55 @@ def download_jobs_view(request):
                         job.url, job.get_status_display(), job.updated])
 
     return response
+
+
+class JobListView(LoginRequiredMixin, ListView):
+    model = Job
+    template_name = 'jobs/list.html'
+    context_object_name = 'jobs'
+    paginate_by = 10
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        queryset = queryset.filter(user=self.request.user)
+        form = JobFilterForm(self.request.GET)
+
+        if form.is_valid():
+            statuses = form.cleaned_data.get('status')
+            title = form.cleaned_data.get('title')
+            job_functions = form.cleaned_data.get('job_function')
+            company = form.cleaned_data.get('company')
+            city = form.cleaned_data.get('city')
+            region = form.cleaned_data.get('region')
+            countries = form.cleaned_data.get('countries')
+            location = form.cleaned_data.get('location')
+            date_posted = form.cleaned_data.get('date_posted')
+
+            if statuses:
+                queryset = queryset.filter(status__in=statuses)
+            if title:
+                queryset = queryset.filter(job_title__icontains=title)
+            if job_functions:
+                queryset = queryset.filter(job_function__in=job_functions)
+            if company:
+                queryset = queryset.filter(company__icontains=company)
+            if city:
+                queryset = queryset.filter(city__icontains=city)
+            if region:
+                queryset = queryset.filter(region__icontains=region)
+            if countries:
+                queryset = queryset.filter(country__in=countries)
+
+            if location:
+                queryset = queryset.filter(location__icontains=location)
+            if date_posted:
+                queryset = queryset.filter(date_posted__gte=date_posted)
+
+        return queryset
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['filter_form'] = JobFilterForm(
+            self.request.GET)  # Pass form to template
+        context['job_form'] = JobForm()
+        return context

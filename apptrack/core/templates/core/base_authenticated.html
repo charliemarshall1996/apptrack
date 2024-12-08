@@ -45,7 +45,10 @@
             <a class="nav-link {% if request.path == '/jobs/board/' %}active{% endif %}" href="{% url 'jobs:board' %}">Board</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link {% if request.path == 'interview:calendar' %}active{% endif %}" href="{% url 'interview:calendar' %}">Interview Calendar</a>
+            <a class="nav-link {% if request.path == 'jobs:list/' %}active{% endif %}" href="{% url 'jobs:list' %}">List</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link {% if request.path == '/interview/calendar/' %}active{% endif %}" href="{% url 'interview:calendar' %}">Interview Calendar</a>
           </li>
           <li class="nav-item">
             <a class="nav-link {% if request.path == '/jobs/download/' %}active{% endif %}" href="{% url 'jobs:download' %}">Download Report</a>
@@ -64,7 +67,7 @@
 
   <!-- Content -->
   {% include 'core/messages.html' %}
-  <div class="container align-content-center" id="content">
+  <div class="container" id="content">
     {% block content %}
     {% endblock %}
   </div>
