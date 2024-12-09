@@ -1,7 +1,7 @@
 from django.db import models
 from django.conf import settings
 
-from core.models import Task, Reminder
+from core.models import Task, Reminder, Country
 # Create your models here.
 
 
@@ -23,10 +23,11 @@ class Interview(models.Model):
     post_code = models.CharField(max_length=10, blank=True, null=True)
     building = models.CharField(max_length=20, blank=True, null=True)
     street = models.CharField(max_length=20, blank=True, null=True)
-    town = models.CharField(max_length=20, blank=True, null=True)
+    city = models.CharField(max_length=20, blank=True, null=True)
     region = models.CharField(max_length=20, blank=True, null=True)
     meeting_url = models.URLField(blank=True, null=True)
-    country = models.CharField(max_length=20)
+    country = models.ForeignKey(
+        Country, on_delete=models.SET_NULL, null=True, blank=True)
     notes = models.TextField(blank=True, null=True)
 
     def __str__(self):

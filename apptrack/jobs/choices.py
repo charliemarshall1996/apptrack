@@ -1,18 +1,5 @@
 
-from core.utils import get_country_choices, get_currency_choices
 from core.choices import ChoiceBase
-
-
-class CurrencyChoices(ChoiceBase):
-    @classmethod
-    def choices(cls):
-        return get_currency_choices()
-
-
-class CountryChoices(ChoiceBase):
-    @classmethod
-    def choices(cls):
-        return get_country_choices()
 
 
 class SourceChoices(ChoiceBase):
@@ -34,22 +21,6 @@ class SourceChoices(ChoiceBase):
     COLD_OUTREACH = "CO", "Cold Outreach"
     JOB_NEWSLETTER = "JN", "Job Newsletter"
     FREELANCER_NETWORK = "FN", "Freelancer Network"
-
-
-class LocationPolicyChoices(ChoiceBase):
-    UNKNOWN = "UK", "Unknown"
-    HYBRID = "HY", "Hybrid"
-    ON_SITE = "ON", "On-Site"
-    REMOTE = "RE", "Remote"
-    FLEXIBLE = "FL", "Flexible"
-
-
-class WorkContractChoices(ChoiceBase):
-    UNKNOWN = "UK", "Unknown"
-    FULLTIME = "FT", "Fulltime"
-    PARTTIME = "PT", "Parttime"
-    CONTRACT = "CO", "Contract"
-    SECONDMENT = "SE", "Secondment"
 
 
 class StatusChoices(ChoiceBase):

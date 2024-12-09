@@ -10,14 +10,8 @@ import pytest
 from accounts.models import Profile
 from core.choices import ReminderUnitChoices
 from jobs.choices import (
-    CurrencyChoices,
-    CountryChoices,
-    JobFunctionChoices,
-    LocationPolicyChoices,
-    WorkContractChoices,
-    PayRateChoices,
     StatusChoices,
-    SourceChoices,
+    SourceChoices
 )
 from jobs.models import Job, Board, Column
 from blog.models import BlogPost
@@ -28,13 +22,7 @@ UserModel = get_user_model()
 fake = Faker()
 
 SOURCES = [source[0] for source in SourceChoices.choices()]
-JOB_FUNCTIONS = [job[0] for job in JobFunctionChoices.choices()]
-LOCATION_POLICIES = [loc[0] for loc in LocationPolicyChoices.choices()]
-WORK_CONTRACT = [work[0] for work in WorkContractChoices.choices()]
-PAY_RATES = [pay[0] for pay in PayRateChoices.choices()]
-CURRENCIES = [currency[0] for currency in CurrencyChoices.choices()]
 STATUSES = [status[0] for status in StatusChoices.choices()]
-COUNTRIES = [country[0] for country in CountryChoices.choices()]
 
 
 @pytest.fixture
@@ -101,20 +89,20 @@ def jobs_form_data():
         'url': fake.url(),
         'source': random.choice(SOURCES),
         'job_title': fake.job(),
-        'job_function': random.choice(JOB_FUNCTIONS),
+        # 'job_function': random.choice(JOB_FUNCTIONS),
         'description': fake.text(),
-        'location_policy': random.choice(LOCATION_POLICIES),
-        'work_contract': random.choice(WORK_CONTRACT),
+        # 'location_policy': '',
+        # 'work_contract': '',
         'min_pay': random.randint(0, 10000),
         'max_pay': random.randint(10000, 100000),
-        'pay_rate': random.choice(PAY_RATES),
-        'currency': random.choice(CURRENCIES),
+        # 'pay_rate': random.choice(PAY_RATES),
+        # 'currency': '',
         'note': fake.text(),
         'status': random.choice(STATUSES),
         'company': fake.company(),
-        'town': fake.city(),
+        'city': fake.city(),
         'region': fake.state(),
-        "country": random.choice(COUNTRIES),
+        # "country": '',
     }
 
 
@@ -124,19 +112,19 @@ def jobs_data():
         'url': fake.url(),
         'source': random.choice(SOURCES),
         'job_title': fake.job(),
-        'job_function': random.choice(JOB_FUNCTIONS),
+        # 'job_function': random.choice(JOB_FUNCTIONS),
         'description': fake.text(),
-        'location_policy': random.choice(LOCATION_POLICIES),
-        'work_contract': random.choice(WORK_CONTRACT),
+        # 'location_policy': '',
+        # 'work_contract': '',
         'min_pay': random.randint(0, 10000),
         'max_pay': random.randint(10000, 100000),
-        'pay_rate': random.choice(PAY_RATES),
-        'currency': random.choice(CURRENCIES),
+        # 'pay_rate': random.choice(PAY_RATES),
+        # 'currency': '',
         'note': fake.text(),
         'status': random.choice(STATUSES),
         'company': fake.company(),
-        'town': fake.city(),
-        'country': random.choice(COUNTRIES),
+        'city': fake.city(),
+        # # 'country': '',
         'region': fake.state(),
     }
 
@@ -148,19 +136,19 @@ def job_data_factory():
             'url': fake.url(),
             'source': random.choice(SOURCES),
             'job_title': fake.job(),
-            'job_function': random.choice(JOB_FUNCTIONS),
+            # 'job_function': random.choice(JOB_FUNCTIONS),
             'description': fake.text(),
-            'location_policy': random.choice(LOCATION_POLICIES),
-            'work_contract': random.choice(WORK_CONTRACT),
+            # 'location_policy': '',
+            # 'work_contract': '',
             'min_pay': random.randint(0, 10000),
             'max_pay': random.randint(10000, 100000),
-            'pay_rate': random.choice(PAY_RATES),
-            'currency': random.choice(CURRENCIES),
+            # 'pay_rate': random.choice(PAY_RATES),
+            # 'currency': '',
             'note': fake.text(),
             'status': random.choice(STATUSES),
             'company': fake.company(),
-            'town': fake.city(),
-            'country': random.choice(COUNTRIES),
+            'city': fake.city(),
+            # 'country': '',
             'region': fake.state(),
             'updated': timezone.now() - timedelta(days=updated_days_previous)
             if updated_days_previous else None,
@@ -296,9 +284,9 @@ def interview_data_factory(job_factory, custom_user_factory):
                 'post_code': fake.postcode(),
                 'building': fake.building_number(),
                 'street': fake.street_name(),
-                'town': fake.city(),
+                'city': fake.city(),
                 'region': fake.state(),
-                'country': random.choice(COUNTRIES),
+                # 'country': '',
                 'notes': fake.text()
                 }
     return factory

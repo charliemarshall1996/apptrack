@@ -1,7 +1,8 @@
 
 from django import forms
 
-from .models import Job, StatusChoices, CountryChoices, JobFunctionChoices
+from core.models import Country
+from .models import Job, StatusChoices, JobFunction
 
 
 class JobForm(forms.ModelForm):
@@ -40,20 +41,35 @@ class DownloadJobsForm(forms.Form):
 class JobFilterForm(forms.Form):
     status = forms.MultipleChoiceField(
         widget=forms.CheckboxSelectMultiple,
-        choices=StatusChoices.choices(),
+        choices=StatusChoices.choices(),  # Assuming StatusChoices remains a class
         required=False
     )
     title = forms.CharField(required=False, label="Job Title")
     company = forms.CharField(required=False, label="Company")
     city = forms.CharField(required=False, label="City")
     region = forms.CharField(required=False, label="Region")
+
+    # Dynamically populate choices for countries
     countries = forms.MultipleChoiceField(
         widget=forms.CheckboxSelectMultiple,
-        choices=CountryChoices.choices(),
         required=False
     )
+
+    # Dynamically populate choices for job functions
     job_function = forms.MultipleChoiceField(
         widget=forms.CheckboxSelectMultiple,
-        choices=JobFunctionChoices.choices(),
         required=False
     )
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        # Populate the choices for countries dynamically
+        self.fields['countries'].choices = [
+            (country.id, country.name) for country in CountryChoices.objects.all()
+        ]
+
+        # Populate the choices for job functions dynamically
+        self.fields['job_function'].choices = [
+            (job_function.id, job_function.name) for job_function in JobFunctionChoices.objects.all()
+        ]

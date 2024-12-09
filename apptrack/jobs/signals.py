@@ -10,11 +10,8 @@ User = get_user_model()
 @receiver(post_save, sender=User)
 def create_board(sender, instance, created, **kwargs):
     if created:
-        print(f"Signal triggered for user: {instance.email}")
         board = Board.objects.create(user=instance, name='My Job Board')
         board.save()
-        print(f"BOARD NAME: {board.name}")
-        print(f"BOARD USER EMAIL: {board.user.email}")
 
 
 @ receiver(post_save, sender=Board)

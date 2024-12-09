@@ -8,14 +8,8 @@ from django.db import models
 from django.utils import timezone
 
 from .choices import (
-    CurrencyChoices,
-    CountryChoices,
-    JobFunctionChoices,
-    LocationPolicyChoices,
-    WorkContractChoices,
-    PayRateChoices,
     StatusChoices,
-    SourceChoices,
+    SourceChoices
 )
 
 logger = logging.getLogger(__name__)
@@ -49,6 +43,34 @@ class Column(models.Model):
         unique_together = ('board', 'name', 'position')
 
 
+class JobFunction(models.Model):
+    name = models.CharField(max_length=100)
+
+    def __str__(self):
+        return self.name
+
+
+class LocationPolicy(models.Model):
+    name = models.CharField(max_length=100)
+
+    def __str__(self):
+        return self.name
+
+
+class PayRate(models.Model):
+    name = models.CharField(max_length=100)
+
+    def __str__(self):
+        return self.name
+
+
+class WorkContract(models.Model):
+    name = models.CharField(max_length=100)
+
+    def __str__(self):
+        return self.name
+
+
 class Job(models.Model):
 
     id = models.BigAutoField(primary_key=True)
@@ -67,29 +89,33 @@ class Job(models.Model):
         max_length=2, choices=SourceChoices.choices(), null=True, blank=True)
 
     job_title = models.CharField(max_length=100, blank=True, null=True)
-    job_function = models.CharField(
-        max_length=4, choices=JobFunctionChoices.choices(), null=True, blank=True)
+    job_function = models.ForeignKey(
+        JobFunction, on_delete=models.SET_NULL, null=True, blank=True)
     description = models.TextField(blank=True, null=True)
 
     company = models.CharField(max_length=100, null=True, blank=True)
     is_recruiter = models.BooleanField(default=False, null=True, blank=True)
 
-    location_policy = models.CharField(
-        max_length=100, choices=LocationPolicyChoices.choices(), null=True, blank=True)
-    work_contract = models.CharField(
-        max_length=100, choices=WorkContractChoices.choices(), null=True, blank=True)
+    location_policy = models.ForeignKey(
+        LocationPolicy, on_delete=models.SET_NULL, null=True, blank=True)
+    work_contract = models.ForeignKey(
+        WorkContract, on_delete=models.SET_NULL, null=True, blank=True
+    )
 
     min_pay = models.IntegerField(null=True, blank=True)
     max_pay = models.IntegerField(null=True, blank=True)
-    pay_rate = models.CharField(
-        max_length=2, choices=PayRateChoices.choices(), null=True, blank=True)
-    currency = models.CharField(
-        max_length=3, null=True, blank=True, choices=CurrencyChoices.choices())
+    pay_rate = models.ForeignKey(
+        PayRate, on_delete=models.SET_NULL, null=True, blank=True
+    )
+    currency = models.ForeignKey(
+        'core.Currency', on_delete=models.SET_NULL, null=True, blank=True
+    )
 
     city = models.CharField(max_length=100, null=True, blank=True)
     region = models.CharField(max_length=100, null=True, blank=True)
-    country = models.CharField(
-        max_length=2, choices=CountryChoices.choices(), null=True, blank=True)
+    country = models.ForeignKey(
+        'core.Country', on_delete=models.SET_NULL, null=True, blank=True
+    )
 
     note = models.TextField(null=True, blank=True)
     status = models.CharField(

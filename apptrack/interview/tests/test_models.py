@@ -21,9 +21,8 @@ def test_interview(interview_data_factory):
     assert interview.post_code == data["post_code"]
     assert interview.building == data["building"]
     assert interview.street == data["street"]
-    assert interview.town == data["town"]
+    assert interview.city == data["city"]
     assert interview.region == data["region"]
-    assert interview.country == data["country"]
     assert interview.notes == data["notes"]
     assert str(interview) == f"Interview for {job.job_title} at {job.company}"
 

@@ -16,6 +16,7 @@ from .forms import JobForm, DownloadJobsForm, JobFilterForm
 from .models import Job, Board, Column
 
 logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)
 
 # Create your views here.
 
@@ -57,8 +58,10 @@ def board_view(request):
 @login_required
 @require_POST
 def add_job_view(request):
+    logger.info("Adding job...")
     board = Board.objects.filter(user=request.user).first()
-    referer_url = request.META.get('HTTP_REFERER', '/')
+    referer_url = request.POST.get("referrer")
+    logger.info("Referer URL: %s", referer_url)
     if request.method == 'POST':
         form = JobForm(request.POST)
         if form.is_valid():

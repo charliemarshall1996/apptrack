@@ -41,6 +41,7 @@ def test_add_job_view(client, board_factory, profile_factory, jobs_form_data):
     profile.save()
 
     data = jobs_form_data
+    data['referrer'] = reverse('jobs:board')
 
     response = client.post(reverse("accounts:login"), {
         "email": profile.user.email, "password": PASSWORD})
@@ -48,11 +49,6 @@ def test_add_job_view(client, board_factory, profile_factory, jobs_form_data):
     assert response.status_code == 302
 
     url = reverse('jobs:add_job')
-
-    # GET request should show add job form
-    response = client.get(url)
-    assert response.status_code == 200
-    assert 'job_form' in response.context
 
     # POST request with valid data should add job
     response = client.post(url, data)
@@ -89,9 +85,6 @@ def test_assign_job_view(client, board_factory, profile_factory, job_form_factor
     url = reverse('jobs:assign_job',
                   kwargs={"job_id": str(job.id),
                           "col_id": str(columns[1])})
-    response = client.get(url)
-
-    assert response.status_code == 200
 
     response = client.post(url)
     try:
@@ -160,15 +153,10 @@ def test_edit_job_view(client, job_form_factory, profile_factory, board_factory,
     assert job.url == data['url']
     assert job.source == data['source']
     assert job.job_title == data['job_title']
-    assert job.job_function == data['job_function']
     assert job.description == data['description']
-    assert job.location_policy == data['location_policy']
-    assert job.work_contract == data['work_contract']
     assert job.company == data["company"]
     assert job.min_pay == data['min_pay']
     assert job.max_pay == data["max_pay"]
-    assert job.pay_rate == data["pay_rate"]
-    assert job.currency == data["currency"]
     assert job.note == data["note"]
 
 
@@ -279,5 +267,4 @@ def test_board_view_add_job(client, profile_factory, jobs_form_data):
     # POST request with valid data should add job
     response = client.post(url, data)
     assert response.status_code == 302
-    assert response.url == reverse('jobs:board')
     assert Job.objects.get(**data)

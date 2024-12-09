@@ -11,6 +11,7 @@
                 {% load crispy_forms_tags %}
                 <form method="POST" id="addJobForm" action="{% url 'jobs:add_job' %}">
                     {% csrf_token %}
+                    <input type="hidden" name="referrer" value="{{ request.build_absolute_uri }}">
                     {{ job_form|crispy }}
                     <button type="submit" class="btn btn-primary">Submit</button>
                 </form>

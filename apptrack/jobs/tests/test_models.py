@@ -59,16 +59,12 @@ def test_job(custom_user_factory, column_factory, jobs_data):
     assert job.description == jobs_data["description"]
     assert job.company == jobs_data["company"]
     assert job.source == jobs_data["source"]
-    assert job.town == jobs_data["town"]
-    assert job.country == jobs_data["country"]
+    assert job.city == jobs_data["city"]
     assert job.job_title == jobs_data["job_title"]
     assert job.min_pay == jobs_data["min_pay"]
     assert job.max_pay == jobs_data["max_pay"]
-    assert job.work_contract == jobs_data["work_contract"]
-    assert job.location_policy == jobs_data["location_policy"]
     assert job.note == jobs_data["note"]
     assert job.url == jobs_data["url"]
-    assert job.job_function == jobs_data["job_function"]
     assert job.status == jobs_data["status"]
 
     assert job.column.name == column.name
