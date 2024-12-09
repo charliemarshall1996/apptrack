@@ -122,6 +122,9 @@ class Job(models.Model):
         max_length=2, choices=StatusChoices.choices(), default=StatusChoices.default())
 
     applied = models.BooleanField(null=True, blank=True)
+    date_applied = models.DateField(null=True, blank=True)
+    interviewed = models.BooleanField(null=True, blank=True)
+    date_interviewed_set = models.DateField(null=True, blank=True)
 
     def __str__(self):
         return f"{self.company} - {self.job_title}"
@@ -189,9 +192,30 @@ class Job(models.Model):
         if self.status in StatusChoices.get_applied_statuses():
             logger.info("Job is applied")
             self.applied = True
+            if not self.date_applied:
+                self.date_applied = timezone.now()
         else:
-            logger.info("Job is not applied")
-            self.applied = False
+            if self.status != StatusChoices.REJECTED or StatusChoices.CLOSED:
+                logger.info("Job is not applied")
+                self.applied = False
+
+    def _set_interviewed(self):
+        logger.info("Setting interviewed...")
+        if self.status in [StatusChoices.INTERVIEW, StatusChoices.OFFER]:
+            self.interviewed = True
+            if not self.date_interviewed_set:
+                self.date_interviewed_set = timezone.now()
+
+    def _manage_user_profile_streak(self):
+        if self.applied:
+            original = Job.objects.get(pk=self.pk)
+            if original:
+                if not original.applied:
+                    self.user.profile.increment_applications()
+                    self.user.profile.save()
+            elif not original:
+                self.user.profile.increment_applications()
+                self.user.profile.save()
 
     def save(self, *args, **kwargs):
         self._manage_columns_and_boards()
@@ -200,4 +224,5 @@ class Job(models.Model):
         self._update_if_changed()
 
         self._set_applied()
+        self._set_interviewed()
         super().save(*args, **kwargs)

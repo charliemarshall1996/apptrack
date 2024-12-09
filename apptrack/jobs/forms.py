@@ -66,10 +66,10 @@ class JobFilterForm(forms.Form):
 
         # Populate the choices for countries dynamically
         self.fields['countries'].choices = [
-            (country.id, country.name) for country in CountryChoices.objects.all()
+            (country.id, country.name) for country in Country.objects.all()
         ]
 
         # Populate the choices for job functions dynamically
         self.fields['job_function'].choices = [
-            (job_function.id, job_function.name) for job_function in JobFunctionChoices.objects.all()
+            (job_function.id, job_function.name) for job_function in JobFunction.objects.all()
         ]

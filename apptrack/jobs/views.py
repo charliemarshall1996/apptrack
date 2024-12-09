@@ -45,6 +45,7 @@ def board_view(request):
 
     # Context for rendering the template
     context = {
+        'user_id': request.user.id,
         'board': board,
         'columns': columns,
         'jobs': jobs,
@@ -129,7 +130,7 @@ def download_jobs_view(request):
     # Handle GET request (date input form rendering)
     if request.method == "GET":
         form = DownloadJobsForm()
-        return render(request, "jobs/download_jobs.html", {"form": form})
+        return render(request, "jobs/download_jobs.html", {"form": form, "user_id": request.user})
 
     # Handle POST request (CSV file generation)
     start_date = request.POST.get("start_date")
@@ -202,6 +203,7 @@ class JobListView(LoginRequiredMixin, ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        context['user_id'] = self.request.user.id
         context['filter_form'] = JobFilterForm(
             self.request.GET)  # Pass form to template
         context['job_form'] = JobForm()

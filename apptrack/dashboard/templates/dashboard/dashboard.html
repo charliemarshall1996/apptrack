@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+
+{% extends 'core/base_authenticated.html' %}
+
+{% load static %}
+{% block content %}
+
+<head>
+    <title>Dashboard</title>
+    
+</head>
+<div class="row">
+    <div class="col">
+        <h1>Dashboard</h1>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col">
+        <h2>Basic Stats</h2>
+    </div>
+</div>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                Statistic
+            </th>
+            <th>
+                Value
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+                Total Applications
+            </td>
+            <td>
+                <strong id="totalApplications"></strong>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Interview Conversion Rate
+            </td>
+            <td>
+                <strong id="interviewConversionRate"></strong>%
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Total Interviews
+            </td>
+            <td>
+                <strong id="totalInterviews"></strong>
+            </td>
+        </tr>
+    </tbody>
+</table>
+
+<div class="row">
+    <div class="col">
+        <h2>Application Stats</h2>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col">
+
+    </div>
+</div>
+
+<div class="row">
+    <div class="col">
+        <h2>Interview Stats</h2>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col">
+        
+    </div>
+</div>
+
+<div class="row">
+    <div class="col">
+        <h2>Feedback Insights</h2>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col">
+    </div>
+</div>
+  
+<script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script> 
+
+<script src="{% static 'dashboard/scripts/basicStats.js' %}">
+</script>
+<script src="{% static 'dashboard/scripts/demoCharts.js' %}">
+</script>
+
+{% endblock %}

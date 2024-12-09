@@ -19,12 +19,25 @@
   <link href="https://fonts.googleapis.com/css2?family=Archivo:ital,wght@0,100..900;1,100..900&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet">
   
   <!-- Bootstrap CSS -->
+   
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
   
   <!-- Custom CSS -->
   <link rel="stylesheet" href="{% static 'core/styles/reset.css' %}">
   <link rel="stylesheet" href="{% static 'core/styles/style.css' %}">
+
+  <!-- jQuery -->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+
+  <!-- UserID -->
+  <script>
+    const userID = "{{ user_id }}"
+    var userStreakEndpoint = "{% url 'core:user_streak' 0 %}".replace("0", userID);
+  </script>
+  <script src="{% static 'core/scripts/userStreak.js' %}"></script>
+  
 </head>
 
 <body class="d-flex flex-column min-vh-100 container-fluid px-0">
@@ -32,7 +45,7 @@
 
   <header>
     <nav class="navbar navbar navbar-expand-md navbar-light px-3">
-      <a class="navbar-brand display-5" href="{% url 'home' %}"><img class="img nav-icon" src="{% static 'core/nav-icon.svg' %}" alt=""></a>
+      <a class="navbar-brand display-5" href="{% url 'dashboard:home' %}"><img class="img nav-icon" src="{% static 'core/nav-icon.svg' %}" alt=""></a>
 
       <!-- Toggler/collapsible Button -->
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
@@ -41,6 +54,9 @@
 
       <div class="collapse navbar-collapse" id="navbarNav">
         <ul class="navbar-nav w-100">
+          <li class="nav-item">
+            <a class="nav-link {% if request.path == '/dashboard/' %}active{% endif %}" href="{% url 'dashboard:home' %}">Dashboard</a>
+          </li>
           <li class="nav-item">
             <a class="nav-link {% if request.path == '/jobs/board/' %}active{% endif %}" href="{% url 'jobs:board' %}">Board</a>
           </li>
@@ -62,6 +78,21 @@
         </ul>
       </div>
     </nav>
+  <div class="container-fluid">
+    <div class="row d-flex flex-nowrap flex-row">
+      <div class="col-6 w-50 flex-nowrap">
+        <strong id="currentUnit"></strong>
+        <strong>Target: </strong>
+        <p id="currentApplications"></p><p>/</p><p id="targetAmount"></p>
+      </div>
+      <div class="col-6 w-50 flex-nowrap">
+        <strong>Current Streak: </strong>
+        <p id="currentStreak"></p>
+        <p> </p>
+        <p id="streakUnit"></p>
+      </div>
+    </div>
+  </div>
         
   </header>
 
@@ -69,6 +100,9 @@
   {% include 'core/messages.html' %}
   <div class="container" id="content">
     {% block content %}
+    {% endblock %}
+    {% block scripts %}
+    
     {% endblock %}
   </div>
 
@@ -79,17 +113,16 @@
           <p class="nav-link">&copy; AppTrack 2024, All Rights Reserved</p>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="{% url 'privacy_policy' %}">Privacy Policy</a>
+          <a class="nav-link" href="{% url 'core:privacy_policy' %}">Privacy Policy</a>
         </li>
       </ul>
     </nav>
   </footer>
 
 </body>
-{% block extra_scripts %}
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
-<!-- <script src="{% static 'scripts/load_locations.js' %}"></script> -->
-{% endblock %}
+
+
+
 
 
 </html>

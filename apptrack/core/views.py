@@ -1,16 +1,23 @@
 
+from jobs.models import Job
+from rest_framework.response import Response
+from rest_framework.views import APIView
+from django.shortcuts import render
 import logging
 
+from django.contrib.auth import get_user_model
 from django.conf import settings
 from django.contrib import messages
 from django.core.mail import send_mail
 from django.shortcuts import render, redirect
 
-
+from accounts.models import Profile
 from .forms import ContactForm
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
+
+User = get_user_model()
 
 
 def home_view(request):
@@ -71,3 +78,26 @@ def contact_view(request):
 
 def privacy_policy_view(request):
     return render(request, 'core/privacy_policy.html')
+
+
+class UserStreak(APIView):
+
+    def get(self, request, id):
+        user = User.objects.get(pk=id)
+        profile = Profile.objects.get(
+            user=user)
+        print(profile)
+        print(profile.target.amount)
+        target = profile.target.amount
+        unit = profile.target.unit
+        current_applications = profile.current_applications_made
+        streak = profile.streak.current_streak
+
+        data = {
+            "target": target,
+            "unit": unit,
+            "current_applications": current_applications,
+            "streak": streak
+        }
+
+        return Response(data)

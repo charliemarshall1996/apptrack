@@ -28,6 +28,9 @@
                 <div class="col m-auto">
                     {{ profile_form.birth_date|as_crispy_field }}
                 </div>
+                <div class="col m-auto">
+                    {{ user_form.email|as_crispy_field }}
+                </div>
             </div>
             <div class="row">
                 <div class="col m-auto">
@@ -35,6 +38,19 @@
                 </div>
                 <div class="col m-auto">
                     {{ profile_form.email_comms_opt_in|as_crispy_field }}
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <h3>Target</h3>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col m-auto">
+                    {{ target_form.unit|as_crispy_field }}
+                </div>
+                <div class="col m-auto">
+                    {{ target_form.amount|as_crispy_field }}
                 </div>
             </div>
             <button type="submit" class="btn btn-primary">Update</button>

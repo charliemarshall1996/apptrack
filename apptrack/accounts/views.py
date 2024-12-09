@@ -29,7 +29,8 @@ from .forms import (
     ProfileRegistrationForm,
     ProfileUpdateForm,
     ResendVerificationEmailForm,
-    PasswordResetForm
+    PasswordResetForm,
+    TargetUpdateForm
 )
 from .models import Profile
 from .utils import (get_can_resend, get_minutes_left_before_resend, get_time_since_last_email,
@@ -53,27 +54,43 @@ def profile_settings_view(request, id):
     if request.method == 'POST':
         user_form = UserUpdateForm(request.POST, instance=request.user)
         profile_form = ProfileUpdateForm(request.POST, instance=profile)
+        target_form = TargetUpdateForm(request.POST, instance=profile.target)
 
-        if user_form.is_valid() and profile_form.is_valid():
+        if user_form.is_valid() and profile_form.is_valid() and target_form.is_valid():
             if user_form.cleaned_data['honeypot']:
                 # Honeypot field should be empty. If it's filled, treat it as spam.
                 messages.error(
                     request, MessageManager.spam)
                 return redirect('home')
 
+            print("forms are valid")
             user = user_form.save()
+            user.save()
+            target = target_form.save()
+            target.save()
             profile = profile_form.save()
             profile.user = user
+            profile.target = target
             profile.save()
 
             messages.success(request, MessageManager.profile_update_success)
 
             return redirect('accounts:profile', id=profile.id)
+        else:
+            messages.error(
+                request, f"Invalid form {profile_form.errors} {user_form.errors} {target_form.errors}")
+            return redirect("accounts:profile", id=profile.id)
     else:
         user_form = UserUpdateForm(instance=request.user)
         profile_form = ProfileUpdateForm(instance=profile)
+        if profile.target:
+            target_form = TargetUpdateForm(instance=profile.target)
+        else:
+            target_form = TargetUpdateForm()
 
     context = {
+        'user_id': request.user.id,
+        'target_form': target_form,
         'user_form': user_form,
         'profile_form': profile_form,
         'profile': profile
@@ -177,7 +194,7 @@ def custom_login_view(request):
                         if user == backend.get_user(user.id):
                             user.backend = f'{backend.__module__}.{backend.__class__.__name__}'
                             break
-
+                    user.profile.check_streak()
                     login(request, user)
                     return redirect('jobs:board')
 
