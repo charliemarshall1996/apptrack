@@ -27,7 +27,8 @@ class TargetTask(Task):
     target = models.ForeignKey(
         'targets.Target', related_name="task", on_delete=models.CASCADE)
 
-    def save(self):
+    def save(self, *args, **kwargs):
         if self.target.met:
             self.is_completed = True
-            self.save()
+
+        super().save(*args, **kwargs)

@@ -1,7 +1,9 @@
 from django.db import models
+from django.dispatch import Signal
 from django.utils import timezone
 
 # Create your models here.
+target_reset = Signal()
 
 
 class Streak(models.Model):
@@ -56,6 +58,7 @@ class Target(models.Model):
                     self.streak.reset()
                 self.current_applications_made = 0
                 self.last_reset = now
+                target_reset.send(sender=self.__class__, instance=self)
                 if not from_save:
                     self.save()
 
@@ -73,6 +76,7 @@ class Target(models.Model):
             if original.target_applications_made != self.target_applications_made:
                 self.current_applications_made = 0
                 self.last_reset = timezone.now()
+                target_reset.send(sender=self.__class__, instance=self)
 
     def save(self, *args, **kwargs):
         if not self.streak:
