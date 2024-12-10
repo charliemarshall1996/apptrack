@@ -21,6 +21,7 @@ from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode
 from django.views.generic.detail import DetailView
 
+from targets.models import Target
 
 from .forms import (
     UserUpdateForm,
@@ -83,10 +84,8 @@ def profile_settings_view(request, id):
     else:
         user_form = UserUpdateForm(instance=request.user)
         profile_form = ProfileUpdateForm(instance=profile)
-        if profile.target:
-            target_form = TargetUpdateForm(instance=profile.target)
-        else:
-            target_form = TargetUpdateForm()
+        target, created = Target.objects.get_or_create(profile=profile)
+        target_form = TargetUpdateForm(instance=target)
 
     context = {
         'user_id': request.user.id,

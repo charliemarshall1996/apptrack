@@ -12,6 +12,7 @@ from django.core.mail import send_mail
 from django.shortcuts import render, redirect
 
 from accounts.models import Profile
+from targets.models import Target
 from .forms import ContactForm
 
 logger = logging.getLogger(__name__)
@@ -86,16 +87,12 @@ class UserStreak(APIView):
         user = User.objects.get(pk=id)
         profile = Profile.objects.get(
             user=user)
-        print(profile)
-        print(profile.target.amount)
-        target = profile.target.amount
-        unit = profile.target.get_unit_display()
-        current_applications = profile.current_applications_made
-        streak = profile.streak.current_streak
+        target = Target.objects.get(profile=profile)
+        current_applications = target.current_applications_made
+        streak = target.streak.current_streak
 
         data = {
-            "target": target,
-            "unit": unit,
+            "target": target.target_applications_made,
             "current_applications": current_applications,
             "streak": streak
         }

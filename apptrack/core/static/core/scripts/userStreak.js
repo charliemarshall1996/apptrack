@@ -7,11 +7,9 @@ $.ajax({
         console.log("data ", data);
         if (data.target > 0) {
             console.log("target " + data.target);
-            displayStreakData(data, 'currentUnit');
             displayStreakData(data, 'currentApplications');
             displayStreakData(data, 'targetAmount');
             displayStreakData(data, 'currentStreak');
-            displayStreakData(data, 'streakUnit');
 
         }
       
@@ -21,27 +19,20 @@ $.ajax({
     } 
   });
   function displayStreakData(data, id) {
+    console.log("id " + id);
     var statData = "";
     var statElement = document.getElementById(id);
-    if (id == "currentUnit") {
-        statData = data.unit;
-    } else if (id == "currentApplications") {
+    if (id == "currentApplications") {
         statData = data.current_applications;
     } else if (id == "targetAmount") {
         statData = data.target;
-    } else if (id == "currentStreak") {
-        statData = data.streak;
     } else {
-        statData = data.unit;
-        if (statData == "Weekly") {
-            statData = "Weeks"
-        } else {
-            statData = "Days"
-        };
+        statData = data.streak;
     };
 
     if (statData == "") {
       statData = 0
     }
+    console.log("statData " + statData);
     statElement.innerHTML = statData;
 }

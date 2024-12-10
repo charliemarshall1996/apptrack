@@ -1,13 +1,9 @@
 from django.db import models
 from django.conf import settings
 
-from core.models import Task, Reminder, Country
+from core.models import Reminder, Country
+from tasks.models import InterviewTask
 # Create your models here.
-
-
-class InterviewTask(Task):
-    interview = models.ForeignKey(
-        'Interview', on_delete=models.CASCADE, related_name='tasks')
 
 
 class Interview(models.Model):

@@ -2,17 +2,27 @@
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.views.generic import View
+from django.utils import timezone
 
 from rest_framework.views import APIView
 from rest_framework.response import Response
 
 from jobs.models import Job, JobFunction, SourceChoices
+from interview.models import Interview
+from tasks.models import Task
 
 from .utils import calculate_conversion_score
 
 
 def home_view(request):
-    context = {"user_id": request.user.id}
+    jobs = Job.objects.filter(
+        user=request.user, archived=False).order_by("updated").all()[:10]
+    interviews = Interview.objects.filter(
+        user=request.user, start_date__gte=timezone.now()).order_by("start_date").all()[:10]
+    tasks = Task.objects.filter(user=request.user)[:10]
+
+    context = {"user_id": request.user.id, "jobs": jobs,
+               "interviews": interviews, "tasks": tasks}
     return render(request, "dashboard/dashboard.html", context)
 
 

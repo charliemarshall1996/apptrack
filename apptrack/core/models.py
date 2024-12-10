@@ -6,14 +6,6 @@ from .choices import ReminderUnitChoices
 User = get_user_model()
 
 
-class Task(models.Model):
-    name = models.CharField(max_length=100)
-    is_completed = models.BooleanField(default=False)
-
-    def __str__(self):
-        return self.name
-
-
 class Reminder(models.Model):
 
     user = models.ForeignKey(User, on_delete=models.CASCADE)

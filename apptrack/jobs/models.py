@@ -198,7 +198,8 @@ class Job(models.Model):
             if not self.date_applied:
                 self.date_applied = timezone.now()
         else:
-            if self.status != StatusChoices.REJECTED or StatusChoices.CLOSED:
+            if (self.status != StatusChoices.REJECTED)\
+                    and (self.status != StatusChoices.CLOSED):
                 logger.info("Job is not applied")
                 self.applied = False
 
@@ -210,16 +211,21 @@ class Job(models.Model):
                 self.date_interviewed_set = timezone.now()
 
     def _manage_user_profile_streak(self):
+        # if job is applied
         if self.applied:
+
+            # if job was not previously applied
             original = Job.objects.get(pk=self.pk)
             if original:
                 if not original.applied:
-                    print("Incrementing applications...")
-                    self.user.profile.increment_applications()
+                    print("Incrementing applications made, job changed to applied")
+                    self.user.profile.target.increment()
                     self.user.profile.save()
+
+            # if job was created
             elif not original:
-                print("Incrementing applications...")
-                self.user.profile.increment_applications()
+                print("Incrementing applications made, job created with applied")
+                self.user.profile.target.increment()
                 self.user.profile.save()
 
     def save(self, *args, **kwargs):

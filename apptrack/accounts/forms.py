@@ -4,7 +4,8 @@ from django.contrib.auth.forms import UserCreationForm
 from django.core.validators import validate_email
 from django.core.exceptions import ValidationError
 
-from .models import Profile, Target
+from targets.models import Target
+from .models import Profile
 
 User = get_user_model()
 
@@ -64,9 +65,9 @@ class TargetUpdateForm(forms.ModelForm):
 
     class Meta:
         model = Target
-        fields = ["unit", "amount"]
+        fields = ["target_applications_made"]
 
-    def save(self) -> Target:
+    def save(self):
         return super().save(commit=False)
 
 
