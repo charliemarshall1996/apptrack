@@ -62,7 +62,7 @@ def add_job_view(request):
     logger.info("Adding job...")
     board = Board.objects.filter(user=request.user).first()
     referer_url = request.POST.get("referrer")
-    logger.info("Referer URL: %s", referer_url)
+    print("Referer URL: %s", referer_url)
     if request.method == 'POST':
         form = JobForm(request.POST)
         if form.is_valid():
