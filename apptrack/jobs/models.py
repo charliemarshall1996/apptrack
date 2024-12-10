@@ -211,9 +211,11 @@ class Job(models.Model):
             original = Job.objects.get(pk=self.pk)
             if original:
                 if not original.applied:
+                    print("Incrementing applications...")
                     self.user.profile.increment_applications()
                     self.user.profile.save()
             elif not original:
+                print("Incrementing applications...")
                 self.user.profile.increment_applications()
                 self.user.profile.save()
 
@@ -225,4 +227,5 @@ class Job(models.Model):
 
         self._set_applied()
         self._set_interviewed()
+        self._manage_user_profile_streak()
         super().save(*args, **kwargs)
