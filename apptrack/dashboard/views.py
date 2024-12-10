@@ -6,7 +6,9 @@ from django.views.generic import View
 from rest_framework.views import APIView
 from rest_framework.response import Response
 
-from jobs.models import Job
+from jobs.models import Job, JobFunction, SourceChoices
+
+from .utils import calculate_conversion_score
 
 
 def home_view(request):
@@ -64,3 +66,54 @@ class ChartData(APIView):
             "chartdata": chartdata,
         }
         return Response(data)
+
+
+class BestConvertingJobFunctions(APIView):
+
+    def get(self, request, id):
+        conversion_scores = []
+        labels = []
+        chartLabel = "Best Converting Job Functions"
+        for job_function in JobFunction.objects.all():
+            jobs = Job.objects.filter(user=id, job_function=job_function)
+            conversion_score = calculate_conversion_score(jobs)
+            conversion_scores.append(conversion_score)
+            labels.append(job_function.name)
+
+        data = {
+            "labels": labels,
+            "chartData": conversion_scores,
+            "chartLabel": chartLabel
+        }
+        return Response(data)
+
+
+class BestConvertingSource(APIView):
+
+    def get(self, request, id):
+        conversion_scores = []
+        labels = []
+        chartLabel = "Best Converting Sources"
+        for code, source in SourceChoices.choices():
+            jobs = Job.objects.filter(user=id, source=code)
+            conversion_score = calculate_conversion_score(jobs)
+            conversion_scores.append(conversion_score)
+            labels.append(source)
+
+        data = {
+            "labels": labels,
+            "chartData": conversion_scores,
+            "chartLabel": chartLabel
+        }
+
+
+class BestConvertingIndustries(APIView):
+
+    def get(self, request, id):
+        pass
+
+
+class BestConvertingLocations(APIView):
+
+    def get(self, request, id):
+        pass
