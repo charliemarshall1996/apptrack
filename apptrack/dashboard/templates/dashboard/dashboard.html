@@ -110,18 +110,17 @@
                 <div class="list-group">
                     {% for task in tasks %}
                     <div class="list-group-item">
-                        <div class="row">
-                            <div class="col">
+                        <div class="row d-flex align-items-center" style="white-space: nowrap;">
+                            <div class="col d-flex">
                                 <strong>{{ task.name }}</strong>
                             </div>
-                        </div>
-                        {% if task.type == "target" %}
-                        <div class="row">
-                            <div class="col">
-                                <p>{{ task.current_val }}</p>/<p>{{ task.target_val }}</p>
+                            {% if task.type == "target" %}
+                            <div class="col d-flex">
+                                <p class="my-0">{{ task.current_val }}/{{ task.target_val }}</p>
                             </div>
+                            {% endif %}
                         </div>
-                        {% endif %}
+                        
                     </div>
                     {% empty %}
                     <div class="list-group-item">
