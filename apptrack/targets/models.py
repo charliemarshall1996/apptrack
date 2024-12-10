@@ -1,3 +1,5 @@
+
+from django.core.exceptions import ObjectDoesNotExist
 from django.db import models
 from django.dispatch import Signal
 from django.utils import timezone
@@ -33,8 +35,8 @@ class Streak(models.Model):
 class Target(models.Model):
     profile = models.OneToOneField(
         'accounts.Profile', on_delete=models.CASCADE, related_name='target')
-    target_applications_made = models.IntegerField(default=0)
-    current_applications_made = models.IntegerField(default=0)
+    daily_target = models.IntegerField(default=0)
+    current = models.IntegerField(default=0)
     total_targets_met = models.IntegerField(default=0)
     streak = models.ForeignKey(
         Streak, on_delete=models.CASCADE, related_name='target', null=True)
@@ -42,41 +44,44 @@ class Target(models.Model):
 
     @property
     def met(self):
-        return self.current_applications_made >= self.target_applications_made
+        return self.current >= self.daily_target
 
     def reset(self, from_save=False):
         # get now
         now = timezone.now()
 
         # if there is a target
-        if self.target_applications_made > 0:
+        if self.daily_target > 0:
             if now.date() > self.last_reset.date():
                 if self.met:
                     self.total_targets_met += 1
                     self.streak.increment()
                 else:
                     self.streak.reset()
-                self.current_applications_made = 0
+                self.current = 0
                 self.last_reset = now
                 target_reset.send(sender=self.__class__, instance=self)
                 if not from_save:
                     self.save()
 
     def increment(self):
-        self.current_applications_made += 1
+        self.current += 1
         self.save()
 
     def decrement(self):
-        self.current_applications_made -= 1
+        self.current -= 1
         self.save()
 
     def _reset_if_target_changed(self):
-        original = Target.objects.get(pk=self.pk)
-        if original:
-            if original.target_applications_made != self.target_applications_made:
-                self.current_applications_made = 0
+        try:
+            Target.objects.get(pk=self.pk)
+            original = Target.objects.get(pk=self.pk)
+            if original.daily_target != self.daily_target:
+                self.current = 0
                 self.last_reset = timezone.now()
                 target_reset.send(sender=self.__class__, instance=self)
+        except Target.DoesNotExist:
+            pass
 
     def save(self, *args, **kwargs):
         if not self.streak:

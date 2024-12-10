@@ -65,7 +65,7 @@ class TargetUpdateForm(forms.ModelForm):
 
     class Meta:
         model = Target
-        fields = ["target_applications_made"]
+        fields = ["daily_target"]
 
     def save(self):
         return super().save(commit=False)

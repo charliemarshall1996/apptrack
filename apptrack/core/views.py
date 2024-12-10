@@ -88,11 +88,11 @@ class UserStreak(APIView):
         profile = Profile.objects.get(
             user=user)
         target = Target.objects.get(profile=profile)
-        current_applications = target.current_applications_made
+        current_applications = target.current
         streak = target.streak.current_streak
 
         data = {
-            "target": target.target_applications_made,
+            "target": target.daily_target,
             "current_applications": current_applications,
             "streak": streak
         }

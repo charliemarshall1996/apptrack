@@ -19,8 +19,8 @@ def home_view(request):
         user=request.user, archived=False).order_by("updated").all()[:10]
     interviews = Interview.objects.filter(
         user=request.user, start_date__gte=timezone.now()).order_by("start_date").all()[:10]
-    tasks = TargetTask.objects.filter(user=request.user).all()[:10]
-    print("TASKS: ", len(tasks))
+    tasks = Task.objects.filter(
+        user=request.user).order_by("priority").all()[:10]
 
     context = {"user_id": request.user.id, "jobs": jobs,
                "interviews": interviews, "tasks": tasks}

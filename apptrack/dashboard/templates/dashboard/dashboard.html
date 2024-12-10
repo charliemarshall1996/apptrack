@@ -115,6 +115,13 @@
                                 <strong>{{ task.name }}</strong>
                             </div>
                         </div>
+                        {% if task.type == "target" %}
+                        <div class="row">
+                            <div class="col">
+                                <p>{{ task.current_val }}</p>/<p>{{ task.target_val }}</p>
+                            </div>
+                        </div>
+                        {% endif %}
                     </div>
                     {% empty %}
                     <div class="list-group-item">

@@ -14,6 +14,7 @@ from django.contrib.auth import (
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.mail import send_mail
+from django.dispatch import Signal
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.utils import timezone
@@ -39,6 +40,8 @@ from .utils import (get_can_resend, get_minutes_left_before_resend, get_time_sin
 
 logger = logging.getLogger(__name__)
 User = get_user_model()
+
+user_login = Signal()
 
 
 @login_required
@@ -117,7 +120,7 @@ class ProfileView(LoginRequiredMixin, DetailView):
 @login_required
 def logout_view(request):
     logout(request)
-    return redirect('home')
+    return redirect('core:home')
 
 
 def login_non_verified_email(request, email):
@@ -198,7 +201,7 @@ def custom_login_view(request):
                         if user == backend.get_user(user.id):
                             user.backend = f'{backend.__module__}.{backend.__class__.__name__}'
                             break
-                    user.profile.check_streak()
+                    user_login.send(sender=user.__class__, user=user)
                     login(request, user)
                     return redirect('jobs:board')
 

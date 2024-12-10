@@ -22,6 +22,7 @@ $.ajax({
     console.log("id " + id);
     var statData = "";
     var statElement = document.getElementById(id);
+    console.log("statElement " + statElement);
     if (id == "currentApplications") {
         statData = data.current_applications;
     } else if (id == "targetAmount") {

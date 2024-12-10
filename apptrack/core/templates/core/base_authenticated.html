@@ -36,7 +36,7 @@
     const userID = "{{ user_id }}";
     var userStreakEndpoint = "{% url 'core:user_streak' 0 %}".replace("0", userID);
   </script>
-  <script src="{% static 'core/scripts/userStreak.js' %}"></script>
+  <script src="{% static 'core/scripts/userStreak.js' %}" defer></script>
   
 </head>
 
@@ -79,7 +79,7 @@
       </div>
     </nav>
     <nav class="navbar navbar-expand navbar-light px-5" >
-      {% if user.profile.target.target_applications_made > 0 %}
+      {% if user.profile.target.daily_target > 0 %}
       <li class="nav-item navbar-text d-flex align-items-center px-2" style="white-space: nowrap;">
         <small>
           <strong>Daily Applications Target:</strong>
