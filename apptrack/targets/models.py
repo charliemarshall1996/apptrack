@@ -67,9 +67,17 @@ class Target(models.Model):
         self.current_applications_made -= 1
         self.save()
 
+    def _reset_if_target_changed(self):
+        original = Target.objects.get(pk=self.pk)
+        if original:
+            if original.target_applications_made != self.target_applications_made:
+                self.current_applications_made = 0
+                self.last_reset = timezone.now()
+
     def save(self, *args, **kwargs):
         if not self.streak:
             self.streak = Streak()
             self.streak.save()
+        self._reset_if_target_changed()
         self.reset(from_save=True)
         super().save(*args, **kwargs)

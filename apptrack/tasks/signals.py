@@ -12,7 +12,9 @@ def create_target_task_on_reset(sender, instance, created, **kwargs):
     if not created:  # Only check on update, not creation
         # Fetch the old value of `last_reset`
         old_instance = sender.objects.get(pk=instance.pk)
-        if old_instance.last_reset != instance.last_reset:
+        if (old_instance.last_reset != instance.last_reset)\
+                or (old_instance.target_applications_made
+                    != instance.target_applications_made):
             # Create a new TargetTask if `last_reset` changed
             TargetTask.objects.create(target=instance, name=task_name)
     else:
