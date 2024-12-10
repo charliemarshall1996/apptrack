@@ -64,6 +64,7 @@ def calendar(request):
     edit_forms = {i.id: AddInterviewForm(instance=i) for i in all_interviews}
 
     context = {
+        "user_id": request.user.id,
         "add_form": add_form,
         "add_reminder_form": add_reminder_form,
         "interviews": json.dumps(interviews),

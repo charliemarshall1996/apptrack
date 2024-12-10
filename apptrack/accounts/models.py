@@ -129,7 +129,8 @@ class Profile(models.Model):
     streak = models.ForeignKey(
         Streak, on_delete=models.CASCADE, null=True, blank=True, related_name='profile'
     )
-    current_applications_made = models.IntegerField(null=True, blank=True)
+    current_applications_made = models.IntegerField(
+        null=True, blank=True, default=0)
     last_reset = models.DateTimeField(auto_now=True)
 
     def __str__(self):
@@ -147,10 +148,12 @@ class Profile(models.Model):
                 self.streak.save()
 
     def check_streak(self):
+        if not self.current_applications_made:
+            self.current_applications_made = 0
         if self.target.amount > 0:
             now = timezone.now()
             self.streak.check_streak(
-                self.target.unit, self.current_applications_made)
+                self.target.unit, self.target.amount, self.current_applications_made)
             # If the target is daily
             if self.target.unit == Target.DAILY:
                 # If the current date is greater

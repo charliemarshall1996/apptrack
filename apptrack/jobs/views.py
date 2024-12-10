@@ -130,7 +130,7 @@ def download_jobs_view(request):
     # Handle GET request (date input form rendering)
     if request.method == "GET":
         form = DownloadJobsForm()
-        return render(request, "jobs/download_jobs.html", {"form": form, "user_id": request.user})
+        return render(request, "jobs/download_jobs.html", {"form": form, "user_id": request.user.id})
 
     # Handle POST request (CSV file generation)
     start_date = request.POST.get("start_date")

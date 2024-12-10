@@ -78,21 +78,26 @@
         </ul>
       </div>
     </nav>
-  <div class="container-fluid">
-    <div class="row d-flex flex-nowrap flex-row">
-      <div class="col-6 w-50 flex-nowrap">
-        <strong id="currentUnit"></strong>
-        <strong>Target: </strong>
-        <p id="currentApplications"></p><p>/</p><p id="targetAmount"></p>
-      </div>
-      <div class="col-6 w-50 flex-nowrap">
-        <strong>Current Streak: </strong>
-        <p id="currentStreak"></p>
-        <p> </p>
-        <p id="streakUnit"></p>
-      </div>
-    </div>
-  </div>
+    <nav class="navbar navbar navbar-expand navbar-light px-3">
+      {% if user.profile.target.amount > 0 %}
+      <li class="nav-item navbar-text d-flex align-items-center px-2">
+        <small>
+          <strong id="currentUnit"></strong>
+          <strong>Applications Target:</strong>
+          <span id="currentApplications"></span>
+          <span>/</span>
+          <span id="targetAmount"></span>
+        </small>
+      </li>
+      <li class="nav-item navbar-text d-flex align-items-center px-2">
+        <small>
+          <strong>Current Streak:</strong>
+          <span id="currentStreak"></span>
+          <strong id="streakUnit"></strong>
+        </small>
+      </li>
+      {% endif %}
+    </nav>
         
   </header>
 

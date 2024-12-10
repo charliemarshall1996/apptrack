@@ -89,7 +89,7 @@ class UserStreak(APIView):
         print(profile)
         print(profile.target.amount)
         target = profile.target.amount
-        unit = profile.target.unit
+        unit = profile.target.get_unit_display()
         current_applications = profile.current_applications_made
         streak = profile.streak.current_streak
 
