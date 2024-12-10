@@ -39,6 +39,16 @@ class DownloadJobsForm(forms.Form):
 
 
 class JobFilterForm(forms.Form):
+    INCLUDE = 'in'
+    EXCLUDE = 'ex'
+    ONLY = 'on'
+
+    ARCHIVED_CHOICES = [
+        (INCLUDE, 'Include'),
+        (EXCLUDE, 'Exclude'),
+        (ONLY, 'Only'),
+    ]
+
     status = forms.MultipleChoiceField(
         widget=forms.CheckboxSelectMultiple,
         choices=StatusChoices.choices(),  # Assuming StatusChoices remains a class
@@ -48,6 +58,8 @@ class JobFilterForm(forms.Form):
     company = forms.CharField(required=False, label="Company")
     city = forms.CharField(required=False, label="City")
     region = forms.CharField(required=False, label="Region")
+    archived = forms.ChoiceField(
+        choices=ARCHIVED_CHOICES, required=False, initial=INCLUDE)
 
     # Dynamically populate choices for countries
     countries = forms.MultipleChoiceField(

@@ -177,6 +177,7 @@ class JobListView(LoginRequiredMixin, ListView):
     template_name = 'jobs/list.html'
     context_object_name = 'jobs'
     paginate_by = 10
+    ordering = ['-updated']
 
     def get_queryset(self):
         queryset = super().get_queryset()
@@ -193,6 +194,12 @@ class JobListView(LoginRequiredMixin, ListView):
             countries = form.cleaned_data.get('countries')
             location = form.cleaned_data.get('location')
             date_posted = form.cleaned_data.get('date_posted')
+            archived = form.cleaned_data.get('archived')
+            if archived != 'in':
+                if archived == 'on':
+                    queryset = queryset.filter(archived=True)
+                else:
+                    queryset = queryset.exclude(archived=True)
 
             if statuses:
                 queryset = queryset.filter(status__in=statuses)

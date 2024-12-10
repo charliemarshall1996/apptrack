@@ -27,11 +27,64 @@
     <div class="row py-3">
         <div class="col">
             <div class="list-group list-group-action">
+                <div class="list-group-item">
+                    <div class="row">
+                        <div class="col">
+                            <strong>Job Title</strong>
+                        </div>
+                        <div class="col">
+                            <strong>Company</strong>
+                        </div>
+                        <div class="col">
+                            <strong>Status</strong>
+                        </div>
+                        
+                        <div class="col">
+                            <strong>Location</strong>
+                        </div>
+                        <div class="col">
+                            <strong>Archived</strong>
+                        </div>
+                        <div class="col">
+                            <strong>Actions</strong>
+                        </div>
+                    </div>
+                </div>
                 {% for job in jobs %}
                     <div class="list-group-item">
                         <div class="row">
                             <div class="col">
-                                <strong>{{ job.job_title }}</strong> - {{ job.company }}</strong>
+                                {{ job.job_title }}
+                            </div>
+                            <div class="col">
+                                {{ job.company }}
+                            </div>
+                            <div class="col">
+                                {{ job.get_status_display }}
+                            </div>
+                            <div class="col">
+                                {% if job.city or job.region or job.country %}
+                                {% if job.city %}{{ job.city }},{% endif %}{% if job.region %}{{ job.region }},{% endif %}{% if job.country %}{{ job.get_country_display }}{% endif %}
+                                {% else %}
+                                -
+                                {% endif %}
+                            </div>
+                            <div class="col">
+                                {{ job.archived }}
+                            </div>
+                            <div class="col">
+                                <div class="row">
+                                    <div class="col">
+                                        <button type="button" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#jobDetailModal{{ job.id }}">
+                                            View
+                                        </button>
+                                    </div>
+                                    {% if not job.applied and job.url %}
+                                    <div class="col">
+                                        <a href="{{ job.url }}" target="_blank" class="btn btn-sm btn-primary">Apply</a>
+                                    </div>
+                                    {% endif %}
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -84,6 +137,7 @@
 
 
 {% include 'jobs/modals/add_job.html' %}
+{% include 'jobs/modals/view_job.html' %}
 {% include 'jobs/modals/filter.html' %}
 
 {% endblock %}
