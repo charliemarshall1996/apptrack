@@ -202,6 +202,8 @@ class Job(models.Model):
                     and (self.status != StatusChoices.CLOSED):
                 logger.info("Job is not applied")
                 self.applied = False
+                self.user.profile.target.decrement()
+                self.user.profile.target.save()
 
     def _set_interviewed(self):
         logger.info("Setting interviewed...")
@@ -220,13 +222,13 @@ class Job(models.Model):
                 if not original.applied:
                     print("Incrementing applications made, job changed to applied")
                     self.user.profile.target.increment()
-                    self.user.profile.save()
+                    self.user.profile.target.save()
 
             # if job was created
             elif not original:
                 print("Incrementing applications made, job created with applied")
                 self.user.profile.target.increment()
-                self.user.profile.save()
+                self.user.profile.target.save()
 
     def save(self, *args, **kwargs):
         self._manage_columns_and_boards()

@@ -42,7 +42,7 @@ class Target(models.Model):
     def met(self):
         return self.current_applications_made >= self.target_applications_made
 
-    def reset(self):
+    def reset(self, from_save=False):
         # get now
         now = timezone.now()
 
@@ -56,15 +56,20 @@ class Target(models.Model):
                     self.streak.reset()
                 self.current_applications_made = 0
                 self.last_reset = now
-                self.save()
+                if not from_save:
+                    self.save()
 
     def increment(self):
         self.current_applications_made += 1
+        self.save()
+
+    def decrement(self):
+        self.current_applications_made -= 1
         self.save()
 
     def save(self, *args, **kwargs):
         if not self.streak:
             self.streak = Streak()
             self.streak.save()
-
+        self.reset(from_save=True)
         super().save(*args, **kwargs)
