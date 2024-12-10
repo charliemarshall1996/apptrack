@@ -86,8 +86,13 @@ function post_request(emp_id, task_id){
     type: 'POST',
     url: `/jobs/job-assign/${emp_id}/${task_id}/`,
     success: function(data) {
-      window.location.reload();
       console.log('Post successful', data);
+      if (data.job_status == 'RE') {
+        showArchiveModal(data.job_id);
+      } else if (data.job_status == 'CL') {
+        showArchiveModal(data.job_id);
+      };
+      
     },
     error: function(xhr, status, error) {
       console.log('Error:', error);
@@ -95,4 +100,19 @@ function post_request(emp_id, task_id){
       console.log('Status:', status);
     }
   });
+}
+
+function showArchiveModal(jobID){
+  const modalElement = document.getElementById('archiveJobModal');
+  const modal = new bootstrap.Modal(modalElement);
+  
+  modal.show();
+  document.getElementById('jobIdToArchive').value = jobID;
+}
+
+function showFeedbackModal(jobID){
+  const modalElement = document.getElementById('feedbackModal');
+  const modal = new bootstrap.Modal(modalElement);
+  document.getElementById('jobIdToFeedback').value = jobID;
+  modal.show();
 }

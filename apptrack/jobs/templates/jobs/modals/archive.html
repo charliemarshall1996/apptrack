@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+
+<!-- Archive Job Modal -->
+<div class="modal fade" id="archiveJobModal" tabindex="-1" aria-labelledby="archiveJobModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="archiveJobModalLabel">Archive Job</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        The job's status is marked as Rejected or Closed. Would you like to archive this job?
+      </div>
+      <div class="modal-footer">
+        <form method="POST" action="{% url 'jobs:archive_job' %}">
+          {% csrf_token %}
+          <input type="hidden" name="job_id" id="jobIdToArchive" value="">
+          <button type="submit" class="btn btn-primary">Yes, Archive</button>
+        </form>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No, Keep It</button>
+      </div>
+    </div>
+  </div>
+</div>

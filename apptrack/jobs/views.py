@@ -12,6 +12,9 @@ from django.views.generic import View, ListView
 from django.views.generic.edit import UpdateView
 from django.urls import reverse, reverse_lazy
 
+from rest_framework.response import Response
+from rest_framework.views import APIView
+
 from .forms import JobForm, DownloadJobsForm, JobFilterForm
 from .models import Job, Board, Column
 
@@ -21,13 +24,25 @@ logger.setLevel(logging.DEBUG)
 # Create your views here.
 
 
+class ArchiveJobView(LoginRequiredMixin, View):
+    @staticmethod
+    def post(request, *args, **kwargs):
+        print("Archiving job...")
+        job_id = request.POST.get('job_id')
+        job = Job.objects.get(id=job_id)
+
+        job.archived = True  # Assuming `is_archived` is a boolean field
+        job.save()
+
+        return redirect('jobs:board')
+
+
 @login_required
 def board_view(request):
-
     board = Board.objects.get(user=request.user)
 
     # Retrieve jobs and columns for the user
-    jobs = Job.objects.filter(user=request.user).all()
+    jobs = Job.objects.filter(user=request.user, archived=False).all()
     columns = board.columns.all()
     job_form = JobForm()
     edit_forms = {job.id: JobForm(instance=job) for job in jobs}
@@ -43,14 +58,14 @@ def board_view(request):
             messages.success(request, "Job added successfully")
             return redirect('jobs:board')
 
-    # Context for rendering the template
+    # Clear session variables after passing them to the template
     context = {
         'user_id': request.user.id,
         'board': board,
         'columns': columns,
         'jobs': jobs,
         'job_form': job_form,
-        'edit_forms': edit_forms
+        'edit_forms': edit_forms,
     }
 
     return render(request, 'jobs/jobs_kanban.html', context)
@@ -73,7 +88,7 @@ def add_job_view(request):
             return redirect(referer_url)
 
 
-class AssignJobView(LoginRequiredMixin, View):
+class AssignJobView(APIView):
 
     @staticmethod
     def post(request, *args, **kwargs):
@@ -92,8 +107,8 @@ class AssignJobView(LoginRequiredMixin, View):
             print(f"Job assigned successfully to column: {column}")
         except Exception as e:
             print(f"Error: {e}")
-
-        return redirect('jobs:board')
+        data = {"job_status": job.status, "job_id": job.id}
+        return Response(data)
 
 
 class DeleteJobView(LoginRequiredMixin, SuccessMessageMixin, View):

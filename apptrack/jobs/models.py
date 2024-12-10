@@ -125,6 +125,9 @@ class Job(models.Model):
     date_applied = models.DateField(null=True, blank=True)
     interviewed = models.BooleanField(null=True, blank=True)
     date_interviewed_set = models.DateField(null=True, blank=True)
+    archived = models.BooleanField(null=True, blank=True, default=False)
+    auto_archive = models.BooleanField(null=True, blank=True, default=False)
+    archive_after_weeks = models.IntegerField(null=True, blank=True, default=2)
 
     def __str__(self):
         return f"{self.company} - {self.job_title}"

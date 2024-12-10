@@ -33,7 +33,7 @@
 
   <!-- UserID -->
   <script>
-    const userID = "{{ user_id }}"
+    const userID = "{{ user_id }}";
     var userStreakEndpoint = "{% url 'core:user_streak' 0 %}".replace("0", userID);
   </script>
   <script src="{% static 'core/scripts/userStreak.js' %}"></script>
