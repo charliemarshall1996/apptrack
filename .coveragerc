@@ -2,3 +2,5 @@
 omit =
     *conftest.py
     apptrack/apptrack/*
+    */__init__.py
+    */migrations/*

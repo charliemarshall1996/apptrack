@@ -547,7 +547,7 @@ class UserStreak(APIView):
         streak = target.streak.current_streak
 
         data = {
-            "target": target.daily_target,
+            "target": target.amount,
             "current_applications": current_applications,
             "streak": streak
         }

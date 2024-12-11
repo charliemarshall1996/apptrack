@@ -39,7 +39,7 @@ class TargetTask(Task):
 
     @property
     def target_val(self):
-        return self.target.daily_target
+        return self.target.amount
 
     @property
     def type(self):

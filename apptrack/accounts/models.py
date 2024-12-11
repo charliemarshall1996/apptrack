@@ -1,3 +1,6 @@
+
+import logging
+
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
 from django.dispatch import Signal
@@ -8,6 +11,9 @@ from .managers import CustomUserManager
 # Create your models here.
 
 target_reset = Signal()
+
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)
 
 
 class CustomUser(AbstractBaseUser, PermissionsMixin):
@@ -74,7 +80,7 @@ class Streak(models.Model):
 class Target(models.Model):
     profile = models.OneToOneField(
         Profile, on_delete=models.CASCADE, related_name='target')
-    daily_target = models.IntegerField(default=0)
+    amount = models.IntegerField(default=0)
     current = models.IntegerField(default=0)
     total_targets_met = models.IntegerField(default=0)
     streak = models.ForeignKey(
@@ -83,25 +89,41 @@ class Target(models.Model):
 
     @property
     def met(self):
-        return self.current >= self.daily_target
+        return self.current >= self.amount
 
     def reset(self, from_save=False):
         # get now
         now = timezone.now()
 
+        logger.info("Starting reset. from_save: %s", from_save)
+
         # if there is a target
-        if self.daily_target > 0:
+        if self.amount > 0:
+            logger.info("Amount is greater than 0. from_save: %s", from_save)
             if now.date() > self.last_reset.date():
+
+                logger.info("Date is different. from_save: %s", from_save)
+                logger.info("Different date")
                 if self.met:
+                    logger.info("Target met. from_save: %s", from_save)
                     self.total_targets_met += 1
                     self.streak.increment()
                 else:
+                    logger.info("Target not met. from_save: %s", from_save)
                     self.streak.reset()
+
                 self.current = 0
                 self.last_reset = now
+
+                logger.info("Sending signal. from_save: %s", from_save)
                 target_reset.send(sender=self.__class__, instance=self)
-                if not from_save:
+
+                logger.info("Checking if from save %s", from_save)
+                if from_save == False:
+                    logger.info("Calling save")
                     self.save()
+                else:
+                    logger.info("Not calling save %s", from_save)
 
     def increment(self):
         self.current += 1
@@ -115,7 +137,7 @@ class Target(models.Model):
         try:
             Target.objects.get(pk=self.pk)
             original = Target.objects.get(pk=self.pk)
-            if original.daily_target != self.daily_target:
+            if original.amount != self.amount:
                 self.current = 0
                 self.last_reset = timezone.now()
                 target_reset.send(sender=self.__class__, instance=self)
