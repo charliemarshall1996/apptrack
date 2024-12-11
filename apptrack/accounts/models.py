@@ -34,12 +34,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
 
 
 class Profile(models.Model):
-    GENDER_CHOICES = (
-        ('M', 'Male'),
-        ('F', 'Female'),
-        ('N', 'Non-Binary'),
-        ('O', 'Other'),
-    )
+
     user = models.OneToOneField(
         CustomUser, on_delete=models.CASCADE, related_name='profile', unique=True)
     email_comms_opt_in = models.BooleanField(default=False)
