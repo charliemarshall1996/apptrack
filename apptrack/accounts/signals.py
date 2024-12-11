@@ -9,15 +9,13 @@ from .models import Target
 
 @receiver(post_save, sender=Profile)
 def create_target(sender, instance, created, **kwargs):
-    existing_target = Target.objects.filter(profile=instance).first()
 
-    if created or not existing_target:
+    if created:
         Target.objects.create(profile=instance)
 
 
 @receiver(user_login)
 def save_target(sender, user, **kwargs):
-    profile = user.profile
-
+    profile = Profile.objects.get(user=user)
     target, created = Target.objects.get_or_create(profile=profile)
     target.save()

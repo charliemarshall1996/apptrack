@@ -26,10 +26,7 @@ urlpatterns = [
     path('ckeditor/', include('ckeditor_uploader.urls')),
     path('accounts/', include('accounts.urls')),
     path('blog/', include('blog.urls')),
-    path('dashboard/', include('dashboard.urls')),
-    path('interview/', include('interview.urls')),
-    path('jobs/', include('jobs.urls')),
-    path('user-streak/<int:id>/', views.UserStreak.as_view())
+    path('jobs/', include('jobs.urls'))
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

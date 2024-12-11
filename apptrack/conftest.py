@@ -8,14 +8,13 @@ from faker import Faker
 import pytest
 
 from accounts.models import Profile
-from core.choices import ReminderUnitChoices
 from jobs.choices import (
     StatusChoices,
-    SourceChoices
+    SourceChoices,
+    ReminderUnitChoices
 )
-from jobs.models import Job, Board, Column
+from jobs.models import (Job, Board, Column, Interview)
 from blog.models import BlogPost
-from interview.models import Interview
 
 UserModel = get_user_model()
 
@@ -64,20 +63,19 @@ def custom_user_factory(custom_user_data_factory):
 
 
 @pytest.fixture
-def profile_data_factory():
-    def factory(user):
-        return {'user': user,
+def profile_data_factory(custom_user_factory):
+    def factory(user=None, password=None, email_verified=True):
+        return {'user': user or custom_user_factory(password, email_verified),
                 'email_comms_opt_in': True,
                 'birth_date': timezone.now() - timedelta(days=1)}
     return factory
 
 
 @pytest.fixture
-def profile_factory(custom_user_factory, profile_data_factory):
-    def factory(password=None, email_verified=True):
-        user = custom_user_factory(
-            password=password, email_verified=email_verified)
-        data = profile_data_factory(user)
+def profile_factory(profile_data_factory):
+    def factory(user=None, password=None, email_verified=True):
+
+        data = profile_data_factory(user, password, email_verified)
         return Profile(**data)
     return factory
 
@@ -112,19 +110,19 @@ def jobs_data():
         'url': fake.url(),
         'source': random.choice(SOURCES),
         'job_title': fake.job(),
-        # 'job_function': random.choice(JOB_FUNCTIONS),
+        'job_function': '',
         'description': fake.text(),
-        # 'location_policy': '',
-        # 'work_contract': '',
+        'location_policy': '',
+        'work_contract': '',
         'min_pay': random.randint(0, 10000),
         'max_pay': random.randint(10000, 100000),
-        # 'pay_rate': random.choice(PAY_RATES),
-        # 'currency': '',
+        'pay_rate': '',
+        'currency': '',
         'note': fake.text(),
         'status': random.choice(STATUSES),
         'company': fake.company(),
         'city': fake.city(),
-        # # 'country': '',
+        'country': '',
         'region': fake.state(),
     }
 
@@ -136,7 +134,7 @@ def job_data_factory():
             'url': fake.url(),
             'source': random.choice(SOURCES),
             'job_title': fake.job(),
-            # 'job_function': random.choice(JOB_FUNCTIONS),
+            # 'job_function': '',
             'description': fake.text(),
             # 'location_policy': '',
             # 'work_contract': '',
@@ -150,46 +148,38 @@ def job_data_factory():
             'city': fake.city(),
             # 'country': '',
             'region': fake.state(),
-            'updated': timezone.now() - timedelta(days=updated_days_previous)
-            if updated_days_previous else None,
+            'updated': timezone.now() - timedelta(days=updated_days_previous) if updated_days_previous else timezone.now(),  # noqa
         }
-    return factory
-
-
-@pytest.fixture()
-def job_form_factory(jobs_form_data):
-    def factory(user=None):
-        return Job(user=user, **jobs_form_data)
     return factory
 
 
 @pytest.fixture
 def job_factory(job_data_factory):
 
-    def factory(user, updated_days_previous=None):
+    def factory(profile, updated_days_previous=None):
         data = job_data_factory(updated_days_previous)
-        return Job(user=user, **data)
+        return Job(profile=profile, **data)
     return factory
 
 
 @pytest.fixture
-def board_data_factory(custom_user_factory):
-    def factory(user=None, password=None, email_verified=True, name=None, no_name=False):
-        if not user:
-            user = custom_user_factory(
-                password=password, email_verified=email_verified)
+def board_data_factory(profile_factory):
+    def factory(profile=None, user=None, password=None, email_verified=True, name=None, no_name=False):
+        if not profile:
+            profile = profile_factory(
+                user=user, password=password, email_verified=email_verified)
 
         if no_name:
-            return {'user': user}
-        return {'user': user, 'name': name or fake.job()}
+            return {'profile': profile}
+        return {'profile': profile, 'name': name or fake.job()}
     return factory
 
 
 @pytest.fixture()
 def board_factory(board_data_factory):
-    def factory(user=None, password=None, email_verified=True, name=None, no_name=False):
+    def factory(profile=None, user=None, password=None, email_verified=True, name=None, no_name=False):
         data = board_data_factory(
-            user, password, email_verified, name, no_name)
+            profile, user, password, email_verified, name, no_name)
         return Board(**data)
     return factory
 
@@ -272,11 +262,12 @@ def blog_post_factory(blog_post_data_factory):
 
 
 @pytest.fixture()
-def interview_data_factory(job_factory, custom_user_factory):
+def interview_data_factory(job_factory, profile_factory):
     def factory():
-        user = custom_user_factory()
-        job = job_factory(user)
-        return {'user': user,
+        profile = profile_factory()
+        profile.save()
+        job = job_factory(profile)
+        return {'profile': profile,
                 'job': job,
                 'interview_round': random.randint(1, 5),
                 'start_date': fake.date_time(),

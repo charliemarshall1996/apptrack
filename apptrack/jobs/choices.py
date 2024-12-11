@@ -1,5 +1,13 @@
 
-from core.choices import ChoiceBase
+class ChoiceBase:
+    @classmethod
+    def choices(cls):
+        # Filter attributes that are tuples of length 2 (value and label)
+        return [
+            (value[0], value[1])
+            for value in cls.__dict__.values()
+            if isinstance(value, tuple) and len(value) == 2
+        ]
 
 
 class SourceChoices(ChoiceBase):
@@ -65,27 +73,27 @@ class StatusChoices(ChoiceBase):
     APPLIED_STATUSES = [APPLIED[0], SHORTLISTED[0],
                         INTERVIEW[0], OFFER[0], REJECTED[0]]
 
-    @classmethod
+    @ classmethod
     def get_status_column_position(cls, status):
         return cls.STATUS_COLUMNS[status]
 
-    @classmethod
+    @ classmethod
     def get_column_position_status(cls, position: int):
         return cls.COLUMN_STATUSES[position][0]
 
-    @classmethod
+    @ classmethod
     def get_column_position_status_name(cls, position: int):
         return cls.COLUMN_STATUSES[position][1]
 
-    @classmethod
+    @ classmethod
     def get_status_name(cls, status):
         return cls.STATUS_NAMES[status]
 
-    @classmethod
+    @ classmethod
     def get_applied_statuses(cls):
         return cls.APPLIED_STATUSES
 
-    @classmethod
+    @ classmethod
     def default(cls):
         return cls.OPEN[0]
 
@@ -411,3 +419,9 @@ class PayRateChoices(ChoiceBase):
     WEEKLY = "WK", "Weekly"
     MONTHLY = "MO", "Monthly"
     YEARLY = "YR", "Yearly"
+
+
+class ReminderUnitChoices(ChoiceBase):
+    DAYS = "d", "Days"
+    HOURS = "h", "Hours"
+    MINUTES = "m", "Minutes"

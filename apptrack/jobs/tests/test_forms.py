@@ -4,12 +4,13 @@ from jobs.forms import JobForm
 
 
 @pytest.mark.django_db
-def test_job_form(jobs_form_data, custom_user_factory):
-    user = custom_user_factory()
+def test_job_form(jobs_form_data, profile_factory):
+    profile = profile_factory()
+    profile.save()
     form = JobForm(data=jobs_form_data)
     assert form.is_valid()
     job = form.save()
-    job.user = user
+    job.profile = profile
     assert job.url == jobs_form_data['url']
     assert job.source == jobs_form_data['source']
     assert job.job_title == jobs_form_data['job_title']

@@ -31,3 +31,11 @@ class MessageManager:
     account_deleted_success = "Your account has been successfully deleted."
 
     profile_update_success = 'Your profile has been updated!'
+
+
+def calculate_conversion_score(jobs):
+    interviews = jobs.objects.filter(interviewed=True).count()
+    applications = jobs.objects.filter(applied=True).count()
+    offers = jobs.objects.filter(applied=True).count()
+
+    return (interviews + (offers * 2) / applications)

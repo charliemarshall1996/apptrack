@@ -12,7 +12,6 @@ from django.core.mail import send_mail
 from django.shortcuts import render, redirect
 
 from accounts.models import Profile
-from targets.models import Target
 from .forms import ContactForm
 
 logger = logging.getLogger(__name__)
@@ -79,22 +78,3 @@ def contact_view(request):
 
 def privacy_policy_view(request):
     return render(request, 'core/privacy_policy.html')
-
-
-class UserStreak(APIView):
-
-    def get(self, request, id):
-        user = User.objects.get(pk=id)
-        profile = Profile.objects.get(
-            user=user)
-        target = Target.objects.get(profile=profile)
-        current_applications = target.current
-        streak = target.streak.current_streak
-
-        data = {
-            "target": target.daily_target,
-            "current_applications": current_applications,
-            "streak": streak
-        }
-
-        return Response(data)

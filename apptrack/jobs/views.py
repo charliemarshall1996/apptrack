@@ -1,4 +1,5 @@
 
+import json
 import csv
 import logging
 
@@ -6,6 +7,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.messages.views import SuccessMessageMixin
+from django.http import JsonResponse, HttpResponse
 from django.shortcuts import render, redirect, HttpResponse, get_object_or_404
 from django.views.decorators.http import require_POST
 from django.views.generic import View, ListView
@@ -15,8 +17,17 @@ from django.urls import reverse, reverse_lazy
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from .forms import JobForm, DownloadJobsForm, JobFilterForm
-from .models import Job, Board, Column
+from .forms import (JobForm,
+                    DownloadJobsForm,
+                    JobFilterForm,
+                    AddInterviewForm,
+                    AddReminderForm)
+from .models import (Job,
+                     Board,
+                     Column,
+                     Interview,
+                     InterviewTask,
+                     InterviewReminder)
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
@@ -39,10 +50,11 @@ class ArchiveJobView(LoginRequiredMixin, View):
 
 @login_required
 def board_view(request):
-    board = Board.objects.get(user=request.user)
+    board = Board.objects.get(profile=request.user.profile)
 
     # Retrieve jobs and columns for the user
-    jobs = Job.objects.filter(user=request.user, archived=False).all()
+    jobs = Job.objects.filter(
+        profile=request.user.profile, archived=False).all()
     columns = board.columns.all()
     job_form = JobForm()
     edit_forms = {job.id: JobForm(instance=job) for job in jobs}
@@ -53,12 +65,15 @@ def board_view(request):
         if job_form.is_valid():
             job = job_form.save()
             job.board = board
-            job.user = request.user
+            job.profile = request.user.profile
             job.save()
             messages.success(request, "Job added successfully")
             return redirect('jobs:board')
 
     # Clear session variables after passing them to the template
+    for form in edit_forms.values():
+        for field in form.fields:
+            print(f"Filed: {field}, Type: {type(field)}")
     context = {
         'user_id': request.user.id,
         'board': board,
@@ -75,7 +90,7 @@ def board_view(request):
 @require_POST
 def add_job_view(request):
     logger.info("Adding job...")
-    board = Board.objects.filter(user=request.user).first()
+    board = Board.objects.filter(profile=request.user.profile).first()
     referer_url = request.POST.get("referrer")
     print("Referer URL: %s", referer_url)
     if request.method == 'POST':
@@ -83,8 +98,27 @@ def add_job_view(request):
         if form.is_valid():
             job = form.save()
             job.board = board
-            job.user = request.user
+            job.profile = request.user.profile
             job.save()
+            return redirect(referer_url)
+
+
+@login_required
+@require_POST
+def edit_job_view(request, pk):
+    logger.info("Editing job...")
+    job = Job.objects.get(pk=pk)
+    referer_url = request.POST.get("editJobReferrer")
+    logger.info("Referer URL: %s", referer_url)
+    if request.method == 'POST':
+        logger.info("Request method is POST")
+        form = JobForm(request.POST, instance=job)
+        if form.is_valid():
+            logger.info("Form is valid")
+            job = form.save()
+            job.save()
+            logger.info("Job saved")
+            logger.info("New job url: %s", job.url)
             return redirect(referer_url)
 
 
@@ -137,6 +171,7 @@ class EditJobView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
     def get_object(self):
         # Custom logic to retrieve the object
         obj = get_object_or_404(self.model, pk=self.kwargs['pk'])
+        print(obj)
         return obj
 
 
@@ -181,7 +216,7 @@ class JobListView(LoginRequiredMixin, ListView):
 
     def get_queryset(self):
         queryset = super().get_queryset()
-        queryset = queryset.filter(user=self.request.user)
+        queryset = queryset.filter(profile=self.request.user.profile)
         form = JobFilterForm(self.request.GET)
 
         if form.is_valid():
@@ -230,3 +265,157 @@ class JobListView(LoginRequiredMixin, ListView):
             self.request.GET)  # Pass form to template
         context['job_form'] = JobForm()
         return context
+
+
+# Create your views here.
+
+
+@login_required
+def calendar(request):
+
+    if request.method == "POST":
+        print("form is post")
+        print(f"request body {request.body}")
+        print(f"request post {str(request.POST)}")
+        print(f"request headers {request.headers}")
+        body = json.loads(request.body)
+        form_type = request.POST.get('form_type')
+        if not form_type:
+            form_type = body['form_type']
+        if form_type == "add":
+            form = AddInterviewForm(request.POST)
+            if form.is_valid():
+                interview = form.save()
+                interview.profile = request.user.profile
+                interview.save()
+        elif form_type == "add_task":
+            pass
+        elif form_type == "update_task":
+            print("update task")
+            task_id = body["task_id"]
+            task = InterviewTask.objects.get(id=task_id)
+            task.is_completed = body["completed"]
+            task.save()
+            print(
+                f"Task updated: {task.name} - Completed: {task.is_completed}")
+        elif form_type == "delete_task":
+            pass
+        else:
+            print(f"invalid form type {form_type}")
+
+    add_form = AddInterviewForm()
+
+    add_reminder_form = AddReminderForm()
+    # Handle GET requests or invalid POST submissions
+    all_interviews = Interview.objects.filter(profile=request.user.profile)
+    interviews = []
+    for interview in all_interviews:
+        interview_data = {
+            'title': f"{interview.job.job_title} at {interview.job.company}",
+            'start': interview.start_date.isoformat(),
+            'end': interview.end_date.isoformat(),
+            'id': interview.id
+        }
+        interviews.append(interview_data)
+
+    edit_forms = {i.id: AddInterviewForm(instance=i) for i in all_interviews}
+
+    context = {
+        "user_id": request.user.id,
+        "add_form": add_form,
+        "add_reminder_form": add_reminder_form,
+        "interviews": json.dumps(interviews),
+        "all_interviews": all_interviews,
+        "edit_forms": edit_forms
+    }
+    return render(request, 'interview/calendar.html', context)
+
+
+@login_required
+@require_POST
+def add_interview(request):
+    print(f"request {request}")
+    if request.method == "POST":
+        form = AddInterviewForm(request.POST)
+        if form.is_valid():
+            interview = form.save()
+
+            # Get the Reminders JSON string from the POST data
+            # Use 'Reminders' as the key, as it's the name of the hidden input field
+            reminders_json = request.POST.get('reminders')
+
+            # Parse the JSON string back into a Python list (or another appropriate type)
+            if reminders_json:
+                reminders = json.loads(reminders_json)
+                for r in reminders:
+                    InterviewReminder.objects.create(
+                        interview=interview,
+                        offset=r['offset'],
+                        unit=r['unit']
+                    )
+            else:
+                reminders = []
+
+            # Save the interview data and associated reminders
+            interview.profile = request.user.profile
+            interview.save()
+
+            return redirect("interview:calendar")
+
+
+@login_required
+@require_POST
+def edit_interview(request):
+    if request.method == "POST":
+        form = AddInterviewForm(request.POST)
+        if form.is_valid():
+            interview = form.save()
+            interview.save()
+            messages.success(request, "Interview updated successfully")
+            return redirect("interview:calendar")
+
+
+def interview_event_detail(request, interview_id):
+    try:
+        interview = Interview.objects.get(id=interview_id)
+        print(interview.start_date.isoformat())
+
+        interview_reminders = [
+            {'id': r.id, 'offset': r.offset, 'unit': r.unit} for r in interview.reminders.all()
+        ]
+
+        interview_tasks = [{'id': task.id, 'name': task.name, 'completed': task.is_completed}
+                           for task in interview.tasks.all()]
+        # Return interview data as JSON
+        response_data = {
+            'id': interview.id,
+            'title': interview.job.job_title,
+            'company': interview.job.company,
+            # Just the date part (YYYY-MM-DD)
+            'date': interview.start_date.date().isoformat(),
+            # Start time (HH:MM)
+            'start_time': interview.start_date.strftime('%H:%M'),
+            # End time (HH:MM)
+            'end_time': interview.end_date.strftime('%H:%M'),
+            'notes': interview.notes,
+            'tasks': interview_tasks,
+            'reminders': interview_reminders
+        }
+        print(response_data)
+        return JsonResponse(response_data)
+    except Interview.DoesNotExist:
+        return JsonResponse({'error': 'Interview not found'}, status=404)
+
+
+@login_required
+@require_POST
+def update_task(request, id):
+    if request.method == "POST":
+        task = InterviewTask.objects.get(id=id)
+        is_completed = json.loads(request.body)['completed']
+        if is_completed == "true":
+            task.is_completed = True
+        else:
+            task.is_completed = False
+        task.save()
+        return HttpResponse(status=200)

@@ -1,16 +1,30 @@
 
-from django.contrib.auth import get_user_model
 from django.db.models.signals import post_save
 from django.dispatch import receiver
-from .models import Board, Column
 
-User = get_user_model()
+from accounts.models import target_reset, Profile
+
+from .models import Board, Column, TargetTask
 
 
-@receiver(post_save, sender=User)
+@receiver(target_reset)
+def create_target_task_on_reset(sender, instance, **kwargs):
+    task_name = f"Daily Applications Target"
+    profile = instance.profile
+
+    task, created = TargetTask.objects.get_or_create(
+        profile=profile, target=instance)
+
+    task.is_completed = False
+    task.name = task_name
+
+    task.save()
+
+
+@receiver(post_save, sender=Profile)
 def create_board(sender, instance, created, **kwargs):
     if created:
-        board = Board.objects.create(user=instance, name='My Job Board')
+        board = Board.objects.create(profile=instance, name='My Job Board')
         board.save()
 
 

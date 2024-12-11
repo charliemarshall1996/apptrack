@@ -25,4 +25,13 @@ urlpatterns = [
     path('resend-verification-email/', views.resend_verification_email,
          name='resend_verification_email'),
     path('delete-account/', views.delete_account_view, name='delete_account'),
+    path('dashboard/', views.home_view, name="dashboard"),
+    # path('test-api', views.get_data),
+    path('api/', views.ChartData.as_view()),
+    path('basic-stats/<int:id>/',
+         views.BasicStats.as_view()),
+    path("job-source-conversion/<int:id>/",
+         views.BestConvertingJobFunctions.as_view()),
+    path("job-function-conversion/<int:id>/",
+         views.BestConvertingJobFunctions.as_view()),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

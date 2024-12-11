@@ -8,6 +8,7 @@ from django.urls import reverse
 from django.utils import timezone
 import pytest
 
+from jobs.forms import JobForm
 from jobs.models import Job
 
 logger = logging.getLogger(__name__)
@@ -34,13 +35,13 @@ def test_board_view(client, profile_factory):
 
 
 @pytest.mark.django_db
-def test_add_job_view(client, board_factory, profile_factory, jobs_form_data):
+def test_add_job_view(client, profile_factory, job_data_factory):
     PASSWORD = "securepassword"
 
     profile = profile_factory(password=PASSWORD)
     profile.save()
 
-    data = jobs_form_data
+    data = job_data_factory()
     data['referrer'] = reverse('jobs:board')
 
     response = client.post(reverse("accounts:login"), {
@@ -57,17 +58,17 @@ def test_add_job_view(client, board_factory, profile_factory, jobs_form_data):
 
 
 @pytest.mark.django_db
-def test_assign_job_view(client, board_factory, profile_factory, job_form_factory):
+def test_assign_job_view(client, profile_factory, job_factory):
     PASSWORD = "securepassword"
 
     profile = profile_factory(password=PASSWORD)
     profile.save()
 
-    board = profile.user.board
+    board = profile.board
 
     columns = [col.id for col in board.columns.all()]
 
-    job = job_form_factory(user=profile.user)
+    job = job_factory(profile=profile)
     job.board = board
     job.save()
     try:
@@ -99,15 +100,15 @@ def test_assign_job_view(client, board_factory, profile_factory, job_form_factor
 
 
 @pytest.mark.django_db
-def test_delete_job_view(client, job_form_factory, profile_factory, board_factory):
+def test_delete_job_view(client, job_factory, profile_factory):
     PASSWORD = "securepassword"
 
     profile = profile_factory(password=PASSWORD)
     profile.save()
 
-    board = profile.user.board
+    board = profile.board
 
-    job = job_form_factory(user=profile.user)
+    job = job_factory(profile=profile)
     job.board = board
     job.save()
 
@@ -128,27 +129,31 @@ def test_delete_job_view(client, job_form_factory, profile_factory, board_factor
 
 
 @pytest.mark.django_db
-def test_edit_job_view(client, job_form_factory, profile_factory, board_factory, jobs_form_data):
+def test_edit_job_view(client, job_factory, profile_factory, jobs_data):
     PASSWORD = "securepassword"
 
     profile = profile_factory(password=PASSWORD)
     profile.save()
 
-    board = profile.user.board
+    board = profile.board
+    board.save()
 
-    job = job_form_factory(user=profile.user)
+    job = job_factory(profile=profile)
     job.board = board
     job.save()
 
-    data = jobs_form_data
+    data = JobForm(data=jobs_data).data
+    data['editJobReferrer'] = reverse('jobs:board')
     response = client.post(reverse("accounts:login"), {
         "email": profile.user.email, "password": PASSWORD})
 
     assert response.status_code == 302
 
     url = reverse("jobs:edit_job", kwargs={"pk": job.pk})
+    response = client.post(url, data)
 
-    response = client.get(url, data)
+    # Get the updated job
+    job = Job.objects.get(pk=job.pk)
 
     assert job.url == data['url']
     assert job.source == data['source']
@@ -165,9 +170,9 @@ def test_download_jobs_view(client, profile_factory, job_factory):
     profile = profile_factory()
     profile.save()
     client.force_login(profile.user)
-    job1 = job_factory(user=profile.user, updated_days_previous=1)
-    job2 = job_factory(user=profile.user, updated_days_previous=14)
-    job3 = job_factory(user=profile.user, updated_days_previous=28)
+    job1 = job_factory(profile=profile, updated_days_previous=1)
+    job2 = job_factory(profile=profile, updated_days_previous=14)
+    job3 = job_factory(profile=profile, updated_days_previous=28)
     job1.save()
     job2.save()
     job3.save()
@@ -243,7 +248,7 @@ def test_download_jobs_view(client, profile_factory, job_factory):
     assert i == 3
 
 
-@pytest.mark.django_db
+@ pytest.mark.django_db
 def test_board_view_add_job(client, profile_factory, jobs_form_data):
     PASSWORD = "securepassword"
 

@@ -3,16 +3,17 @@ import logging
 
 import pytest
 
-from jobs.models import Job, Column, Board
+from jobs.models import Job, Column, Interview, InterviewTask, Reminder
 from jobs.choices import StatusChoices
 
 logger = logging.getLogger(__name__)
 
 
 @pytest.mark.django_db
-def test_board(custom_user_factory):
-    user = custom_user_factory()
-    board = user.board
+def test_board(profile_factory):
+    profile = profile_factory()
+    profile.save()
+    board = profile.board
     board.save()
     board_columns = [column.name for column in board.columns.all()]
     assert board.name == "My Job Board"
@@ -50,22 +51,24 @@ def test_column(board_factory, column_data_factory):
 
 
 @pytest.mark.django_db
-def test_job(custom_user_factory, column_factory, jobs_data):
-    user = custom_user_factory()
-    board = user.board
+def test_job(profile_factory, column_factory, job_data_factory):
+    data = job_data_factory()
+    profile = profile_factory()
+    profile.save()
+    board = profile.board
     column = column_factory(board=board)
-    job = Job(user=user, column=column, board=board, **jobs_data)
+    job = Job(profile=profile, column=column, board=board, **data)
 
-    assert job.description == jobs_data["description"]
-    assert job.company == jobs_data["company"]
-    assert job.source == jobs_data["source"]
-    assert job.city == jobs_data["city"]
-    assert job.job_title == jobs_data["job_title"]
-    assert job.min_pay == jobs_data["min_pay"]
-    assert job.max_pay == jobs_data["max_pay"]
-    assert job.note == jobs_data["note"]
-    assert job.url == jobs_data["url"]
-    assert job.status == jobs_data["status"]
+    assert job.description == data["description"]
+    assert job.company == data["company"]
+    assert job.source == data["source"]
+    assert job.city == data["city"]
+    assert job.job_title == data["job_title"]
+    assert job.min_pay == data["min_pay"]
+    assert job.max_pay == data["max_pay"]
+    assert job.note == data["note"]
+    assert job.url == data["url"]
+    assert job.status == data["status"]
 
     assert job.column.name == column.name
     assert job.column.position == column.position
@@ -73,11 +76,13 @@ def test_job(custom_user_factory, column_factory, jobs_data):
 
 
 @pytest.mark.django_db
-def test_job_updated(custom_user_factory, column_factory, jobs_data):
-    user = custom_user_factory()
-    board = user.board
+def test_job_updated(profile_factory, column_factory, job_data_factory):
+    profile = profile_factory()
+    profile.save()
+    board = profile.board
     column = column_factory(board=board)
-    job = Job(user=user, column=column, board=board, **jobs_data)
+    job = Job(profile=profile, column=column,
+              board=board, **job_data_factory())
 
     job.save()
 
@@ -105,10 +110,11 @@ def test_job_updated(custom_user_factory, column_factory, jobs_data):
 
 
 @pytest.mark.django_db
-def test_job_status_no_column(custom_user_factory, jobs_data):
-    user = custom_user_factory()
-    board = user.board
-    job = Job(user=user, board=board, **jobs_data)
+def test_job_status_no_column(profile_factory, job_data_factory):
+    profile = profile_factory()
+    profile.save()
+    board = profile.board
+    job = Job(profile=profile, board=board, **job_data_factory())
     job.save()
 
     assert job.column
@@ -118,16 +124,17 @@ def test_job_status_no_column(custom_user_factory, jobs_data):
 
 
 @pytest.mark.django_db
-def test_job_status_applied(custom_user_factory, jobs_data):
+def test_job_status_applied(profile_factory, job_data_factory):
     applied_statuses = StatusChoices.get_applied_statuses()
-
+    data = job_data_factory()
     for status in applied_statuses:
-        jobs_data["status"] = StatusChoices.OPEN[0]
+        data["status"] = StatusChoices.OPEN[0]
         logger.info("status: %s", status)
-        logger.info("jobs_data: %s", jobs_data)
-        user = custom_user_factory()
-        board = user.board
-        job = Job(user=user, board=board, **jobs_data)
+        logger.info("jobs_data: %s", data)
+        profile = profile_factory()
+        profile.save()
+        board = profile.board
+        job = Job(profile=profile, board=board, **data)
         job.save()
 
         assert not job.applied
@@ -136,3 +143,70 @@ def test_job_status_applied(custom_user_factory, jobs_data):
         job.save()
         assert job.status == status
         assert job.applied
+
+
+@pytest.mark.django_db
+def test_interview(interview_data_factory):
+    data = interview_data_factory()
+    job = data['job']
+    profile = job.profile
+
+    interview = Interview(**data)
+
+    assert interview.job == job
+    assert interview.profile == profile
+    assert interview.interview_round == data['interview_round']
+    assert interview.start_date == data["start_date"]
+    assert interview.end_date == data["end_date"]
+    assert interview.post_code == data["post_code"]
+    assert interview.building == data["building"]
+    assert interview.street == data["street"]
+    assert interview.city == data["city"]
+    assert interview.region == data["region"]
+    assert interview.notes == data["notes"]
+    assert str(interview) == f"Interview for {job.job_title} at {job.company}"
+
+
+@pytest.mark.django_db
+def test_interview_creates_default_tasks(interview_factory):
+    interview = interview_factory()
+    interview.job.save()
+    interview.profile.user.save()
+    interview.profile.save()
+    interview.save()
+
+    default_tasks = [
+        "Prepare for interview",
+        "Review job description",
+        "Research the company",
+        "Prepare questions for the interviewer",
+        "Dress appropriately",
+        "Plan your route to the interview",
+    ]
+
+    for task in default_tasks:
+        assert InterviewTask.objects.filter(
+            interview=interview, name=task).exists()
+
+
+@pytest.mark.django_db
+def test_interview_task(interview_task_data_factory):
+    data = interview_task_data_factory()
+    interview = data['interview']
+
+    task = InterviewTask(**data)
+
+    assert task.interview == interview
+    assert task.name == data['name']
+    assert task.is_completed == data['is_completed']
+
+
+@pytest.mark.django_db
+def test_reminder(reminder_data_factory):
+    data = reminder_data_factory()
+    reminder = Reminder.objects.create(**data)
+    assert reminder.offset == data["offset"]
+    assert reminder.unit == data["unit"]
+    assert reminder.user == data["user"]
+    assert not reminder.emailed
+    assert not reminder.read

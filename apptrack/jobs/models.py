@@ -1,32 +1,81 @@
 
 import logging
 
-from django.contrib.auth import get_user_model
-from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist
 from django.db import models
 from django.utils import timezone
+from polymorphic.models import PolymorphicModel
+
+from accounts.models import Profile, Target
+from core.models import Country, Currency
 
 from .choices import (
     StatusChoices,
-    SourceChoices
+    SourceChoices,
+    ReminderUnitChoices
 )
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
 
-User = get_user_model()
-
-
 # Create your models here.
+
+
+class Task(PolymorphicModel):
+    profile = models.ForeignKey(
+        Profile, on_delete=models.CASCADE, related_name="tasks")
+    name = models.CharField(max_length=100)
+    is_completed = models.BooleanField(default=False)
+    priority = models.IntegerField(default=0, null=True, blank=True)
+
+
+class TargetTask(Task):
+    target = models.ForeignKey(
+        Target, related_name="task", on_delete=models.CASCADE)
+
+    @property
+    def current_val(self):
+        return self.target.current
+
+    @property
+    def target_val(self):
+        return self.target.daily_target
+
+    @property
+    def type(self):
+        return "target"
+
+    def save(self, *args, **kwargs):
+        if self.target.met:
+            self.is_completed = True
+        self.priority = 1
+        super().save(*args, **kwargs)
+
+
+class Feedback(PolymorphicModel):
+    name = models.CharField(max_length=255)
+
+
+class PositiveFeedback(Feedback):
+
+    @property
+    def type(self):
+        return "positive"
+
+
+class NegativeFeedback(Feedback):
+
+    @property
+    def type(self):
+        return "negative"
 
 
 class Board(models.Model):
     name = models.CharField(max_length=255, null=True,
                             blank=True, default="My Job Board")
 
-    user = models.OneToOneField(settings.AUTH_USER_MODEL,
-                                on_delete=models.CASCADE, related_name='board')
+    profile = models.OneToOneField(Profile,
+                                   on_delete=models.CASCADE, related_name='board')
 
 
 class Column(models.Model):
@@ -74,8 +123,8 @@ class WorkContract(models.Model):
 class Job(models.Model):
 
     id = models.BigAutoField(primary_key=True)
-    user = models.ForeignKey(settings.AUTH_USER_MODEL,
-                             on_delete=models.CASCADE)
+    profile = models.ForeignKey(Profile,
+                                on_delete=models.CASCADE)
     column = models.ForeignKey(
         Column, related_name="column", on_delete=models.CASCADE, null=True, blank=True)
     board = models.ForeignKey(
@@ -108,13 +157,13 @@ class Job(models.Model):
         PayRate, on_delete=models.SET_NULL, null=True, blank=True
     )
     currency = models.ForeignKey(
-        'core.Currency', on_delete=models.SET_NULL, null=True, blank=True
+        Currency, on_delete=models.SET_NULL, null=True, blank=True
     )
 
     city = models.CharField(max_length=100, null=True, blank=True)
     region = models.CharField(max_length=100, null=True, blank=True)
     country = models.ForeignKey(
-        'core.Country', on_delete=models.SET_NULL, null=True, blank=True
+        Country, on_delete=models.SET_NULL, null=True, blank=True
     )
 
     note = models.TextField(null=True, blank=True)
@@ -128,6 +177,11 @@ class Job(models.Model):
     archived = models.BooleanField(null=True, blank=True, default=False)
     auto_archive = models.BooleanField(null=True, blank=True, default=False)
     archive_after_weeks = models.IntegerField(null=True, blank=True, default=2)
+
+    positive_feedback = models.ManyToManyField(
+        PositiveFeedback, blank=True, null=True)
+    negative_feedback = models.ManyToManyField(
+        NegativeFeedback, blank=True, null=True)
 
     def __str__(self):
         return f"{self.company} - {self.job_title}"
@@ -202,8 +256,8 @@ class Job(models.Model):
                     and (self.status != StatusChoices.CLOSED):
                 logger.info("Job is not applied")
                 self.applied = False
-                self.user.profile.target.decrement()
-                self.user.profile.target.save()
+                self.profile.target.decrement()
+                self.profile.target.save()
 
     def _set_interviewed(self):
         logger.info("Setting interviewed...")
@@ -212,23 +266,23 @@ class Job(models.Model):
             if not self.date_interviewed_set:
                 self.date_interviewed_set = timezone.now()
 
-    def _manage_user_profile_streak(self):
+    def _manage_profile_streak(self):
+        profile_target = Target.objects.get(profile=self.profile)
         # if job is applied
         if self.applied:
 
             # if job was not previously applied
-            original = Job.objects.get(pk=self.pk)
-            if original:
+            try:
+                original = Job.objects.get(pk=self.pk)
                 if not original.applied:
-                    print("Incrementing applications made, job changed to applied")
-                    self.user.profile.target.increment()
-                    self.user.profile.target.save()
-
-            # if job was created
-            elif not original:
+                    print(
+                        "Incrementing applications made, job changed to applied")
+                    profile_target.increment()
+                    profile_target.save()
+            except Job.DoesNotExist:
                 print("Incrementing applications made, job created with applied")
-                self.user.profile.target.increment()
-                self.user.profile.target.save()
+                profile_target.increment()
+                profile_target.save()
 
     def save(self, *args, **kwargs):
         self._manage_columns_and_boards()
@@ -238,5 +292,97 @@ class Job(models.Model):
 
         self._set_applied()
         self._set_interviewed()
-        self._manage_user_profile_streak()
+        self._manage_profile_streak()
+        super().save(*args, **kwargs)
+
+
+# Create your models here.
+class Reminder(models.Model):
+
+    profile = models.ForeignKey(Profile, on_delete=models.CASCADE)
+
+    offset = models.IntegerField(default=1)
+    unit = models.CharField(
+        max_length=1, choices=ReminderUnitChoices.choices())
+
+    emailed = models.BooleanField(default=False, blank=True)
+    read = models.BooleanField(default=False)
+
+
+class Interview(models.Model):
+    interview_round = models.IntegerField(default=1)
+
+    job = models.ForeignKey(
+        Job, on_delete=models.CASCADE, related_name='interviews')
+    profile = models.ForeignKey(Profile,
+                                on_delete=models.CASCADE)
+
+    start_date = models.DateTimeField()
+    end_date = models.DateTimeField()
+    post_code = models.CharField(max_length=10, blank=True, null=True)
+    building = models.CharField(max_length=20, blank=True, null=True)
+    street = models.CharField(max_length=20, blank=True, null=True)
+    city = models.CharField(max_length=20, blank=True, null=True)
+    region = models.CharField(max_length=20, blank=True, null=True)
+    meeting_url = models.URLField(blank=True, null=True)
+    country = models.ForeignKey(
+        Country, on_delete=models.SET_NULL, null=True, blank=True)
+    notes = models.TextField(blank=True, null=True)
+
+    def __str__(self):
+        return f"Interview for {self.job.job_title} at {self.job.company}"
+
+    def create_default_tasks(self):
+        default_tasks = [
+            "Prepare for interview",
+            "Review job description",
+            "Research the company",
+            "Prepare questions for the interviewer",
+            "Dress appropriately",
+            "Plan your route to the interview",
+        ]
+        for task in default_tasks:
+            InterviewTask.objects.create(
+                interview=self, profile=self.profile, name=task)
+
+    def save(self, *args, **kwargs):
+        if not self.pk:  # This ensures tasks are added only once when the interview is created
+            super().save(*args, **kwargs)
+            self.create_default_tasks()
+        else:
+            super().save(*args, **kwargs)
+
+
+class InterviewReminder(Reminder):
+    interview = models.ForeignKey(
+        Interview, on_delete=models.CASCADE, related_name='reminders')
+
+    @property
+    def message(self):
+        return f"Reminder: Interview for {self.interview.job.job_title} at {self.interview.job.company} in {self.alert_before} {self.alert_before_unit}"
+
+
+class InterviewTask(Task):
+    interview = models.ForeignKey(
+        Interview, related_name="tasks", on_delete=models.CASCADE)
+
+    @property
+    def type(self):
+        return "interview"
+
+    def save(self, *args, **kwargs):
+        self.priority = 2
+        super().save(*args, **kwargs)
+
+
+class JobTask(Task):
+    job = models.ForeignKey(
+        Job, related_name="tasks", on_delete=models.CASCADE)
+
+    @property
+    def type(self):
+        return "job"
+
+    def save(self, *args, **kwargs):
+        self.priority = 3
         super().save(*args, **kwargs)

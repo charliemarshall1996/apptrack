@@ -4,8 +4,7 @@ from django.contrib.auth.forms import UserCreationForm
 from django.core.validators import validate_email
 from django.core.exceptions import ValidationError
 
-from targets.models import Target
-from .models import Profile
+from .models import Profile, Target
 
 User = get_user_model()
 
