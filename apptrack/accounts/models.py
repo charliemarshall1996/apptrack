@@ -83,7 +83,7 @@ class Target(models.Model):
     current = models.IntegerField(default=0)
     total_targets_met = models.IntegerField(default=0)
     streak = models.ForeignKey(
-        Streak, on_delete=models.CASCADE, related_name='target', null=True)
+        Streak, on_delete=models.CASCADE, related_name='target', null=True, default=Streak.objects.create)
     last_reset = models.DateTimeField(auto_now=True)
 
     @property
@@ -128,9 +128,6 @@ class Target(models.Model):
             pass
 
     def save(self, *args, **kwargs):
-        if not self.streak:
-            self.streak = Streak()
-            self.streak.save()
         self._reset_if_target_changed()
         self.reset(from_save=True)
         super().save(*args, **kwargs)
