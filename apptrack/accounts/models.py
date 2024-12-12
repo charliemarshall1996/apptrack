@@ -80,8 +80,8 @@ class Streak(models.Model):
 class Target(models.Model):
     profile = models.OneToOneField(
         Profile, on_delete=models.CASCADE, related_name='target')
-    amount = models.IntegerField(default=0)
-    current = models.IntegerField(default=0)
+    amount = models.IntegerField(default=0, null=True, blank=True)
+    current = models.IntegerField(default=0, null=True, blank=True)
     total_targets_met = models.IntegerField(default=0)
     streak = models.ForeignKey(
         Streak, on_delete=models.CASCADE, related_name='target', null=True, default=Streak.objects.create)
@@ -97,33 +97,35 @@ class Target(models.Model):
 
         logger.info("Starting reset. from_save: %s", from_save)
 
-        # if there is a target
-        if self.amount > 0:
-            logger.info("Amount is greater than 0. from_save: %s", from_save)
-            if now.date() > self.last_reset.date():
+        if self.amount:
+            # if there is a target
+            if self.amount > 0:
+                logger.info(
+                    "Amount is greater than 0. from_save: %s", from_save)
+                if now.date() > self.last_reset.date():
 
-                logger.info("Date is different. from_save: %s", from_save)
-                logger.info("Different date")
-                if self.met:
-                    logger.info("Target met. from_save: %s", from_save)
-                    self.total_targets_met += 1
-                    self.streak.increment()
-                else:
-                    logger.info("Target not met. from_save: %s", from_save)
-                    self.streak.reset()
+                    logger.info("Date is different. from_save: %s", from_save)
+                    logger.info("Different date")
+                    if self.met:
+                        logger.info("Target met. from_save: %s", from_save)
+                        self.total_targets_met += 1
+                        self.streak.increment()
+                    else:
+                        logger.info("Target not met. from_save: %s", from_save)
+                        self.streak.reset()
 
-                self.current = 0
-                self.last_reset = now
+                    self.current = 0
+                    self.last_reset = now
 
-                logger.info("Sending signal. from_save: %s", from_save)
-                target_reset.send(sender=self.__class__, instance=self)
+                    logger.info("Sending signal. from_save: %s", from_save)
+                    target_reset.send(sender=self.__class__, instance=self)
 
-                logger.info("Checking if from save %s", from_save)
-                if from_save == False:
-                    logger.info("Calling save")
-                    self.save()
-                else:
-                    logger.info("Not calling save %s", from_save)
+                    logger.info("Checking if from save %s", from_save)
+                    if from_save == False:
+                        logger.info("Calling save")
+                        self.save()
+                    else:
+                        logger.info("Not calling save %s", from_save)
 
     def increment(self):
         self.current += 1

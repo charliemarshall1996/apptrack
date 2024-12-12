@@ -16,26 +16,25 @@ def get_minutes_left_before_resend(time_since_last_email, timeout_duration):
     return total_seconds // 60
 
 
-class MessageManager:
+class ConversionCalculator:
 
-    password_reset_success = """We've emailed you instructions for setting your password, 
-        if an account exists with the email you entered. You should receive them 
-        shortly. If you don't receive an email, please make sure you've entered the 
-        address you registered with, and check your spam folder."""
-    spam = "Your form submission was detected as spam."
+    @staticmethod
+    def calculate_basic_conversion_rate(applications, interviews_or_offers):
+        if interviews_or_offers > 0 and applications > 0:
+            return (interviews_or_offers / applications)
+        else:
+            return 0
 
-    user_not_found = "We can't find a user with that email address."
+    @staticmethod
+    def calculate_conversion_rate(applications, interviews, offers):
+        if interviews + offers > 0 and applications > 0:
+            return ((interviews + offers) / applications)
+        else:
+            return 0
 
-    verification_email_sent = "Verification email sent. Please check your inbox."
-
-    account_deleted_success = "Your account has been successfully deleted."
-
-    profile_update_success = 'Your profile has been updated!'
-
-
-def calculate_conversion_score(jobs):
-    interviews = jobs.objects.filter(interviewed=True).count()
-    applications = jobs.objects.filter(applied=True).count()
-    offers = jobs.objects.filter(applied=True).count()
-
-    return (interviews + (offers * 2) / applications)
+    @staticmethod
+    def calculate_conversion_score(applications, interviews, offers):
+        if interviews + offers > 0 and applications > 0:
+            return ((interviews + (offers * 2)) / applications)
+        else:
+            return 0

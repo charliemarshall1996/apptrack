@@ -1,9 +1,4 @@
 
-from .utils import calculate_conversion_score
-from jobs.models import Job, JobFunction, SourceChoices
-from rest_framework.response import Response
-from rest_framework.views import APIView
-from django.shortcuts import render
 import logging
 from datetime import timedelta
 
@@ -39,12 +34,12 @@ from .forms import (
     PasswordResetForm,
     TargetUpdateForm
 )
+from .messages import AccountsMessageManager
 from .models import Profile, Target
 from .utils import (get_can_resend,
                     get_minutes_left_before_resend,
-                    get_time_since_last_email,
-                    MessageManager,
-                    calculate_conversion_score)
+                    get_time_since_last_email)
+
 
 logger = logging.getLogger(__name__)
 User = get_user_model()
@@ -56,6 +51,7 @@ user_login = Signal()
 def profile_settings_view(request, id):
     # Fetch the profile using the slug
     profile = get_object_or_404(Profile, id=id)
+    target = get_object_or_404(Target, profile=profile)
 
     # Check if the logged-in user owns the profile, otherwise redirect
     if profile.user != request.user:
@@ -66,7 +62,7 @@ def profile_settings_view(request, id):
     if request.method == 'POST':
         user_form = UserUpdateForm(request.POST, instance=request.user)
         profile_form = ProfileUpdateForm(request.POST, instance=profile)
-        target_form = TargetUpdateForm(request.POST, instance=profile.target)
+        target_form = TargetUpdateForm(request.POST, instance=target)
 
         if user_form.is_valid() and profile_form.is_valid() and target_form.is_valid():
 
@@ -79,10 +75,17 @@ def profile_settings_view(request, id):
             profile.target = target
             profile.save()
 
-            messages.success(request, MessageManager.profile_update_success)
+            messages.success(
+                request, AccountsMessageManager.profile_update_success)
 
             return redirect('accounts:profile', id=profile.id)
         else:
+            if not profile_form.is_valid():
+                errors = profile_form.errors.as_data()
+                if errors.get('birth_date'):
+                    messages.error(
+                        request, AccountsMessageManager.invalid_birth_date)
+
             messages.error(
                 request, f"Invalid form {profile_form.errors} {user_form.errors} {target_form.errors}")
             return redirect("accounts:profile", id=profile.id)
@@ -126,17 +129,14 @@ def logout_view(request):
 
 
 def login_non_verified_email(request, email):
-    logger.debug(f"Email: {email}")
     try:
         user = User.objects.get(email=email)
-        logger.debug(f"User: {user}")
     except User.DoesNotExist:
-        logger.debug("User does not exist")
-        messages.error(request, "Invalid login credentials")
+        messages.error(request, AccountsMessageManager.email_not_found)
         return redirect("accounts:login")
 
     if user.email_verified:
-        messages.error(request, "Invalid login credentials")
+        messages.error(request, AccountsMessageManager.email_not_verified)
         return redirect("accounts:login")
 
     timeout_duration = timedelta(minutes=10)
@@ -149,31 +149,19 @@ def login_non_verified_email(request, email):
             timeout_duration, time_since_last_email)
 
         if can_resend:
-            resend_verification_url = reverse(
+            url = reverse(
                 'accounts:resend_verification_email')
-            message = (f"""
-            Please verify your email before logging in.
-            Please check your email for the verification link, including spam folder.
-            If you need to resend the verification email, please click <a href='{reverse(
-            'accounts:resend_verification_email')}'>here</a>.
-            """)
+            message = AccountsMessageManager.resend_verification_email(url)
         else:
             minutes_difference = get_minutes_left_before_resend(
                 time_since_last_email, timeout_duration)
-
-            message = ("""
-                Please verify your email before logging in.
-                Please check your email for the verification link, including spam folder.
-                You must wait {} minutes before resending the verification email.
-                """.format(round(minutes_difference)))
+            minutes_difference = round(minutes_difference)
+            message = AccountsMessageManager.resend_email_wait(
+                minutes_difference)
     else:
-        resend_verification_url = reverse('accounts:resend_verification_email')
-        message = ("""
-            Please verify your email before logging in.
-            Please check your email for the verification link, including spam folder.
-            If you need to resend the verification email, please click
-            <a href='{}'>here</a>.
-            """.format(resend_verification_url))
+        url = reverse(
+            'accounts:resend_verification_email')
+        message = AccountsMessageManager.resend_verification_email(url)
 
     messages.error(request, message)
     return redirect('accounts:login')
@@ -185,11 +173,8 @@ def custom_login_view(request):
         form = UserLoginForm(request.POST)
 
         if form.is_valid():
-            logger.debug("Form is valid")
             if form.cleaned_data['honeypot']:
-                # Honeypot field should be empty. If it's filled, treat it as spam.
-                messages.error(request, MessageManager.spam)
-                # Redirect to prevent bot resubmission
+                messages.error(request, AccountsMessageManager.spam)
                 return redirect('core:home')
 
             email = form.cleaned_data['email']
@@ -197,14 +182,12 @@ def custom_login_view(request):
             user = authenticate(request, email=email, password=password)
 
             if user is not None:
-                logger.debug(f"User exitsts for email: {email}")
                 if user.email_verified:
                     for backend in get_backends():
                         if user == backend.get_user(user.id):
                             user.backend = f'{backend.__module__}.{backend.__class__.__name__}'
                             break
-                    print("USER: ", user)
-                    print("PROFILE: ", user.profile)
+
                     user_login.send(sender=user.__class__, user=user)
                     login(request, user)
                     return redirect('jobs:board')
@@ -213,8 +196,7 @@ def custom_login_view(request):
                 # Use the return value from login_non_verified_email
                 return login_non_verified_email(request, email)
         else:
-            logger.debug(f"Form is not valid {form.errors}")
-            messages.error(request, "Login form is not valid")
+            messages.error(request, AccountsMessageManager.invalid_login_form)
             return redirect("accounts:login")
     else:
         form = UserLoginForm()
@@ -262,7 +244,7 @@ def verify_email(request, user_id, token):
         user.email_verified = True
         user.save()
         messages.success(
-            request, 'Your email has been verified. You can now log in.')
+            request, AccountsMessageManager.email_verified)
         return redirect('accounts:login')
 
 
@@ -272,25 +254,21 @@ def resend_verification_email(request):
 
         if form.is_valid():
             if form.cleaned_data['honeypot']:
-                # Honeypot field should be empty. If it's filled, treat it as spam.
                 messages.error(
-                    request, MessageManager.spam)
-                # Redirect to prevent bot resubmission
+                    request, AccountsMessageManager.spam)
+
                 return redirect('core:home')
             email = form.cleaned_data['email']
 
-            # Look up the user by email
             try:
                 user = User.objects.get(email=email)
             except User.DoesNotExist:
                 messages.error(
-                    request, "No user found with that email address.")
+                    request, AccountsMessageManager.email_not_found)
                 return redirect('accounts:resend_verification_email')
 
-            # Define timeout duration (10 minutes here)
             timeout_duration = timedelta(minutes=10)
 
-            # Check if a verification email has already been sent and enforce the timeout
             if user.last_verification_email_sent:
                 time_since_last_email = get_time_since_last_email(
                     user.last_verification_email_sent)
@@ -299,17 +277,17 @@ def resend_verification_email(request):
                     time_since_last_email, timeout_duration)
 
                 if time_since_last_email < timeout_duration:
-                    messages.error(
-                        request, f"Please wait {minutes_difference} before resending the verification email.")
+                    messages.info(
+                        request,
+                        AccountsMessageManager.resend_email_wait(minutes_difference))
                     return redirect('accounts:resend_verification_email')
 
-            # Send verification email and update `last_verification_email_sent`
             send_verification_email(user, request)
             user.last_verification_email_sent = timezone.now()
             user.save()
 
-            messages.success(request, "A verification email has been sent.")
-            # Redirect to a suitable page like login or home
+            messages.success(
+                request, AccountsMessageManager.email_verification_sent)
             return redirect('accounts:login')
     else:
         form = ResendVerificationEmailForm()
@@ -323,12 +301,8 @@ def password_reset_view(request):
         if form.is_valid():
 
             if form.cleaned_data['honeypot']:
-                logger.debug("Honeypot field filled")
-                # Honeypot field should be empty.
-                # If it's filled, treat it as spam.
                 messages.error(
-                    request, MessageManager.spam)
-                # Redirect to prevent bot resubmission
+                    request, AccountsMessageManager.spam)
                 return redirect('core:home')
 
             email = form.cleaned_data['email']
@@ -336,11 +310,11 @@ def password_reset_view(request):
             if user:
                 send_password_reset_email(user, request)
                 messages.success(
-                    request, MessageManager.password_reset_success)
+                    request, AccountsMessageManager.password_reset_success)
                 return redirect("accounts:password_reset")
             else:
                 messages.error(
-                    request, MessageManager.user_not_found)
+                    request, AccountsMessageManager.email_not_found)
             return redirect('accounts:password_reset')
     else:
         form = PasswordResetForm()
@@ -355,7 +329,7 @@ def delete_account_view(request):
         user.profile.delete()  # Delete the user's profile
         user.delete()  # Delete the user account
         messages.success(
-            request, "Your account has been successfully deleted.")
+            request, AccountsMessageManager.account_deleted_success)
         return redirect('core:home')  # Redirect to the homepage after deletion
 
     # Render the confirmation page
@@ -363,21 +337,15 @@ def delete_account_view(request):
 
 
 def register(request):
-    logger.debug("Register request. Method: %s", request.method)
     if request.method == 'POST':
-        logger.info("Register request. Method: %s", request.method)
         user_form = UserRegistrationForm(request.POST)
         profile_form = ProfileRegistrationForm(request.POST)
 
         if user_form.is_valid() and profile_form.is_valid():
 
-            logger.info("Valid user_form and profile_form")
             if user_form.cleaned_data['honeypot']:
-                logger.info("Honeypot field filled")
-                # Honeypot field should be empty. If it's filled, treat it as spam.
                 messages.error(
-                    request, MessageManager.spam)
-                # Redirect to prevent bot resubmission
+                    request, AccountsMessageManager.spam)
                 return redirect('core:home')
 
             user = user_form.save()
@@ -396,7 +364,6 @@ def register(request):
             # Redirect to profile or job application list
             return redirect('accounts:login')
         else:
-            logger.info("Invalid user_form or profile_form")
             if user_form.errors:
                 error_data = user_form.errors.as_data()
                 email_error = error_data.get("email")
@@ -406,10 +373,10 @@ def register(request):
                 if email_error:
                     logger.info("Email address is invalid")
                     messages.error(
-                        request, "Please enter a valid email address.")
+                        request, AccountsMessageManager.invalid_email)
                 if password_error:
                     messages.error(
-                        request, "Please enter a valid password.")
+                        request, AccountsMessageManager.invalid_password)
 
             return redirect('accounts:register')
 
@@ -431,125 +398,3 @@ def home_view(request):
     context = {"user_id": request.user.id, "jobs": jobs,
                "interviews": interviews, "tasks": tasks}
     return render(request, "accounts/dashboard.html", context)
-
-
-class TotalApplications(APIView):
-
-    def get(self, request, id):
-        return Job.objects.filter(user=id, applied=True).count()
-
-
-class BasicStats(APIView):
-
-    def get(self, request, id):
-
-        total_applied_jobs = Job.objects.filter(user=id, applied=True).count()
-        total_interviews = Job.objects.filter(
-            user=id, interviewed=True).count()
-
-        if total_applied_jobs == 0 or total_interviews == 0:
-            conversion_rate = 0
-        else:
-            conversion_rate = total_applied_jobs/total_interviews
-
-        data = {
-            "total_applications": total_applied_jobs,
-            "total_interviews": total_interviews,
-            "interview_conversion_rate": conversion_rate
-        }
-
-        return Response(data)
-
-
-class ChartData(APIView):
-    authentication_classes = []
-    permission_classes = []
-
-    def get(self, request, format=None):
-        labels = [
-            'January',
-            'February',
-            'March',
-            'April',
-            'May',
-            'June',
-            'July'
-        ]
-        chartLabel = "my data"
-        chartdata = [0, 10, 5, 2, 20, 30, 45]
-        data = {
-            "labels": labels,
-            "chartLabel": chartLabel,
-            "chartdata": chartdata,
-        }
-        return Response(data)
-
-
-class BestConvertingJobFunctions(APIView):
-
-    def get(self, request, id):
-        conversion_scores = []
-        labels = []
-        chartLabel = "Best Converting Job Functions"
-        for job_function in JobFunction.objects.all():
-            jobs = Job.objects.filter(user=id, job_function=job_function)
-            conversion_score = calculate_conversion_score(jobs)
-            conversion_scores.append(conversion_score)
-            labels.append(job_function.name)
-
-        data = {
-            "labels": labels,
-            "chartData": conversion_scores,
-            "chartLabel": chartLabel
-        }
-        return Response(data)
-
-
-class BestConvertingSource(APIView):
-
-    def get(self, request, id):
-        conversion_scores = []
-        labels = []
-        chartLabel = "Best Converting Sources"
-        for code, source in SourceChoices.choices():
-            jobs = Job.objects.filter(user=id, source=code)
-            conversion_score = calculate_conversion_score(jobs)
-            conversion_scores.append(conversion_score)
-            labels.append(source)
-
-        data = {
-            "labels": labels,
-            "chartData": conversion_scores,
-            "chartLabel": chartLabel
-        }
-
-
-class BestConvertingIndustries(APIView):
-
-    def get(self, request, id):
-        pass
-
-
-class BestConvertingLocations(APIView):
-
-    def get(self, request, id):
-        pass
-
-
-class UserStreak(APIView):
-
-    def get(self, request, id):
-        user = User.objects.get(pk=id)
-        profile = Profile.objects.get(
-            user=user)
-        target = Target.objects.get(profile=profile)
-        current_applications = target.current
-        streak = target.streak.current_streak
-
-        data = {
-            "target": target.amount,
-            "current_applications": current_applications,
-            "streak": streak
-        }
-
-        return Response(data)

@@ -172,8 +172,13 @@ class Job(models.Model):
 
     applied = models.BooleanField(null=True, blank=True)
     date_applied = models.DateField(null=True, blank=True)
+
     interviewed = models.BooleanField(null=True, blank=True)
     date_interviewed_set = models.DateField(null=True, blank=True)
+
+    offered = models.BooleanField(null=True, blank=True)
+    date_offered_set = models.DateField(null=True, blank=True)
+
     archived = models.BooleanField(null=True, blank=True, default=False)
     auto_archive = models.BooleanField(null=True, blank=True, default=False)
     archive_after_weeks = models.IntegerField(null=True, blank=True, default=2)
@@ -265,6 +270,13 @@ class Job(models.Model):
             self.interviewed = True
             if not self.date_interviewed_set:
                 self.date_interviewed_set = timezone.now()
+
+    def _set_offered(self):
+        logger.info("Setting offered...")
+        if self.status == StatusChoices.OFFER:
+            self.offered = True
+            if not self.date_offered_set:
+                self.date_offered_set = timezone.now()
 
     def _manage_profile_streak(self):
         profile_target = Target.objects.get(profile=self.profile)
