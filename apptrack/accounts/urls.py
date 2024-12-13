@@ -21,8 +21,8 @@ urlpatterns = [
          name='password_reset_complete'),
     path('verify-email/<int:user_id>/<str:token>/',
          views.verify_email_view, name='verify_email'),
-    path('resend-verification-email/', views.resend_verification_email_view,
-         name='resend_verification_email'),
+    path('resend/', views.resend_view,
+         name='resend'),
     path('delete-account/', views.delete_account_view, name='delete_account'),
     path('dashboard/', views.dashboard_view, name="dashboard"),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

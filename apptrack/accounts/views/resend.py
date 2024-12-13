@@ -17,7 +17,7 @@ User = get_user_model()
 email_manager = AccountsEmailManager()
 
 
-def resend_verification_email_view(request):
+def resend_view(request):
     if request.method == 'POST':
         form = ResendVerificationEmailForm(request.POST)
 
@@ -34,7 +34,7 @@ def resend_verification_email_view(request):
             except User.DoesNotExist:
                 messages.error(
                     request, AccountsMessageManager.email_not_found)
-                return redirect('accounts:resend_verification_email')
+                return redirect('accounts:resend')
 
             timeout_duration = timedelta(minutes=10)
 
@@ -49,7 +49,7 @@ def resend_verification_email_view(request):
                     messages.info(
                         request,
                         AccountsMessageManager.resend_email_wait(minutes_difference))
-                    return redirect('accounts:resend_verification_email')
+                    return redirect('accounts:resend')
 
             email_manager.mail_verification(request, user)
             user.last_verification_email_sent = timezone.now()
@@ -61,4 +61,4 @@ def resend_verification_email_view(request):
     else:
         form = ResendVerificationEmailForm()
 
-    return render(request, 'accounts/resend_verification_email.html', {'form': form})
+    return render(request, 'accounts/resend.html', {'form': form})

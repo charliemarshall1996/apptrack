@@ -52,7 +52,7 @@ def login_non_verified_email(request, email):
 
         if can_resend:
             url = reverse(
-                'accounts:resend_verification_email')
+                'accounts:resend')
             message = AccountsMessageManager.resend_verification_email(url)
         else:
             minutes_difference = get_minutes_left_before_resend(
@@ -63,7 +63,7 @@ def login_non_verified_email(request, email):
     else:
         logger.info("Email not sent")
         url = reverse(
-            'accounts:resend_verification_email')
+            'accounts:resend')
         message = AccountsMessageManager.resend_verification_email(url)
 
     messages.info(request, message)
