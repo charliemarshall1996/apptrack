@@ -50,8 +50,8 @@ jobs:
           echo "ANYMAIL = {'BREVO_API_KEY': '${{ secrets.BREVO_API_KEY }}', 'IGNORE_RECIPIENT_STATUS': True}" >> $GITHUB_WORKSPACE/apptrack/apptrack/settings.py
           echo "DEFAULT_FROM_EMAIL = 'no-reply@apptrack.app'" >> $GITHUB_WORKSPACE/apptrack/apptrack/settings.py
           echo "AUTH_USER_MODEL = 'accounts.CustomUser'" >> $GITHUB_WORKSPACE/apptrack/apptrack/settings.py
-          echo "CKEDITOR_BASEPATH = "/static/ckeditor/ckeditor/" CKEDITOR_UPLOAD_PATH = 'uploads/' CKEDITOR_IMAGE_BACKEND = "pillow" CKEDITOR_JQUERY_URL = '//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js' CKEDITOR_CONFIGS = {'default':{'toolbar': 'full','width': 'auto','extraPlugins': ','.join(['codesnippet',]),},}">> $GITHUB_WORKSPACE/apptrack/apptrack/settings.py
-          echo "WEBPUSH_SETTINGS = {"VAPID_PUBLIC_KEY": getKey("VAPID_PUBLIC_KEY"),"VAPID_PRIVATE_KEY": getKey("VAPID_PRIVATE_KEY"),"VAPID_ADMIN_EMAIL": "charlie.marshall1996@gmail.com"} REDIS_URL = os.environ.get('REDIS_URL') CELERY_BROKER_URL = 'redis://localhost:6379/0' CELERY_RESULT_BACKEND = 'redis://localhost:6379/0' CELERY_TRACK_STARTED = True" >> $GITHUB_WORKSPACE/apptrack/apptrack/settings.py
+          echo "CKEDITOR_BASEPATH = '/static/ckeditor/ckeditor/' CKEDITOR_UPLOAD_PATH = 'uploads/' CKEDITOR_IMAGE_BACKEND = 'pillow' CKEDITOR_JQUERY_URL = '//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js' CKEDITOR_CONFIGS = {'default':{'toolbar': 'full','width': 'auto','extraPlugins': ','.join(['codesnippet',]),},}">> $GITHUB_WORKSPACE/apptrack/apptrack/settings.py
+          echo "WEBPUSH_SETTINGS = {'VAPID_PUBLIC_KEY': getKey('VAPID_PUBLIC_KEY'),'VAPID_PRIVATE_KEY': getKey('VAPID_PRIVATE_KEY'), 'VAPID_ADMIN_EMAIL': 'charlie.marshall1996@gmail.com'} REDIS_URL = os.environ.get('REDIS_URL') CELERY_BROKER_URL = 'redis://localhost:6379/0' CELERY_RESULT_BACKEND = 'redis://localhost:6379/0' CELERY_TRACK_STARTED = True" >> $GITHUB_WORKSPACE/apptrack/apptrack/settings.py
       - name: Apply migrations
         run: python apptrack/manage.py migrate
 
