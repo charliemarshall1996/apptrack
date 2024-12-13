@@ -40,20 +40,29 @@ def user_registration_form_data():
 def custom_user_data_factory():
     def factory(password=None, email_verified=True, verification_email_sent=True):
         if verification_email_sent:
-            sent = timezone.now() - timedelta(days=1)
+            return {
+                'email': fake.email(),
+                'email_verified': email_verified,
+                'last_verification_email_sent': timezone.now() - timedelta(days=1),
+                'first_name': fake.file_name(),
+                'last_name': fake.file_name(),
+                'is_active': True,
+                'is_staff': False,
+                'password': password or fake.password(),
+                'date_joined': timezone.now() - timedelta(days=1),
+            }
         else:
-            sent = ''
-        return {
-            'email': fake.email(),
-            'email_verified': email_verified,
-            'last_verification_email_sent': sent,
-            'first_name': fake.file_name(),
-            'last_name': fake.file_name(),
-            'is_active': True,
-            'is_staff': False,
-            'password': password or fake.password(),
-            'date_joined': timezone.now() - timedelta(days=1),
-        }
+            return {
+                'email': fake.email(),
+                'email_verified': email_verified,
+                'first_name': fake.file_name(),
+                'last_name': fake.file_name(),
+                'is_active': True,
+                'is_staff': False,
+                'password': password or fake.password(),
+                'date_joined': timezone.now() - timedelta(days=1),
+            }
+
     return factory
 
 

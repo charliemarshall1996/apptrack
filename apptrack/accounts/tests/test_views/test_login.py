@@ -195,8 +195,11 @@ def test_login_view_non_verified_no_last_sent(client, profile_factory):
 
     PASSWORD = "securepassword"
 
-    profile = profile_factory(password=PASSWORD, email_verified=False)
+    profile = profile_factory(
+        password=PASSWORD, email_verified=False, verification_email_sent=False)
     profile.save()
+
+    assert not profile.user.last_verification_email_sent
 
     url = reverse('accounts:login')
 
