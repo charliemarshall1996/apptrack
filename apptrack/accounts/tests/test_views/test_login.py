@@ -156,7 +156,7 @@ def test_login_view_non_verified(client, profile_factory):
     assert response.status_code == 302  # Should redirect
     assert response.url == reverse('accounts:login')
     messages = list(get_messages(response.wsgi_request))
-    url = reverse('accounts:resend_verification_email')
+    url = reverse('accounts:resend')
     assert str(
         messages[0]) == AccountsMessageManager.resend_verification_email(url)
 
@@ -213,6 +213,6 @@ def test_login_view_non_verified_no_last_sent(client, profile_factory):
     assert response.status_code == 302  # Should redirect
     assert response.url == reverse('accounts:login')
     messages = list(get_messages(response.wsgi_request))
-    url = reverse('accounts:resend_verification_email')
+    url = reverse('accounts:resend')
     assert str(
         messages[0]) == AccountsMessageManager.resend_verification_email(url)

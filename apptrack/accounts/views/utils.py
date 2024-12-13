@@ -21,20 +21,20 @@ class ConversionCalculator:
     @staticmethod
     def calculate_basic_conversion_rate(applications, interviews_or_offers):
         if interviews_or_offers > 0 and applications > 0:
-            return (interviews_or_offers / applications)
+            return (interviews_or_offers / applications) * 100
         else:
             return 0
 
     @staticmethod
     def calculate_conversion_rate(applications, interviews, offers):
         if interviews + offers > 0 and applications > 0:
-            return ((interviews + offers) / applications)
+            return ((interviews + offers) / applications) * 100
         else:
             return 0
 
     @staticmethod
     def calculate_conversion_score(applications, interviews, offers):
         if interviews + offers > 0 and applications > 0:
-            return ((interviews + (offers * 2)) / applications)
+            return ((interviews + (offers * 2)) / applications) * 100
         else:
             return 0

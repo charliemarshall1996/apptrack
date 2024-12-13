@@ -5,7 +5,7 @@ import pytest
 
 
 def test_home_view(client):
-    url = reverse('home')
+    url = reverse('core:home')
     response = client.get(url)
     assert response.status_code == 200
 
@@ -25,7 +25,7 @@ def test_contact_view(client, contact_form_data_factory):
 
     response = client.post(url, data)
     assert response.status_code == 302
-    assert response.url == reverse('home')
+    assert response.url == reverse('core:home')
 
 
 @pytest.mark.django_db
@@ -37,7 +37,7 @@ def test_contact_view_spam(client, contact_form_data_factory):
 
     response = client.post(url, data)
     assert response.status_code == 302
-    assert response.url == reverse('home')
+    assert response.url == reverse('core:home')
 
 
 @pytest.mark.django_db
