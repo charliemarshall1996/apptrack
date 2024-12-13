@@ -222,7 +222,7 @@ class JobListView(LoginRequiredMixin, ListView):
         if form.is_valid():
             statuses = form.cleaned_data.get('status')
             title = form.cleaned_data.get('title')
-            job_functions = form.cleaned_data.get('job_function')
+            job_functions = form.cleaned_data.get('job_functions')
             company = form.cleaned_data.get('company')
             city = form.cleaned_data.get('city')
             region = form.cleaned_data.get('region')

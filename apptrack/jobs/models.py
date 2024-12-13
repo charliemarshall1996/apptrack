@@ -93,6 +93,7 @@ class Column(models.Model):
 
 
 class JobFunction(models.Model):
+    code = models.CharField(max_length=4)
     name = models.CharField(max_length=100)
 
     def __str__(self):
@@ -328,7 +329,7 @@ class Interview(models.Model):
         Job, on_delete=models.CASCADE, related_name='interviews')
     profile = models.ForeignKey(Profile,
                                 on_delete=models.CASCADE)
-
+    round = models.IntegerField(default=1)
     start_date = models.DateTimeField()
     end_date = models.DateTimeField()
     post_code = models.CharField(max_length=10, blank=True, null=True)

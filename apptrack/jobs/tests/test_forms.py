@@ -1,6 +1,8 @@
 
 import pytest
-from jobs.forms import JobForm
+from core.models import Country, Currency
+from jobs.forms import JobForm, JobFilterForm, AddInterviewForm
+from jobs.models import JobFunction, Interview
 
 
 @pytest.mark.django_db
@@ -21,3 +23,31 @@ def test_job_form(jobs_form_data, profile_factory):
     assert job.status == jobs_form_data['status']
     job.save()
     job.delete()
+
+
+@pytest.mark.django_db
+def test_add_interview_form(interview_data_factory):
+    # initialise data
+    data = interview_data_factory()
+    data['job'].save()
+    profile = data.pop('profile')
+
+    form = AddInterviewForm(data=data)
+
+    try:
+        interview = form.save()
+        assert isinstance(interview, Interview)
+    except (AssertionError, ValueError):
+        print(form.errors)
+        raise AssertionError
+
+
+@pytest.mark.django_db
+def test_job_filter_form_init():
+    form = JobFilterForm()
+
+    assert form.fields['countries'].choices == [
+        (country.alpha_2, country.name) for country in Country.objects.all()]
+
+    assert form.fields['job_functions'].choices == [
+        (job_function.code, job_function.name) for job_function in JobFunction.objects.all()]

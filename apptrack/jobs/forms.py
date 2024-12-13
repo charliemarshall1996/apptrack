@@ -69,7 +69,7 @@ class JobFilterForm(forms.Form):
     )
 
     # Dynamically populate choices for job functions
-    job_function = forms.MultipleChoiceField(
+    job_functions = forms.MultipleChoiceField(
         widget=forms.CheckboxSelectMultiple,
         required=False
     )
@@ -83,7 +83,7 @@ class JobFilterForm(forms.Form):
         ]
 
         # Populate the choices for job functions dynamically
-        self.fields['job_function'].choices = [
+        self.fields['job_functions'].choices = [
             (job_function.id, job_function.name) for job_function in JobFunction.objects.all()
         ]
 

@@ -4,6 +4,7 @@ import random
 
 from django.contrib.auth import get_user_model
 from django.utils import timezone
+from django.utils.timezone import make_aware
 from faker import Faker
 import pytest
 
@@ -261,7 +262,7 @@ def blog_post_data_factory():
         return {'title': fake.text(50),
                 'content': fake.text(),
                 'summary': fake.text(),
-                'published': fake.date_time()
+                'published': make_aware(fake.date_time())
                 }
     return factory
 
@@ -282,9 +283,9 @@ def interview_data_factory(job_factory, profile_factory):
         job = job_factory(profile)
         return {'profile': profile,
                 'job': job,
-                'interview_round': random.randint(1, 5),
-                'start_date': fake.date_time(),
-                'end_date': fake.date_time(),
+                'round': random.randint(1, 5),
+                'start_date': make_aware(fake.date_time()),
+                'end_date': make_aware(fake.date_time()),
                 'post_code': fake.postcode(),
                 'building': fake.building_number(),
                 'street': fake.street_name(),
