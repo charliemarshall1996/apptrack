@@ -33,7 +33,7 @@ def contact_view(request):
                 # Honeypot field should be empty. If it's filled, treat it as spam.
                 messages.error(request, "Spam detected")
                 # Redirect to prevent bot resubmission
-                return redirect('home')
+                return redirect('core:home')
 
             first_name = form.cleaned_data['first_name']
             last_name = form.cleaned_data['last_name']
@@ -65,12 +65,12 @@ def contact_view(request):
 
             messages.success(
                 request, "Your message has been sent successfully!")
-            return redirect('home')
+            return redirect('core:home')
         else:
             logger.debug("Invalid form data")
             logger.debug("Errors: %s", form.errors)
             messages.error(request, "Please fill out the form correctly.")
-            return redirect('contact')
+            return redirect('core:contact')
     else:
         form = ContactForm()
         return render(request, 'core/contact.html', {'form': form})
