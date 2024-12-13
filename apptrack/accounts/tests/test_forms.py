@@ -6,7 +6,7 @@ from accounts.forms import (
     ProfileRegistrationForm,
     UserUpdateForm,
     ProfileUpdateForm,
-    UserLoginForm,
+    LoginForm,
     ResendVerificationEmailForm,
     PasswordResetForm,
 )
@@ -126,7 +126,7 @@ def test_user_login_form_valid():
         "email": "test@example.com",
         "password": "StrongPassword123",
     }
-    form = UserLoginForm(data=form_data)
+    form = LoginForm(data=form_data)
     assert form.is_valid()
     assert form.cleaned_data["email"] == "test@example.com"
 
@@ -136,7 +136,7 @@ def test_user_login_form_missing_fields():
         "email": "",
         "password": "",
     }
-    form = UserLoginForm(data=form_data)
+    form = LoginForm(data=form_data)
     assert not form.is_valid()
     assert "email" in form.errors
     assert "password" in form.errors

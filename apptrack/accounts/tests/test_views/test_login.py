@@ -9,7 +9,7 @@ from accounts.messages import AccountsMessageManager
 
 
 @pytest.mark.django_db
-def test_custom_login_view(client, profile_factory):
+def test_login_view(client, profile_factory):
     PASSWORD = "securepassword"
 
     profile = profile_factory(password=PASSWORD)
@@ -33,7 +33,7 @@ def test_custom_login_view(client, profile_factory):
 
 
 @pytest.mark.django_db
-def test_custom_login_view_invalid_credentials(client, profile_factory):
+def test_login_view_invalid_credentials(client, profile_factory):
 
     PASSWORD = "securepassword"
 
@@ -59,7 +59,7 @@ def test_custom_login_view_invalid_credentials(client, profile_factory):
 
 
 @pytest.mark.django_db
-def test_custom_login_view_spam(client, profile_factory):
+def test_login_view_spam(client, profile_factory):
 
     PASSWORD = "securepassword"
 
@@ -85,7 +85,7 @@ def test_custom_login_view_spam(client, profile_factory):
 
 
 @pytest.mark.django_db
-def test_custom_login_view_email_does_not_exist(client, profile_factory):
+def test_login_view_email_does_not_exist(client, profile_factory):
 
     PASSWORD = "securepassword"
 
@@ -111,7 +111,7 @@ def test_custom_login_view_email_does_not_exist(client, profile_factory):
 
 
 @pytest.mark.django_db
-def test_custom_login_view_invalid_form(client, profile_factory):
+def test_login_view_invalid_form(client, profile_factory):
 
     PASSWORD = "securepassword"
 
@@ -137,7 +137,7 @@ def test_custom_login_view_invalid_form(client, profile_factory):
 
 
 @pytest.mark.django_db
-def test_custom_login_view_non_verified(client, profile_factory):
+def test_login_view_non_verified(client, profile_factory):
 
     PASSWORD = "securepassword"
 
@@ -162,7 +162,7 @@ def test_custom_login_view_non_verified(client, profile_factory):
 
 
 @pytest.mark.django_db
-def test_custom_login_view_non_verified_wait(client, profile_factory):
+def test_login_view_non_verified_wait(client, profile_factory):
 
     minutes_left = 1
     mock_can_resend = Mock(return_value=False)
@@ -181,10 +181,35 @@ def test_custom_login_view_non_verified_wait(client, profile_factory):
     data = {'honeypot': '', 'email': profile.user.email,
             'password': PASSWORD}
 
-    with patch('accounts.views.get_can_resend', mock_can_resend), patch('accounts.views.get_minutes_left_before_resend', mock_minutes_left):
+    with patch('accounts.views.login.get_can_resend', mock_can_resend), patch('accounts.views.login.get_minutes_left_before_resend', mock_minutes_left):
         response = client.post(url, data)
     assert response.status_code == 302  # Should redirect
     assert response.url == reverse('accounts:login')
     messages = list(get_messages(response.wsgi_request))
     assert str(
         messages[0]) == AccountsMessageManager.resend_email_wait(minutes_left)
+
+
+@pytest.mark.django_db
+def test_login_view_non_verified_no_last_sent(client, profile_factory):
+
+    PASSWORD = "securepassword"
+
+    profile = profile_factory(password=PASSWORD, email_verified=False)
+    profile.save()
+
+    url = reverse('accounts:login')
+
+    # GET request should render the login page
+    response = client.get(url)
+
+    # Test honeypot field for spam
+    data = {'honeypot': '', 'email': profile.user.email,
+            'password': PASSWORD}
+    response = client.post(url, data)
+    assert response.status_code == 302  # Should redirect
+    assert response.url == reverse('accounts:login')
+    messages = list(get_messages(response.wsgi_request))
+    url = reverse('accounts:resend_verification_email')
+    assert str(
+        messages[0]) == AccountsMessageManager.resend_verification_email(url)

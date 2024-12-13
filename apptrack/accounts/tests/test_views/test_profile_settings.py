@@ -24,7 +24,7 @@ def test_profile_settings_view(client, profile_factory):
 
     assert response.status_code == 302
 
-    url = reverse('accounts:profile_settings', kwargs={
+    url = reverse('accounts:settings', kwargs={
                   "id": profile.id})
 
     # GET request should render the profile settings page
@@ -71,7 +71,7 @@ def test_profile_settings_view_invalid_profile(client, profile_factory, custom_u
     print(f"Login response {list(get_messages(response.wsgi_request))}")
     print(f"user authenticated: {user_profile.user.is_authenticated}")
 
-    url = reverse('accounts:profile_settings', kwargs={
+    url = reverse('accounts:settings', kwargs={
                   "id": profile.user.profile.id})
 
     response = client.get(url)
@@ -96,7 +96,7 @@ def test_profile_settings_view_invalid_birth_date(client, profile_factory):
 
     assert response.status_code == 302
 
-    url = reverse('accounts:profile_settings', kwargs={
+    url = reverse('accounts:settings', kwargs={
                   "id": profile.id})
 
     # GET request should render the profile settings page

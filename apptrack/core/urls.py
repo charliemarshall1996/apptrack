@@ -1,6 +1,5 @@
 from django.urls import path
-from django.contrib.auth import views as auth_views
-from accounts.api import ProfileAPI
+from accounts.views.api import ProfileAPI
 from . import views
 
 app_name = "core"

@@ -81,7 +81,7 @@ class UserUpdateForm(forms.ModelForm):
         return super().save(commit=False)
 
 
-class UserLoginForm(forms.Form):
+class LoginForm(forms.Form):
 
     honeypot = forms.CharField(required=False, widget=forms.HiddenInput)
     email = forms.EmailField(required=True)

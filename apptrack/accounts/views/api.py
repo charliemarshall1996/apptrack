@@ -2,9 +2,9 @@
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from jobs.models import (Job, JobFunction, Target)
+from jobs.models import (Job, Target)
 
-from .models import Profile
+from accounts.models import Profile
 from .utils import ConversionCalculator
 
 
@@ -46,7 +46,7 @@ class ProfileAPI(APIView):
         total_active_interviews = Job.objects.filter(
             profile=profile, interviewed=True, archived=False).count()
         total_active_offers = Job.objects.filter(
-            profile=profile, offers=True, archived=False).count()
+            profile=profile, offered=True, archived=False).count()
         total_offers = Job.objects.filter(profile=profile).count()
 
         return {'total_jobs': total_jobs,
@@ -67,6 +67,7 @@ class ProfileAPI(APIView):
                 'offer_conversion_rate': ConversionCalculator.calculate_basic_conversion_rate(total_applied_jobs, total_offers)}
 
 
+"""
 class ChartData(APIView):
     authentication_classes = []
     permission_classes = []
@@ -89,3 +90,4 @@ class ChartData(APIView):
             "chartdata": chartdata,
         }
         return Response(data)
+"""

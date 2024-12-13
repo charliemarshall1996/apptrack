@@ -5,12 +5,11 @@ from django.conf.urls.static import static
 from . import views
 app_name = 'accounts'
 urlpatterns = [
-    path('register/', views.register, name='register'),
-    path('login/', views.custom_login_view, name='login'),
+    path('registration/', views.registration_view, name='register'),
+    path('login/', views.login_view, name='login'),
     path('logout/', views.logout_view, name='logout'),
     path('profile/<int:id>/', views.ProfileView.as_view(), name='profile'),
-    path('profile-settings/<int:id>/',
-         views.profile_settings_view, name='profile_settings'),
+    path('settings/<int:id>/', views.settings_view, name='settings'),
     path('password-reset/', views.password_reset_view, name='password_reset'),
     path('password-reset-confirm/<uidb64>/<token>/',
          auth_views.PasswordResetConfirmView.as_view(
@@ -21,8 +20,8 @@ urlpatterns = [
              template_name='accounts/password_reset_complete.html'),
          name='password_reset_complete'),
     path('verify-email/<int:user_id>/<str:token>/',
-         views.verify_email, name='verify_email'),
-    path('resend-verification-email/', views.resend_verification_email,
+         views.verify_email_view, name='verify_email'),
+    path('resend-verification-email/', views.resend_verification_email_view,
          name='resend_verification_email'),
     path('delete-account/', views.delete_account_view, name='delete_account'),
     path('dashboard/', views.home_view, name="dashboard"),

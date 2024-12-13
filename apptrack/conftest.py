@@ -38,11 +38,15 @@ def user_registration_form_data():
 
 @pytest.fixture
 def custom_user_data_factory():
-    def factory(password=None, email_verified=True):
+    def factory(password=None, email_verified=True, verification_email_sent=True):
+        if verification_email_sent:
+            sent = timezone.now() - timedelta(days=1)
+        else:
+            sent = ''
         return {
             'email': fake.email(),
             'email_verified': email_verified,
-            'last_verification_email_sent': timezone.now() - timedelta(days=1),
+            'last_verification_email_sent': sent,
             'first_name': fake.file_name(),
             'last_name': fake.file_name(),
             'is_active': True,
@@ -56,16 +60,16 @@ def custom_user_data_factory():
 @pytest.fixture
 def custom_user_factory(custom_user_data_factory):
 
-    def factory(password=None, email_verified=True):
-        data = custom_user_data_factory(password, email_verified)
+    def factory(**kwargs):
+        data = custom_user_data_factory(**kwargs)
         return UserModel.objects.create_user(**data)
     return factory
 
 
 @pytest.fixture
 def profile_data_factory(custom_user_factory):
-    def factory(user=None, password=None, email_verified=True):
-        return {'user': user or custom_user_factory(password, email_verified),
+    def factory(user=None, **kwargs):
+        return {'user': user or custom_user_factory(**kwargs),
                 'email_comms_opt_in': True,
                 'birth_date': timezone.now() - timedelta(days=1)}
     return factory
@@ -73,9 +77,9 @@ def profile_data_factory(custom_user_factory):
 
 @pytest.fixture
 def profile_factory(profile_data_factory):
-    def factory(user=None, password=None, email_verified=True):
+    def factory(**kwargs):
 
-        data = profile_data_factory(user, password, email_verified)
+        data = profile_data_factory(**kwargs)
         return Profile(**data)
     return factory
 
