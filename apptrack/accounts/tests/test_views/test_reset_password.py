@@ -61,3 +61,33 @@ def test_password_reset_view_spam(client, profile_factory):
     assert response.url == reverse('core:home')
     messages = list(get_messages(response.wsgi_request))
     assert str(messages[0]) == AccountsMessageManager.spam
+
+
+@pytest.mark.django_db
+def test_password_reset_view_email_does_not_exist(client, profile_factory):
+
+    # Create user and profile
+    PASSWORD = "securepassword"
+    profile = profile_factory(password=PASSWORD)
+    profile.save()
+
+    # Login
+    client.force_login(profile.user)
+
+    # Get the password reset page
+    url = reverse('accounts:password_reset')
+    response = client.get(url)
+
+    # Post data with a non-existent email
+    data = {'honeypot': '', 'email': "a@b.com"}
+    response = client.post(url, data)
+
+    # Response should redirect
+    # to the password reset page
+    assert response.status_code == 302
+    assert response.url == reverse('accounts:password_reset')
+
+    # Response should display an
+    # email not found error message
+    messages = list(get_messages(response.wsgi_request))
+    assert str(messages[0]) == AccountsMessageManager.email_not_found
