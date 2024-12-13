@@ -1,0 +1,1 @@
+INSTALLED_APPS = ['django.contrib.admin','django.contrib.auth','django.contrib.contenttypes','django.contrib.sessions','django.contrib.messages','django.contrib.staticfiles','accounts','blog','core','jobs','anymail','celery','ckeditor','ckeditor_uploader','crispy_forms','crispy_bootstrap5','django_extensions','polymorphic','pycountry','rest_framework','webpush']
