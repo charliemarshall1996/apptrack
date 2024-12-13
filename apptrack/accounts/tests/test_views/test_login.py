@@ -29,7 +29,7 @@ def test_login_view(client, profile_factory):
     response = client.post(url, data)
     assert response.status_code == 302
     # Assuming this is the redirect
-    assert response.url == reverse('jobs:board')
+    assert response.url == reverse('accounts:dashboard')
 
 
 @pytest.mark.django_db

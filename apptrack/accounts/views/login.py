@@ -93,7 +93,7 @@ def login_view(request):
 
                     user_login.send(sender=user.__class__, user=user)
                     login(request, user)
-                    return redirect('jobs:board')
+                    return redirect('accounts:dashboard')
 
             else:
                 # Use the return value from login_non_verified_email
