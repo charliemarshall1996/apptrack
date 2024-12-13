@@ -2,14 +2,15 @@
 
 $.ajax({ 
     method: "GET", 
-    url: userStreakEndpoint,
+    url: userDataEndpoint,
     success: function(data) {
         console.log("data ", data);
-        if (data.target > 0) {
-            console.log("target " + data.target);
-            displayStreakData(data, 'currentApplications');
-            displayStreakData(data, 'targetAmount');
-            displayStreakData(data, 'currentStreak');
+        var streakData = data.streak
+        if (streakData.target > 0) {
+            
+            console.log("target " + streakData.target);
+            displayStreakData(streakData, 'target');
+            displayStreakData(streakData, 'streak');
 
         }
       
@@ -22,13 +23,12 @@ $.ajax({
     console.log("id " + id);
     var statData = "";
     var statElement = document.getElementById(id);
+
     console.log("statElement " + statElement);
-    if (id == "currentApplications") {
-        statData = data.current_applications;
-    } else if (id == "targetAmount") {
-        statData = data.target;
+    if (id == "target") {
+        statData = data.target_display;
     } else {
-        statData = data.streak;
+        statData = data.streak_display;
     };
 
     if (statData == "") {

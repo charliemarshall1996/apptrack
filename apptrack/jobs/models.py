@@ -47,6 +47,8 @@ class TargetTask(Task):
 
     def save(self, *args, **kwargs):
         if self.target.met:
+            logger.info("Target met %s %s", self.target.amount,
+                        self.target.current)
             self.is_completed = True
         self.priority = 1
         super().save(*args, **kwargs)
@@ -101,6 +103,7 @@ class JobFunction(models.Model):
 
 
 class LocationPolicy(models.Model):
+    code = models.CharField(max_length=2)
     name = models.CharField(max_length=100)
 
     def __str__(self):
@@ -108,6 +111,7 @@ class LocationPolicy(models.Model):
 
 
 class PayRate(models.Model):
+    code = models.CharField(max_length=2)
     name = models.CharField(max_length=100)
 
     def __str__(self):
@@ -115,6 +119,7 @@ class PayRate(models.Model):
 
 
 class WorkContract(models.Model):
+    code = models.CharField(max_length=2)
     name = models.CharField(max_length=100)
 
     def __str__(self):

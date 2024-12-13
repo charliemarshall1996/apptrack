@@ -22,7 +22,7 @@ document.addEventListener('DOMContentLoaded', function() {
 			const taskId = task.id.replace('taskCheckbox', '');
 			task.addEventListener("change", function() {
 				if (this.checked) {
-					fetch(`/interview/update-task/${taskId}/`, {
+					fetch(`/jobs/task-edit/${taskId}/`, {
 						method: 'POST',
 						headers: {
 							'Content-Type': 'application/json',
@@ -37,7 +37,7 @@ document.addEventListener('DOMContentLoaded', function() {
 						}
 					})
 				} else {
-					fetch(`/interview/update-task/${taskId}/`, {
+					fetch(`/jobs/task-edit/${taskId}/`, {
 						method: 'POST',
 						headers: {
 							'Content-Type': 'application/json',

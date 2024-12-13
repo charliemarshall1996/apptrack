@@ -11,7 +11,7 @@
                 </div>
                 <div class="modal-body">
                     {% load crispy_forms_tags %}
-                    <form method="POST" id="addInterviewForm" action="{% url 'interview:add_interview' %}">
+                    <form method="POST" id="addInterviewForm" action="{% url 'jobs:add_interview' %}">
                         {% csrf_token %}
                         {{ add_form|crispy }}
 

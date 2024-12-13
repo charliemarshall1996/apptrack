@@ -3,7 +3,17 @@ import logging
 
 import pytest
 
-from jobs.models import Job, Column, Interview, InterviewTask, Reminder
+from jobs.models import (Job,
+                         Column,
+                         Interview,
+                         InterviewTask,
+                         Reminder,
+                         Task,
+                         TargetTask,
+                         JobFunction,
+                         LocationPolicy,
+                         PayRate,
+                         WorkContract)
 from jobs.choices import StatusChoices
 
 logger = logging.getLogger(__name__)
@@ -51,7 +61,8 @@ def test_column(board_factory, column_data_factory):
 
 
 @pytest.mark.django_db
-def test_job(profile_factory, column_factory, job_data_factory):
+def test_job(profile_factory, column_factory, job_data_factory, _init_choice_models):
+    _init_choice_models()
     data = job_data_factory()
     profile = profile_factory()
     profile.save()
@@ -76,7 +87,8 @@ def test_job(profile_factory, column_factory, job_data_factory):
 
 
 @pytest.mark.django_db
-def test_job_updated(profile_factory, column_factory, job_data_factory):
+def test_job_updated(profile_factory, column_factory, job_data_factory, _init_choice_models):
+    _init_choice_models()
     profile = profile_factory()
     profile.save()
     board = profile.board
@@ -110,7 +122,8 @@ def test_job_updated(profile_factory, column_factory, job_data_factory):
 
 
 @pytest.mark.django_db
-def test_job_status_no_column(profile_factory, job_data_factory):
+def test_job_status_no_column(profile_factory, job_data_factory, _init_choice_models):
+    _init_choice_models()
     profile = profile_factory()
     profile.save()
     board = profile.board
@@ -124,7 +137,8 @@ def test_job_status_no_column(profile_factory, job_data_factory):
 
 
 @pytest.mark.django_db
-def test_job_status_applied(profile_factory, job_data_factory):
+def test_job_status_applied(profile_factory, job_data_factory, _init_choice_models):
+    _init_choice_models()
     applied_statuses = StatusChoices.get_applied_statuses()
     data = job_data_factory()
     for status in applied_statuses:
@@ -146,7 +160,8 @@ def test_job_status_applied(profile_factory, job_data_factory):
 
 
 @pytest.mark.django_db
-def test_interview(interview_data_factory):
+def test_interview(interview_data_factory, _init_choice_models):
+    _init_choice_models()
     data = interview_data_factory()
     job = data['job']
     profile = job.profile
@@ -155,7 +170,7 @@ def test_interview(interview_data_factory):
 
     assert interview.job == job
     assert interview.profile == profile
-    assert interview.interview_round == data['interview_round']
+    assert interview.round == data['round']
     assert interview.start_date == data["start_date"]
     assert interview.end_date == data["end_date"]
     assert interview.post_code == data["post_code"]
@@ -168,7 +183,8 @@ def test_interview(interview_data_factory):
 
 
 @pytest.mark.django_db
-def test_interview_creates_default_tasks(interview_factory):
+def test_interview_creates_default_tasks(interview_factory, _init_choice_models):
+    _init_choice_models()
     interview = interview_factory()
     interview.job.save()
     interview.profile.user.save()
@@ -190,7 +206,8 @@ def test_interview_creates_default_tasks(interview_factory):
 
 
 @pytest.mark.django_db
-def test_interview_task(interview_task_data_factory):
+def test_interview_task(interview_task_data_factory, _init_choice_models):
+    _init_choice_models()
     data = interview_task_data_factory()
     interview = data['interview']
 
@@ -202,11 +219,139 @@ def test_interview_task(interview_task_data_factory):
 
 
 @pytest.mark.django_db
-def test_reminder(reminder_data_factory):
+def test_reminder(reminder_data_factory, _init_choice_models):
+    _init_choice_models()
     data = reminder_data_factory()
     reminder = Reminder.objects.create(**data)
     assert reminder.offset == data["offset"]
     assert reminder.unit == data["unit"]
-    assert reminder.user == data["user"]
+    assert reminder.profile == data["profile"]
     assert not reminder.emailed
     assert not reminder.read
+
+
+@pytest.mark.django_db
+def test_task(profile_factory):
+
+    # Initialise data
+    name = "Test Task"
+    priority = 1
+    is_completed = False
+    profile = profile_factory()
+    profile.save()
+
+    # Create a task
+    task = Task(profile=profile, name=name,
+                priority=priority, is_completed=is_completed)
+    task.save()
+
+    assert task.priority == priority
+    assert task.is_completed == is_completed
+    assert task.name == name
+    assert task.profile == profile
+
+
+@pytest.mark.django_db
+def test_target_task(profile_factory):
+
+    # Initialise data
+    name = "Test Task"
+    priority = 1
+    is_completed = False
+    profile = profile_factory()
+    profile.save()
+    amount = 1
+    target = profile.target
+    target.amount = amount
+    target.current = 0
+    target.save()
+
+    # Create a task
+    task = TargetTask(profile=profile, target=target, name=name,
+                      priority=priority, is_completed=is_completed)
+    task.save()
+
+    assert task.priority == priority
+    assert not task.is_completed
+    assert task.name == name
+    assert task.target == target
+    assert task.current_val == 0
+    assert task.target_val == amount
+    assert task.type == 'target'
+
+
+@pytest.mark.django_db
+def test_target_task_save_met(profile_factory):
+
+    # Initialise data
+    name = "Test Task"
+    priority = 1
+    is_completed = False
+    profile = profile_factory()
+    profile.save()
+    amount = 1
+    target = profile.target
+    target.current = 0
+    target.amount = amount
+    target.save()
+
+    # Create a task
+    task = TargetTask(profile=profile, target=target, name=name,
+                      priority=priority, is_completed=is_completed)
+    task.save()
+
+    target.increment()
+
+    task.save()
+
+    assert task.current_val == 1
+    assert task.is_completed
+
+
+@pytest.mark.django_db
+def test_job_function():
+    code = "TE"
+    name = "TEST"
+
+    job_function = JobFunction(code=code, name=name)
+    job_function.save()
+
+    assert job_function.code == code
+    assert job_function.name == name
+    assert str(job_function) == name
+
+
+@pytest.mark.django_db
+def test_location_policy():
+    code = "TE"
+    name = "TEST"
+
+    location_policy = LocationPolicy(code=code, name=name)
+    location_policy.save()
+
+    assert location_policy.code == code
+    assert location_policy.name == name
+
+
+@pytest.mark.django_db
+def test_pay_rate():
+    code = "TE"
+    name = "TEST"
+
+    pay_rate = PayRate(code=code, name=name)
+    pay_rate.save()
+
+    assert pay_rate.code == code
+    assert pay_rate.name == name
+
+
+@pytest.mark.django_db
+def test_work_contract():
+    code = "TE"
+    name = "TEST"
+
+    work_contract = WorkContract(code=code, name=name)
+    work_contract.save()
+
+    assert work_contract.code == code
+    assert work_contract.name == name

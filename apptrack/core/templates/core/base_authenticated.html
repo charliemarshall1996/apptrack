@@ -34,7 +34,7 @@
   <!-- UserID -->
   <script>
     const userID = "{{ user_id }}";
-    var userStreakEndpoint = "{% url 'core:user_streak' 0 %}".replace("0", userID);
+    var userDataEndpoint = "{% url 'core:user_streak' 0 %}".replace("0", userID);
   </script>
   <script src="{% static 'core/scripts/userStreak.js' %}" defer></script>
   
@@ -67,7 +67,7 @@
             <a class="nav-link {% if request.path == '/jobs/calendar/' %}active{% endif %}" href="{% url 'jobs:calendar' %}">Interview Calendar</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link {% if request.path == '/jobs/download/' %}active{% endif %}" href="{% url 'jobs:download' %}">Download Report</a>
+            <a class="nav-link {% if request.path == '/jobs/job-download/' %}active{% endif %}" href="{% url 'jobs:download_job' %}">Download Report</a>
           </li>
           <li class="nav-item">
             <a class="nav-link {% if request.path == '/accounts/profile/{{ user.profile.id }}' %}active{% endif %}" href="{% url 'accounts:profile' user.profile.id %}">Profile</a>
@@ -79,21 +79,16 @@
       </div>
     </nav>
     <nav class="navbar navbar-expand navbar-light px-5" >
-      {% if user.profile.target.daily_target > 0 %}
+      {% if user.profile.target.amount > 0 %}
       <li class="nav-item navbar-text d-flex align-items-center px-2" style="white-space: nowrap;">
         <small>
-          <strong>Daily Applications Target:</strong>
-          <span id="currentApplications"></span>
-          <span>/</span>
-          <span id="targetAmount"></span>
+          <strong id="target"></strong>
         </small>
       </li>
       <li class="nav-item navbar-text d-flex align-items-center px-3" style="white-space: nowrap;">
         <span>
           <small>
-            <strong>Current Streak: </strong>
-            <span id="currentStreak"></span>
-            <span> Days</span>
+            <strong id="streak"></strong>
           </small>
         </span>
       </li>

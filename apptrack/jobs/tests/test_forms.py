@@ -26,7 +26,8 @@ def test_job_form(jobs_form_data, profile_factory):
 
 
 @pytest.mark.django_db
-def test_add_interview_form(interview_data_factory):
+def test_add_interview_form(interview_data_factory, _init_choice_models):
+    _init_choice_models()
     # initialise data
     data = interview_data_factory()
     data['job'].save()

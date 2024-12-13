@@ -1,10 +1,10 @@
 
-var endpoint = `basic-stats/${userID}/`;
 
 $.ajax({ 
     method: "GET", 
-    url: endpoint, 
-    success: function(data) { 
+    url: userDataEndpoint, 
+    success: function(data) {
+      data = data.basic_stats
       displayBasicStat(data, 'interviewConversionRate');
       displayBasicStat(data, 'totalApplications');
       displayBasicStat(data, 'totalInterviews')
@@ -21,9 +21,9 @@ $.ajax({
         if (id == "interviewConversionRate") {
             statData = data.interview_conversion_rate;
         } else if (id == "totalApplications") {
-            statData = data.total_applications;
+            statData = data.total_jobs;
         } else {
-            statData = data.total_interviews;
+            statData = data.total_interviewed_jobs;
         }
         if (statData == "") {
           statData = 0

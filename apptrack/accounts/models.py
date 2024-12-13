@@ -85,7 +85,7 @@ class Target(models.Model):
     total_targets_met = models.IntegerField(default=0)
     streak = models.ForeignKey(
         Streak, on_delete=models.CASCADE, related_name='target', null=True, default=Streak.objects.create)
-    last_reset = models.DateTimeField(auto_now=True)
+    last_reset = models.DateTimeField(auto_now_add=True)
 
     @property
     def met(self):
@@ -97,7 +97,7 @@ class Target(models.Model):
 
         logger.info("Starting reset. from_save: %s", from_save)
 
-        if self.amount:
+        if self.amount and self.last_reset:
             # if there is a target
             if self.amount > 0:
                 logger.info(

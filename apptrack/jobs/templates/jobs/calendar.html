@@ -22,16 +22,16 @@
     <div id="calendar"></div>
 </div>
 
-{% include 'interview/modals/add_reminder.html' %}
+{% include 'jobs/modals/add_reminder.html' %}
 
-{% include 'interview/modals/add_interview.html' %}
-{% include 'interview/modals/view_interview.html' %}
-{% include 'interview/modals/edit_interview.html' %}
+{% include 'jobs/modals/add_interview.html' %}
+{% include 'jobs/modals/view_interview.html' %}
+{% include 'jobs/modals/edit_interview.html' %}
 
 
 <!-- FullCalendar JS -->
 <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js"></script>
-<script src="{% static 'interview/scripts/calendar.js' %}" defer></script>
-<script src="{% static 'interview/scripts/addInterview.js' %}" defer></script>
+<script src="{% static 'jobs/scripts/calendar.js' %}" defer></script>
+<script src="{% static 'jobs/scripts/addInterview.js' %}" defer></script>
 
 {% endblock content %}
