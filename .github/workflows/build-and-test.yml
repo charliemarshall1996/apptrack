@@ -12,65 +12,57 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: "3.11.9"
+
+      # Setup environment
       - name: Upgrade pip
         run: python -m pip install --upgrade pip
       - name: Install dependencies
         run: pip install -r requirements.txt
       - name: Set PYTHONPATH
         run: echo "PYTHONPATH=$PYTHONPATH:$GITHUB_WORKSPACE/apptrack" >> $GITHUB_ENV
-      - name: Set up settings.py
-        run: |
-          mkdir -p $GITHUB_WORKSPACE/apptrack/apptrack
-          echo "import os" > $GITHUB_WORKSPACE/apptrack/apptrack/settings.py
-          echo "from pathlib import Path" >> $GITHUB_WORKSPACE/apptrack/apptrack/settings.py
-          echo "SECRET_KEY = '${{ secrets.DJANGO_SECRET_KEY }}'" >> $GITHUB_WORKSPACE/apptrack/apptrack/settings.py
-          echo "DEBUG = False" >> $GITHUB_WORKSPACE/apptrack/apptrack/settings.py
-          echo "ALLOWED_HOSTS = ['localhost', 'apptrack.app', '127.0.0.1', 'www.apptrack.app']" >> $GITHUB_WORKSPACE/apptrack/apptrack/settings.py
-          echo "AUTHENTICATION_BACKENDS = ['accounts.backends.EmailVerificationBackend']" >> $GITHUB_WORKSPACE/apptrack/apptrack/settings.py
-          echo "BASE_DIR = Path(__file__).resolve().parent.parent" >> $GITHUB_WORKSPACE/apptrack/apptrack/settings.py
-          echo "INSTALLED_APPS = ['django.contrib.admin','django.contrib.auth','django.contrib.contenttypes','django.contrib.sessions','django.contrib.messages','django.contrib.staticfiles','accounts','blog','interview','core','crispy_forms','crispy_bootstrap5','jobs','pycountry','anymail']" >> $GITHUB_WORKSPACE/apptrack/apptrack/settings.py
-          echo "MIDDLEWARE = ['django.middleware.security.SecurityMiddleware','django.contrib.sessions.middleware.SessionMiddleware','django.middleware.common.CommonMiddleware','django.middleware.csrf.CsrfViewMiddleware','django.contrib.auth.middleware.AuthenticationMiddleware','django.contrib.messages.middleware.MessageMiddleware','django.middleware.clickjacking.XFrameOptionsMiddleware']" >> $GITHUB_WORKSPACE/apptrack/apptrack/settings.py
-          echo "ROOT_URLCONF = 'apptrack.urls'" >> $GITHUB_WORKSPACE/apptrack/apptrack/settings.py
-          echo "TEMPLATES = [{'BACKEND': 'django.template.backends.django.DjangoTemplates','DIRS': [],'APP_DIRS': True,'OPTIONS': {'context_processors': ['django.template.context_processors.debug','django.template.context_processors.request','django.contrib.auth.context_processors.auth','django.contrib.messages.context_processors.messages']}}]" >> $GITHUB_WORKSPACE/apptrack/apptrack/settings.py
-          echo "WSGI_APPLICATION = 'apptrack.wsgi.application'" >> $GITHUB_WORKSPACE/apptrack/apptrack/settings.py
-          echo "DATABASES = {'default': {'ENGINE': 'django.db.backends.sqlite3','NAME': BASE_DIR / 'db.sqlite3'}}" >> $GITHUB_WORKSPACE/apptrack/apptrack/settings.py
-          echo "AUTH_PASSWORD_VALIDATORS = [{'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},{'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator'},{'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator'},{'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator'}]" >> $GITHUB_WORKSPACE/apptrack/apptrack/settings.py
-          echo "LANGUAGE_CODE = 'en-us'" >> $GITHUB_WORKSPACE/apptrack/apptrack/settings.py
-          echo "TIME_ZONE = 'UTC'" >> $GITHUB_WORKSPACE/apptrack/apptrack/settings.py
-          echo "USE_I18N = True" >> $GITHUB_WORKSPACE/apptrack/apptrack/settings.py
-          echo "USE_TZ = True" >> $GITHUB_WORKSPACE/apptrack/apptrack/settings.py
-          echo "STATIC_URL = 'static/'" >> $GITHUB_WORKSPACE/apptrack/apptrack/settings.py
-          echo "DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'" >> $GITHUB_WORKSPACE/apptrack/apptrack/settings.py
-          echo "CRISPY_ALLOWED_TEMPLATE_PACKS = 'bootstrap5'" >> $GITHUB_WORKSPACE/apptrack/apptrack/settings.py
-          echo "CRISPY_TEMPLATE_PACK = 'bootstrap5'" >> $GITHUB_WORKSPACE/apptrack/apptrack/settings.py
-          echo "MEDIA_ROOT = os.path.join(BASE_DIR, 'media')" >> $GITHUB_WORKSPACE/apptrack/apptrack/settings.py
-          echo "MEDIA_URL = '/media/'" >> $GITHUB_WORKSPACE/apptrack/apptrack/settings.py
-          echo "EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'" >> $GITHUB_WORKSPACE/apptrack/apptrack/settings.py
-          echo "BREVO_API_URL = 'https://api.brevo.com'" >> $GITHUB_WORKSPACE/apptrack/apptrack/settings.py
-          echo "ANYMAIL = {'BREVO_API_KEY': '${{ secrets.BREVO_API_KEY }}', 'IGNORE_RECIPIENT_STATUS': True}" >> $GITHUB_WORKSPACE/apptrack/apptrack/settings.py
-          echo "DEFAULT_FROM_EMAIL = 'no-reply@apptrack.app'" >> $GITHUB_WORKSPACE/apptrack/apptrack/settings.py
-          echo "AUTH_USER_MODEL = 'accounts.CustomUser'" >> $GITHUB_WORKSPACE/apptrack/apptrack/settings.py
 
+      # Setup settings.py
+      - name: Set up settings.py directory
+        run: mkdir -p $GITHUB_WORKSPACE/apptrack/apptrack
+      - name: add secret_key
+        run: echo "SECRET_KEY = '${{ secrets.DJANGO_SECRET_KEY }}'" > $GITHUB_WORKSPACE/apptrack/apptrack/settings.py
+      - name: populate settings.py
+        run: cat .github/workflows/settings.txt >> $GITHUB_WORKSPACE/apptrack/apptrack/settings.py
+      - name: add email secrets
+        run: |
+          echo "ANYMAIL = {'BREVO_API_KEY': '${{ secrets.BREVO_API_KEY }}', 'IGNORE_RECIPIENT_STATUS': True}" >> $GITHUB_WORKSPACE/apptrack/apptrack/settings.py
+      # Migrate
+      - name: Make migrations
+        run: python apptrack/manage.py makemigrations
+        env:
+          DJANGO_SETTINGS_MODULE: apptrack.settings
       - name: Apply migrations
         run: python apptrack/manage.py migrate
+        env:
+          DJANGO_SETTINGS_MODULE: apptrack.settings
 
+      # Run tests
       - name: Test with pytest
         run: |
           pip install pytest pytest-cov
-          pytest
+          pytest -cov=apptrack --cov-report=xml
+        env:
+          DJANGO_SETTINGS_MODULE: apptrack.settings
       - name: Lint with Ruff
         run: |
           pip install ruff
           ruff check --output-format=github .
+        env:
+          DJANGO_SETTINGS_MODULE: apptrack.settings
         continue-on-error: true
 
-      - name: Upload pytest test results
-        uses: actions/upload-artifact@v4
+      # Upload coverage
+      - name: Upload coverage reports to Codecov
+        uses: codecov/codecov-action@v5
         with:
-          name: pytest-results
-          path: junit/test-results.xml
-        if: ${{ always() }}
+          token: ${{ secrets.CODECOV_TOKEN }}
 
+      # Cleanup
       - name: Cleanup settings.py
         if: always()
         run: rm -f $GITHUB_WORKSPACE/apptrack/apptrack/settings.py
