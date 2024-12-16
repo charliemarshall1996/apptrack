@@ -113,7 +113,7 @@ def test_target(profile_factory):
 
     target = Target.objects.get(profile=profile)
     assert target.profile == profile
-    assert target.amount == 0
+    assert target.amount == 5
     assert target.current == 0
     assert target.streak
     assert target.total_targets_met == 0

@@ -1,4 +1,5 @@
 
+from django.core.exceptions import MultipleObjectsReturned
 from django.db.models.signals import post_save, post_migrate
 from django.dispatch import receiver
 
@@ -58,8 +59,19 @@ def post_migration(sender, instance, *args, **kwargs):
 
 @receiver(post_save, sender=Target)
 def check_target_task(sender, instance, **kwargs):
-    task, _ = TargetTask.objects.get_or_create(
-        target=instance, profile=instance.profile)
+
+    try:
+        task, _ = TargetTask.objects.get_or_create(
+            target=instance, profile=instance.profile)
+    except MultipleObjectsReturned:
+        # If multiple objects exist, retain the first and delete the rest
+        tasks = TargetTask.objects.filter(
+            target=instance, profile=instance.profile)
+        # Get the first task
+        task = tasks.first()
+        # Delete the other tasks
+        tasks.exclude(id=task.id).delete()
+
     print("task: ", task)
     print("target: ", instance)
     task.save()

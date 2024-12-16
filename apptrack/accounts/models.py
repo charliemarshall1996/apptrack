@@ -79,12 +79,12 @@ class Streak(models.Model):
 
 class Target(models.Model):
     profile = models.OneToOneField(
-        Profile, on_delete=models.CASCADE, related_name='target')
+        Profile, on_delete=models.CASCADE, related_name='target', unique=True)
     amount = models.IntegerField(default=0, null=True, blank=True)
     current = models.IntegerField(default=0, null=True, blank=True)
     total_targets_met = models.IntegerField(default=0)
     streak = models.ForeignKey(
-        Streak, on_delete=models.CASCADE, related_name='target', null=True, default=Streak.objects.create)
+        Streak, on_delete=models.CASCADE, related_name='target', null=True, default=Streak.objects.create, unique=True)
     last_reset = models.DateTimeField(auto_now_add=True)
 
     @property
