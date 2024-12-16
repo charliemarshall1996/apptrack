@@ -31,23 +31,29 @@ jobs:
       - name: add email secrets
         run: |
           echo "ANYMAIL = {'BREVO_API_KEY': '${{ secrets.BREVO_API_KEY }}', 'IGNORE_RECIPIENT_STATUS': True}" >> $GITHUB_WORKSPACE/apptrack/apptrack/settings.py
-      - name: export settings.py
-        run: export "DJANGO_SETTINGS_MODULE=apptrack.apptrack.settings"
       # Migrate
       - name: Make migrations
         run: python apptrack/manage.py makemigrations
+        env:
+          DJANGO_SETTINGS_MODULE: apptrack.settings
       - name: Apply migrations
         run: python apptrack/manage.py migrate
+        env:
+          DJANGO_SETTINGS_MODULE: apptrack.settings
 
       # Run tests
       - name: Test with pytest
         run: |
           pip install pytest pytest-cov
           pytest -cov
+        env:
+          DJANGO_SETTINGS_MODULE: apptrack.settings
       - name: Lint with Ruff
         run: |
           pip install ruff
           ruff check --output-format=github .
+        env:
+          DJANGO_SETTINGS_MODULE: apptrack.settings
         continue-on-error: true
 
       # Upload test results
