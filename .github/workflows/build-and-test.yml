@@ -45,7 +45,7 @@ jobs:
       - name: Test with pytest
         run: |
           pip install pytest pytest-cov
-          pytest -cov=apptrack --cov-report=xml
+          pytest -cov --cov-report=xml
         env:
           DJANGO_SETTINGS_MODULE: apptrack.settings
 
@@ -54,6 +54,7 @@ jobs:
         uses: codecov/codecov-action@v5
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
+        if: always()
 
       # Lint
       - name: Lint with Ruff
