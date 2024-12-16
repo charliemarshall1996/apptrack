@@ -24,7 +24,7 @@ jobs:
       - name: Setup SSH
         run: ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_ed25519 "${{ secrets.PYANYWHERE_USER }}"@ssh.pythonanywhere.com << EOF
       - name: Change to apptrack directory
-        run: cd ~/apptrack
+        run: cd apptrack
       - name: Pull latest changes
         run: git pull origin main --rebase --strategy-option ours
       - name: Activate virtual environment
