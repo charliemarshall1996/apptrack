@@ -45,7 +45,7 @@ jobs:
       - name: Test with pytest
         run: |
           pip install pytest pytest-cov
-          pytest -cov
+          pytest -cov --cov-report=xml
         env:
           DJANGO_SETTINGS_MODULE: apptrack.settings
       - name: Lint with Ruff
@@ -56,12 +56,11 @@ jobs:
           DJANGO_SETTINGS_MODULE: apptrack.settings
         continue-on-error: true
 
-      # Upload test results
-      - name: Upload pytest test results
-        uses: actions/upload-artifact@v4
+      # Upload coverage
+      - name: Upload coverage reports to Codecov
+        uses: codecov/codecov-action@v5
         with:
-          name: pytest-results
-          path: junit/test-results.xml
+          token: ${{ secrets.CODECOV_TOKEN }}
         if: ${{ always() }}
 
       # Cleanup
