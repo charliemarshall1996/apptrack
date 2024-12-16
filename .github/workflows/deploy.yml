@@ -15,22 +15,30 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Find SSH Directory
+        run: mkdir -p ~/.ssh
       - name: Add SSH Key
+        run: echo "${{ secrets.PYANYWHERE_PRIVATE_KEY }}" > ~/.ssh/id_ed25519
+      - name: Make SSH Key Readable
+        run: chmod 600 ~/.ssh/id_ed25519
+      - name: Setup SSH
+        run: ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_ed25519 "${{ secrets.PYANYWHERE_USER }}"@ssh.pythonanywhere.com << EOF
+      - name: Change to apptrack directory
+        run: cd ~/apptrack
+      - name: Pull latest changes
+        run: git pull origin main --rebase --strategy-option ours
+      - name: Activate virtual environment
+        run: source .virtualenvs/.venv/.bin/activate
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+        if: ${{ success() }}
+      - name: change to root directory
+        run: cd apptrack
+      - name: Make migrations
+        run: python manage.py makemigrations
+      - name: Migrate
+        run: python manage.py migrate
+      - name: Cleanup SSH Key
         run: |
-          mkdir -p ~/.ssh
-          echo "${{ secrets.PYANYWHERE_PRIVATE_KEY }}" > ~/.ssh/id_ed25519
-          chmod 600 ~/.ssh/id_ed25519
-          #test
-
-      - name: Deploy to PythonAnywhere
-        run: |
-          ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_ed25519 "${{ secrets.PYANYWHERE_USER }}"@ssh.pythonanywhere.com << EOF
-          cd ~/apptrack
-          git pull origin main --rebase --strategy-option ours
-          
-          source .virtualenvs/.venv/.bin/activate
-          pip install -r requirements.txt
-          cd apptrack
-          python manage.py makemigrations
-          python manage.py migrate
-          EOF
+          rm -f ~/.ssh/id_ed25519
+        if: ${{ always() }}
