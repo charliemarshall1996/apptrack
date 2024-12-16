@@ -19,9 +19,12 @@ jobs:
       - name: Set PYTHONPATH
         run: echo "PYTHONPATH=$PYTHONPATH:$GITHUB_WORKSPACE/apptrack" >> $GITHUB_ENV
       - name: Set up settings.py
-        run: !!string |
+        run: |
           mkdir -p $GITHUB_WORKSPACE/apptrack/apptrack
           cat .github/workflows/settings.txt > $GITHUB_WORKSPACE/apptrack/apptrack/settings.py
+
+      - name: Add secrets to settings.py
+        run: |
           echo "SECRET_KEY = '${{ secrets.DJANGO_SECRET_KEY }}'" >> $GITHUB_WORKSPACE/apptrack/apptrack/settings.py
           echo "ANYMAIL = {'BREVO_API_KEY': '${{ secrets.BREVO_API_KEY }}', 'IGNORE_RECIPIENT_STATUS': True}" >> $GITHUB_WORKSPACE/apptrack/apptrack/settings.py
           echo "WEBPUSH_SETTINGS = {'VAPID_PUBLIC_KEY': ${{ secrets.VAPID_PUBLIC_KEY }},'VAPID_PRIVATE_KEY': ${{ secrets.VAPID_PRIVATE_KEY }}, 'VAPID_ADMIN_EMAIL': 'charlie.marshall1996@gmail.com'}" >> $GITHUB_WORKSPACE/apptrack/apptrack/settings.py
