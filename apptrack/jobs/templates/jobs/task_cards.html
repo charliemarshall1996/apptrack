@@ -4,13 +4,27 @@
 
 {% load static %}
 
+{% block css %}
+ <style>
+    .task-card {
+        width: 75%;
+    }
+   .container {
+       justify-items: center;
+       align-content: center;
+   }
+ </style>
+{% endblock %}
+
 {% block content %}
 
-<div class="task-cards">
+<div class="task-cards d-block">
     {% for task in tasks %}
-    <div class="card task-card" data-id="{{ task.id }}">
-        <div class="card-body">
+    <div class="card task-card d-block" data-id="{{ task.id }}">
+        <div class="card-header text-center">
             <h5 class="card-title">{{ task.name }}</h5>
+        </div>
+        <div class="card-body text-center">
             {% if task.type == "target" %}
             <p class="card-text">Applications Target: {{ task.target.current }}/{{ task.target.amount }}</p>
             {% endif %}
@@ -27,6 +41,8 @@
             {% endif %}
         </div>
     </div>
+    {% empty %}
+    <h1>🥳 All tasks completed!</h1>
     {% endfor %}
 </div>
 

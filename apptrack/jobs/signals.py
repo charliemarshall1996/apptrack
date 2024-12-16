@@ -60,4 +60,6 @@ def post_migration(sender, instance, *args, **kwargs):
 def check_target_task(sender, instance, **kwargs):
     task, _ = TargetTask.objects.get_or_create(
         target=instance, profile=instance.profile)
+    print("task: ", task)
+    print("target: ", instance)
     task.save()

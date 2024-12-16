@@ -10,7 +10,7 @@ from .models import Target
 def create_target(sender, instance, created, **kwargs):
 
     if created:
-        Target.objects.create(profile=instance)
+        Target.objects.create(profile=instance, amount=5)
 
 
 @receiver(user_login)
