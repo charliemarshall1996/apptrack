@@ -21,24 +21,36 @@ jobs:
         run: echo "${{ secrets.PYANYWHERE_PRIVATE_KEY }}" > ~/.ssh/id_ed25519
       - name: Make SSH Key Readable
         run: chmod 600 ~/.ssh/id_ed25519
-      - name: Setup SSH
-        run: ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_ed25519 "${{ secrets.PYANYWHERE_USER }}"@ssh.pythonanywhere.com << EOF
-      - name: Change to apptrack directory
-        run: cd apptrack
       - name: Pull latest changes
-        run: git pull origin main --rebase --strategy-option ours
-      - name: Activate virtual environment
-        run: source .virtualenvs/.venv/.bin/activate
-      - name: Install dependencies
-        run: pip install -r requirements.txt
-        if: ${{ success() }}
-      - name: change to root directory
-        run: cd apptrack
-      - name: Make migrations
-        run: python manage.py makemigrations
-      - name: Migrate
-        run: python manage.py migrate
-      - name: Cleanup SSH Key
         run: |
-          rm -f ~/.ssh/id_ed25519
-        if: ${{ always() }}
+          ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_ed25519 "${{ secrets.PYANYWHERE_USER }}"@ssh.pythonanywhere.com << EOF
+          cd apptrack
+          git pull origin main --rebase --strategy-option ours
+          EOF
+      - name: Activate virtual environment and Install dependencies
+        run: |
+          ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_ed25519 "${{ secrets.PYANYWHERE_USER }}"@ssh.pythonanywhere.com << EOF
+          cd apptrack
+          ls
+          source .virtualenvs/.venv/.bin/activate
+          pip install -r requirements.txt
+          EOF
+        if: ${{ success() }}
+      - name: Make migrations
+        run: |
+          ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_ed25519 "${{ secrets.PYANYWHERE_USER }}"@ssh.pythonanywhere.com << EOF
+          cd apptrack/apptrack
+          python manage.py makemigrations
+          EOF
+      - name: Make migrate
+        run: |
+          ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_ed25519 "${{ secrets.PYANYWHERE_USER }}"@ssh.pythonanywhere.com << EOF
+          cd apptrack/apptrack
+          python manage.py migrate
+          EOF
+      - name: Collect static files
+        run: |
+          ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_ed25519 "${{ secrets.PYANYWHERE_USER }}"@ssh.pythonanywhere.com << EOF
+          cd apptrack/apptrack
+          python manage.py collectstatic --noinput
+          EOF
