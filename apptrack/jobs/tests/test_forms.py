@@ -1,6 +1,6 @@
 
 import pytest
-from core.models import Country, Currency
+from core.models import Country
 from jobs.forms import JobForm, JobFilterForm, AddInterviewForm
 from jobs.models import JobFunction, Interview
 
@@ -31,7 +31,7 @@ def test_add_interview_form(interview_data_factory, _init_choice_models):
     # initialise data
     data = interview_data_factory()
     data['job'].save()
-    profile = data.pop('profile')
+    data.pop('profile')
 
     form = AddInterviewForm(data=data)
 

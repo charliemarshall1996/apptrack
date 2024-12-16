@@ -3,7 +3,6 @@ import random
 from django.urls import reverse
 import pytest
 from core.models import Country
-from jobs.views import JobListView
 
 
 @pytest.mark.django_db

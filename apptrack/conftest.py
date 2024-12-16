@@ -168,7 +168,6 @@ def job_data_factory():
     def factory(**kwargs):
         COUNTRIES = [country for country in Country.objects.all()]
         CURRENCIES = [currency for currency in Currency.objects.all()]
-        JOB_FUNCTIONS = [function for function in JobFunction.objects.all()]
         updated_days_previous = kwargs.pop('updated_days_previous', None)
         url = kwargs.pop('url', None)
         source = kwargs.pop('source', None)

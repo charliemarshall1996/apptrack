@@ -11,7 +11,7 @@ from .models import Board, Column, TargetTask, JobFunction
 
 @receiver(target_reset)
 def create_target_task_on_reset(sender, instance, **kwargs):
-    task_name = f"Daily Applications Target"
+    task_name = "Daily Applications Target"
     profile = instance.profile
 
     task, created = TargetTask.objects.get_or_create(
