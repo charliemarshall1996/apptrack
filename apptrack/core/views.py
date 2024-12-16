@@ -1,8 +1,4 @@
 
-from jobs.models import Job
-from rest_framework.response import Response
-from rest_framework.views import APIView
-from django.shortcuts import render
 import logging
 
 from django.contrib.auth import get_user_model
@@ -11,7 +7,6 @@ from django.contrib import messages
 from django.core.mail import send_mail
 from django.shortcuts import render, redirect
 
-from accounts.models import Profile
 from .forms import ContactForm
 
 logger = logging.getLogger(__name__)

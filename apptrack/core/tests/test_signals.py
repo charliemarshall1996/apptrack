@@ -2,7 +2,6 @@ from django.test import TestCase
 from django.apps import apps
 from core.models import Country, Currency
 from core.signals import post_migrate
-from core.apps import CoreConfig
 from core.utils import get_country_choices, get_currency_choices
 
 

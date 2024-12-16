@@ -1,7 +1,6 @@
 
 from django.db.models.signals import post_save
 from django.dispatch import receiver
-from django.core.exceptions import ObjectDoesNotExist
 from accounts.models import Profile
 from accounts.views import user_login
 from .models import Target

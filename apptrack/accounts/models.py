@@ -121,7 +121,7 @@ class Target(models.Model):
                     target_reset.send(sender=self.__class__, instance=self)
 
                     logger.info("Checking if from save %s", from_save)
-                    if from_save == False:
+                    if not from_save:
                         logger.info("Calling save")
                         self.save()
                     else:

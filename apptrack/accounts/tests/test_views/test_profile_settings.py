@@ -1,12 +1,9 @@
 
-from unittest.mock import Mock, patch
-
 import pytest
 from django.urls import reverse
 from django.contrib.auth import get_user_model
 from django.contrib.messages import get_messages
 
-from accounts.tokens import email_verification_token
 from accounts.messages import AccountsMessageManager
 
 User = get_user_model()
