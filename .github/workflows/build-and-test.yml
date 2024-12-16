@@ -12,35 +12,47 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: "3.11.9"
+
+      # Setup environment
       - name: Upgrade pip
         run: python -m pip install --upgrade pip
       - name: Install dependencies
         run: pip install -r requirements.txt
       - name: Set PYTHONPATH
         run: echo "PYTHONPATH=$PYTHONPATH:$GITHUB_WORKSPACE/apptrack" >> $GITHUB_ENV
-      - name: Set up settings.py
-        run: |
-          mkdir -p $GITHUB_WORKSPACE/apptrack/apptrack
-          cat .github/workflows/settings.txt > $GITHUB_WORKSPACE/apptrack/apptrack/settings.py
 
-      - name: Add secrets to settings.py
+      # Setup settings.py
+      - name: Set up settings.py directory
+        run: mkdir -p $GITHUB_WORKSPACE/apptrack
+      - name: populate settings.py
+        run: cat .github/workflows/settings.txt > $GITHUB_WORKSPACE/apptrack/apptrack/settings.py
+      - name: add secret_key
+        run: echo "SECRET_KEY = '${{ secrets.DJANGO_SECRET_KEY }}'" >> $GITHUB_WORKSPACE/apptrack/apptrack/settings.py
+      - name: add email secrets
         run: |
-          echo "SECRET_KEY = '${{ secrets.DJANGO_SECRET_KEY }}'" >> $GITHUB_WORKSPACE/apptrack/apptrack/settings.py
           echo "ANYMAIL = {'BREVO_API_KEY': '${{ secrets.BREVO_API_KEY }}', 'IGNORE_RECIPIENT_STATUS': True}" >> $GITHUB_WORKSPACE/apptrack/apptrack/settings.py
-          echo "WEBPUSH_SETTINGS = {'VAPID_PUBLIC_KEY': ${{ secrets.VAPID_PUBLIC_KEY }},'VAPID_PRIVATE_KEY': ${{ secrets.VAPID_PRIVATE_KEY }}, 'VAPID_ADMIN_EMAIL': ${{ secrets.VAPID_ADMIN_EMAIL }}}" >> $GITHUB_WORKSPACE/apptrack/apptrack/settings.py
+      - name: add webpush secrets
+        run: |
+          echo "WEBPUSH_SETTINGS = {'VAPID_PUBLIC_KEY': '${{ secrets.VAPID_PUBLIC_KEY }}', 'VAPID_PRIVATE_KEY': '${{ secrets.VAPID_PRIVATE_KEY }}'}, 'VAPID_ADMIN_EMAIL': '${{ secrets.VAPID_ADMIN_EMAIL }}'" >> $GITHUB_WORKSPACE/apptrack/apptrack/settings.py
+
+      # Migrate
+      - name: Make migrations
+        run: python apptrack/manage.py makemigrations
       - name: Apply migrations
         run: python apptrack/manage.py migrate
 
+      # Run tests
       - name: Test with pytest
         run: |
           pip install pytest pytest-cov
-          pytest
+          pytest -cov
       - name: Lint with Ruff
         run: |
           pip install ruff
           ruff check --output-format=github .
         continue-on-error: true
 
+      # Upload test results
       - name: Upload pytest test results
         uses: actions/upload-artifact@v4
         with:
@@ -48,6 +60,7 @@ jobs:
           path: junit/test-results.xml
         if: ${{ always() }}
 
+      # Cleanup
       - name: Cleanup settings.py
         if: always()
         run: rm -f $GITHUB_WORKSPACE/apptrack/apptrack/settings.py
