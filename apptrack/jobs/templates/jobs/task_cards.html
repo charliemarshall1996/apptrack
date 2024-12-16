@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+
+{% extends 'core/base_authenticated.html' %}
+
+{% load static %}
+
+{% block content %}
+
+<div class="task-cards">
+    {% for task in tasks %}
+    <div class="card task-card" data-id="{{ task.id }}">
+        <div class="card-body">
+            <h5 class="card-title">{{ task.name }}</h5>
+            {% if task.type == "target" %}
+            <p class="card-text">Applications Target: {{ task.target.current }}/{{ task.target.amount }}</p>
+            {% endif %}
+            {% if task.type == "interview" %}
+            <p class="card-text">Interview: {{ task.interview.name }}</p>
+            <p class="card-text">Date: {{ task.interview.start_date }}</p>
+            {% endif %}
+            {% if task.type == "job" %}
+            <p class="card-text">Job: {{ task.job.job_title }}</p>
+            <p class="card-text">Company: {{ task.job.company }}</p>
+            {% endif %}
+            {% if task.type != "target" %}
+                <button class="btn btn-primary complete-task" data-id="{{ task.id }}">Complete</button>
+            {% endif %}
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+
+{% endblock %}

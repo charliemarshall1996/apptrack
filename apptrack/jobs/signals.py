@@ -2,7 +2,7 @@
 from django.db.models.signals import post_save, post_migrate
 from django.dispatch import receiver
 
-from accounts.models import target_reset, Profile
+from accounts.models import target_reset, Profile, Target
 
 from .apps import JobsConfig
 from .choices import JobFunctionChoices
@@ -51,6 +51,13 @@ def create_columns(sender, instance, created, **kwargs):
 
 
 @receiver(post_migrate, sender=JobsConfig)
-def post_migrate(sender, instance, *args, **kwargs):
+def post_migration(sender, instance, *args, **kwargs):
     for code, name in JobFunctionChoices.choices():
         JobFunction.objects.get_or_create(code=code, name=name)
+
+
+@receiver(post_save, sender=Target)
+def check_target_task(sender, instance, **kwargs):
+    task, _ = TargetTask.objects.get_or_create(
+        target=instance, profile=instance.profile)
+    task.save()

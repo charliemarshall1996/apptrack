@@ -1,7 +1,7 @@
 const draggables = document.querySelectorAll(".task");
 const droppables = document.querySelectorAll(".swim-lane");
 const csrftoken = $('meta[name="csrf-token"]').attr('content');
-var task_id= '0';
+var job_id= '0';
 var emp_id = '0';
 
 // Allow the column to accept a drop
@@ -21,7 +21,7 @@ draggables.forEach((task) => {
   task.addEventListener("dragend", () => {
     task.classList.remove("is-dragging");
     
-    get_assign(task_id, emp_id);
+    get_assign(job_id, emp_id);
 
   });
 });
@@ -38,7 +38,7 @@ droppables.forEach((zone) => {
     } else {
       zone.insertBefore(curTask, bottomTask);
     }
-    task_id = curTask.id;
+    job_id = curTask.id;
     emp_id = zone.id;
     });
 });
@@ -64,8 +64,8 @@ const insertAboveTask = (zone, mouseY) => {
   return closestTask;
 };
 
-function get_assign(task_id, emp_id){
-    post_request(emp_id, task_id);
+function get_assign(job_id, emp_id){
+    post_request(emp_id, job_id);
 }
 
 function csrfSafeMethod(method) {
@@ -81,10 +81,10 @@ $.ajaxSetup({
 });
 
 
-function post_request(emp_id, task_id){
+function post_request(col_id, job_id){
   $.ajax({
     type: 'POST',
-    url: `/jobs/job-assign/${emp_id}/${task_id}/`,
+    url: `/jobs/job-assign/${col_id}/${job_id}/`,
     success: function(data) {
       console.log('Post successful', data);
       if (data.job_status == 'RE') {

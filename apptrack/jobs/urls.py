@@ -22,5 +22,7 @@ urlpatterns = [
     path("job-edit/<int:pk>/", views.job_edit_view, name="edit_job"),
     path('job-list/', views.JobListView.as_view(), name='list'),
 
+    path('task-cards/', views.task_cards_view, name='task_cards'),
     path('task-edit/<int:id>/', views.task_edit_view, name='update_task'),
+
 ]

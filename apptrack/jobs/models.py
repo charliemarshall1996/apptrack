@@ -257,18 +257,24 @@ class Job(models.Model):
 
     def _set_applied(self):
         logger.info("Setting applied...")
-        if self.status in StatusChoices.get_applied_statuses():
-            logger.info("Job is applied")
-            self.applied = True
-            if not self.date_applied:
-                self.date_applied = timezone.now()
-        else:
-            if (self.status != StatusChoices.REJECTED)\
-                    and (self.status != StatusChoices.CLOSED):
-                logger.info("Job is not applied")
-                self.applied = False
-                self.profile.target.decrement()
-                self.profile.target.save()
+
+        try:
+            original = Job.objects.get(pk=self.pk)
+            if original.status != self.status:
+                if self.status in StatusChoices.get_applied_statuses():
+                    logger.info("Job is applied")
+                    self.applied = True
+                    if not self.date_applied:
+                        self.date_applied = timezone.now()
+                else:
+                    if (self.status != StatusChoices.REJECTED)\
+                            and (self.status != StatusChoices.CLOSED):
+                        logger.info("Job is not applied")
+                        self.applied = False
+                        self.profile.target.decrement()
+                        self.profile.target.save()
+        except Job.DoesNotExist:
+            pass
 
     def _set_interviewed(self):
         logger.info("Setting interviewed...")
