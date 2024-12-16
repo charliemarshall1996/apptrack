@@ -31,7 +31,8 @@ jobs:
       - name: add email secrets
         run: |
           echo "ANYMAIL = {'BREVO_API_KEY': '${{ secrets.BREVO_API_KEY }}', 'IGNORE_RECIPIENT_STATUS': True}" >> $GITHUB_WORKSPACE/apptrack/apptrack/settings.py
-
+        env:
+          DJANGO_SETTINGS_MODULE: apptrack.apptrack.settings
       # Migrate
       - name: Make migrations
         run: python apptrack/manage.py makemigrations
