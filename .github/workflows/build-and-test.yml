@@ -48,6 +48,14 @@ jobs:
           pytest -cov=apptrack --cov-report=xml
         env:
           DJANGO_SETTINGS_MODULE: apptrack.settings
+
+      # Upload coverage
+      - name: Upload coverage reports to Codecov
+        uses: codecov/codecov-action@v5
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+
+      # Lint
       - name: Lint with Ruff
         run: |
           pip install ruff
@@ -55,12 +63,6 @@ jobs:
         env:
           DJANGO_SETTINGS_MODULE: apptrack.settings
         continue-on-error: true
-
-      # Upload coverage
-      - name: Upload coverage reports to Codecov
-        uses: codecov/codecov-action@v5
-        with:
-          token: ${{ secrets.CODECOV_TOKEN }}
 
       # Cleanup
       - name: Cleanup settings.py
