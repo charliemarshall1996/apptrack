@@ -56,8 +56,7 @@ INSTALLED_APPS = [
     'django_extensions',
     'polymorphic',
     'pycountry',
-    'rest_framework',
-    'webpush'
+    'rest_framework'
 ]
 
 MIDDLEWARE = [
