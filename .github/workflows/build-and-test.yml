@@ -27,7 +27,7 @@ jobs:
         run: |
           echo "SECRET_KEY = '${{ secrets.DJANGO_SECRET_KEY }}'" >> $GITHUB_WORKSPACE/apptrack/apptrack/settings.py
           echo "ANYMAIL = {'BREVO_API_KEY': '${{ secrets.BREVO_API_KEY }}', 'IGNORE_RECIPIENT_STATUS': True}" >> $GITHUB_WORKSPACE/apptrack/apptrack/settings.py
-          echo "WEBPUSH_SETTINGS = {'VAPID_PUBLIC_KEY': ${{ secrets.VAPID_PUBLIC_KEY }},'VAPID_PRIVATE_KEY': ${{ secrets.VAPID_PRIVATE_KEY }}, 'VAPID_ADMIN_EMAIL': 'charlie.marshall1996@gmail.com'}" >> $GITHUB_WORKSPACE/apptrack/apptrack/settings.py
+          echo "WEBPUSH_SETTINGS = {'VAPID_PUBLIC_KEY': ${{ secrets.VAPID_PUBLIC_KEY }},'VAPID_PRIVATE_KEY': ${{ secrets.VAPID_PRIVATE_KEY }}, 'VAPID_ADMIN_EMAIL': ${{ secrets.VAPID_ADMIN_EMAIL }}}" >> $GITHUB_WORKSPACE/apptrack/apptrack/settings.py
       - name: Apply migrations
         run: python apptrack/manage.py migrate
 
