@@ -19,7 +19,7 @@ jobs:
       - name: Set PYTHONPATH
         run: echo "PYTHONPATH=$PYTHONPATH:$GITHUB_WORKSPACE/apptrack" >> $GITHUB_ENV
       - name: Set up settings.py
-        run: |
+        run: !!string |
           mkdir -p $GITHUB_WORKSPACE/apptrack/apptrack
           cat .github/workflows/settings.txt > $GITHUB_WORKSPACE/apptrack/apptrack/settings.py
           echo "SECRET_KEY = '${{ secrets.DJANGO_SECRET_KEY }}'" >> $GITHUB_WORKSPACE/apptrack/apptrack/settings.py
