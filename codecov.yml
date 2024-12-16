@@ -1,0 +1,8 @@
+coverage:
+  file: coverage.xml
+
+fixes:
+  - "*apptrack::*apptrack/apptrack/"
+
+codecov:
+  disable_default_path_fixes: true
