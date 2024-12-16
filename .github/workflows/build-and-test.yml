@@ -61,7 +61,6 @@ jobs:
         uses: codecov/codecov-action@v5
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
-        if: ${{ always() }}
 
       # Cleanup
       - name: Cleanup settings.py
