@@ -1,8 +1,13 @@
-coverage:
-  file: coverage.xml
+component_management:
+  default_rules:
+    paths:
+      - "coverage.xml"
 
 fixes:
   - "*apptrack::*apptrack/apptrack/"
 
 codecov:
+  token: ${{ secrets.CODECOV_TOKEN }}
   disable_default_path_fixes: true
+  branch: main
+  strict_yaml_branch: main
