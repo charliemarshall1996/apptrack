@@ -25,7 +25,7 @@
   <header class="row">
     <div class="col-8 mx-auto">
       <nav class="navbar navbar navbar-expand-md navbar-light px-3">
-        <a class="navbar-brand display-5" href="{% url 'core:home' %}"><img class="img nav-icon" src="{% static 'core/nav-icon.svg' %}" alt=""></a>
+        <a class="navbar-brand" href="{% url 'core:home' %}"><img class="img nav-icon" src="{% static 'core/nav-icon.svg' %}" alt=""></a>
   
         <!-- Toggler/collapsible Button -->
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
@@ -34,17 +34,30 @@
   
         <div class="collapse navbar-collapse" id="navbarNav">
           <ul class="navbar-nav w-100">
-            <li class="nav-item">
+            <li class="nav-item d-none d-md-flex">
               <a class="nav-link {% if request.path == 'core:contact' %}active{% endif %}" href="{% url 'core:contact' %}">Contact</a>
             </li>
-            <li class="nav-item">
+            <li class="nav-item d-flex d-md-none ms-auto">
+              <a class="nav-link {% if request.path == 'core:contact' %}active{% endif %}" href="{% url 'core:contact' %}">Contact</a>
+            </li>
+            <li class="nav-item d-none d-md-flex">
               <a class="nav-link {% if request.path == 'blog:home' %}active{% endif %}" href="{% url 'blog:home' %}">Blog</a>
-            
-            <li class="nav-item ms-auto px-1">
+            </li>
+            <li class="nav-item d-flex d-md-none ms-auto">
+              <a class="nav-link {% if request.path == 'blog:home' %}active{% endif %}" href="{% url 'blog:home' %}">Blog</a>
+            </li>
+            <li class="nav-item d-none d-md-flex ms-auto px-1">
               <a class="btn btn-primary" href="{% url 'accounts:login' %}">Login</a>
             </li>
-            <li class="nav-item px-1">
+            <li class="nav-item d-flex d-md-none ms-auto p-2">
+              <a class="btn btn-sm btn-primary" href="{% url 'accounts:login' %}">Login</a>
+            </li>
+            <li class="nav-item d-none d-md-flex px-1">
               <a class="btn btn-outline-primary" href="{% url 'accounts:register' %}">Register</a>
+            </li>
+            
+            <li class="nav-item d-flex d-md-none ms-auto p-2">
+              <a class="btn btn-sm btn-outline-primary" href="{% url 'accounts:register' %}">Register</a>
             </li>
           </ul>
         </div>
