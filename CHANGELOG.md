@@ -19,6 +19,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Moved WorkContract model to core app
 - Moved PayRate model to core app
 
+### Fixed
+
+- Jobs list filter modal Job Functions selection
+- Jobs list filter modal Countries selection
+
 ## [V1.0.2]
 
 ### Added
