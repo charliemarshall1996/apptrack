@@ -10,10 +10,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Target app to separate functionality from accounts
+- Tasks app to separate functionality
 
 ### Changed
 
 - Moved target and streak functionality in Target app
+- Moved tasks models into tasks app
 
 ## [V1.0.1]
 
