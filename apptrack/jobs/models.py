@@ -300,26 +300,6 @@ class Interview(models.Model):
     def __str__(self):
         return f"Interview for {self.job.job_title} at {self.job.company}"
 
-    def create_default_tasks(self):
-        default_tasks = [
-            "Prepare for interview",
-            "Review job description",
-            "Research the company",
-            "Prepare questions for the interviewer",
-            "Dress appropriately",
-            "Plan your route to the interview",
-        ]
-        for task in default_tasks:
-            InterviewTask.objects.create(
-                interview=self, profile=self.profile, name=task)
-
-    def save(self, *args, **kwargs):
-        if not self.pk:  # This ensures tasks are added only once when the interview is created
-            super().save(*args, **kwargs)
-            self.create_default_tasks()
-        else:
-            super().save(*args, **kwargs)
-
 
 class InterviewReminder(Reminder):
     interview = models.ForeignKey(

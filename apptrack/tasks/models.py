@@ -5,7 +5,6 @@ from django.db import models
 from polymorphic.models import PolymorphicModel
 
 from accounts.models import Profile
-from jobs.models import Job, Interview
 from target.models import Target
 # Create your models here.
 
@@ -50,7 +49,7 @@ class TargetTask(Task):
 
 class InterviewTask(Task):
     interview = models.ForeignKey(
-        Interview, related_name="tasks", on_delete=models.CASCADE)
+        'jobs.Interview', related_name="tasks", on_delete=models.CASCADE)
 
     @property
     def type(self):
@@ -63,7 +62,7 @@ class InterviewTask(Task):
 
 class JobTask(Task):
     job = models.ForeignKey(
-        Job, related_name="tasks", on_delete=models.CASCADE)
+        'jobs.Job', related_name="tasks", on_delete=models.CASCADE)
 
     @property
     def type(self):

@@ -6,15 +6,13 @@ import pytest
 from jobs.models import (Job,
                          Column,
                          Interview,
-                         InterviewTask,
                          Reminder,
-                         Task,
-                         TargetTask,
                          JobFunction,
                          LocationPolicy,
                          PayRate,
                          WorkContract)
 from jobs.choices import StatusChoices
+from tasks.models import InterviewTask
 
 logger = logging.getLogger(__name__)
 
@@ -191,6 +189,8 @@ def test_interview_creates_default_tasks(interview_factory, _init_choice_models)
     interview.profile.save()
     interview.save()
 
+    assert interview
+
     default_tasks = [
         "Prepare for interview",
         "Review job description",
@@ -228,84 +228,6 @@ def test_reminder(reminder_data_factory, _init_choice_models):
     assert reminder.profile == data["profile"]
     assert not reminder.emailed
     assert not reminder.read
-
-
-@pytest.mark.django_db
-def test_task(profile_factory):
-
-    # Initialise data
-    name = "Test Task"
-    priority = 1
-    is_completed = False
-    profile = profile_factory()
-    profile.save()
-
-    # Create a task
-    task = Task(profile=profile, name=name,
-                priority=priority, is_completed=is_completed)
-    task.save()
-
-    assert task.priority == priority
-    assert task.is_completed == is_completed
-    assert task.name == name
-    assert task.profile == profile
-
-
-@pytest.mark.django_db
-def test_target_task(profile_factory):
-
-    # Initialise data
-    name = "Test Task"
-    priority = 1
-    is_completed = False
-    profile = profile_factory()
-    profile.save()
-    amount = 1
-    target = profile.target
-    target.amount = amount
-    target.current = 0
-    target.save()
-
-    # Create a task
-    task = TargetTask(profile=profile, target=target, name=name,
-                      priority=priority, is_completed=is_completed)
-    task.save()
-
-    assert task.priority == priority
-    assert not task.is_completed
-    assert task.name == name
-    assert task.target == target
-    assert task.current_val == 0
-    assert task.target_val == amount
-    assert task.type == 'target'
-
-
-@pytest.mark.django_db
-def test_target_task_save_met(profile_factory):
-
-    # Initialise data
-    name = "Test Task"
-    priority = 1
-    is_completed = False
-    profile = profile_factory()
-    profile.save()
-    amount = 1
-    target = profile.target
-    target.current = 0
-    target.amount = amount
-    target.save()
-
-    # Create a task
-    task = TargetTask(profile=profile, target=target, name=name,
-                      priority=priority, is_completed=is_completed)
-    task.save()
-
-    target.increment()
-
-    task.save()
-
-    assert task.current_val == 1
-    assert task.is_completed
 
 
 @pytest.mark.django_db
