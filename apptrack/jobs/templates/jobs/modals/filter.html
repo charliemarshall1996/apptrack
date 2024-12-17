@@ -43,7 +43,7 @@
                                             <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#accordionExample">
                                                 <div class="accordion-body">
                                                     <div class="list-group list-group-flush">
-                                                        {% for job_function in filter_form.job_function %}
+                                                        {% for job_function in filter_form.job_functions %}
                                                         <div class="list-group-item">
                                                             <div class="form-check">
                                                                 {{ job_function }}
@@ -62,8 +62,8 @@
                                             </h2>
                                             <div id="collapseThree" class="accordion-collapse collapse" aria-labelledby="headingThree" data-bs-parent="#accordionExample">
                                                 <div class="accordion-body">
-                                                    <div class="list-group">
-                                                        {% for country in filter_form.country %}
+                                                    <div class="list-group list-group-flush">
+                                                        {% for country in filter_form.countries %}
                                                         <div class="list-group-item">
                                                             <div class="form-check">
                                                                 {{ country }}
