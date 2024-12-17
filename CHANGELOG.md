@@ -9,8 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- made index.html navbar responsive
+- Made unauthenticated.html navbar responsive
 - Made index.html hero text responsive
+- Made index.html hero banner height responsive
 
 ## [V1.0.0]
 
