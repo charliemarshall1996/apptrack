@@ -48,22 +48,10 @@ def populate_pay_rates():
         pay_rate.save()
 
 
-"""def populate_location_policies():
-    print("Populating location policies...")
-
-    df = pd.read_csv("core/default_data/location_policies.csv")
-
-    for _, row in df.iterrows():
-        location_policy, _ = LocationPolicy.objects.get_or_create(
-            code=row.code, name=row['name'])
-        location_policy.save()"""
-
-
 def run():
     print("Populating tables...")
     populate_countries()
     populate_currencies()
     populate_job_functions()
     populate_pay_rates()
-    # populate_location_policies()
     print("Tables populated.")
