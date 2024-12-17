@@ -102,7 +102,6 @@ def test_profile_settings_view_invalid_birth_date(client, profile_factory):
 
     assert 'user_form' in response.context
     assert 'profile_form' in response.context
-    assert 'target_form' in response.context
 
     # POST request with valid data should update profile
     data = {

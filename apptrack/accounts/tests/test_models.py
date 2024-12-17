@@ -1,11 +1,7 @@
 
-import datetime
-from unittest.mock import Mock, patch
-
-from django.utils import timezone
 import pytest
 
-from accounts.models import CustomUser, Profile, Streak, Target
+from accounts.models import CustomUser, Profile
 
 
 @pytest.mark.django_db
