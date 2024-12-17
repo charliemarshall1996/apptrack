@@ -95,18 +95,6 @@ class Target(models.Model):
         self.current -= 1
         self.save()
 
-    def _reset_if_target_changed(self):
-        try:
-            Target.objects.get(pk=self.pk)
-            original = Target.objects.get(pk=self.pk)
-            if original.amount != self.amount:
-                self.current = 0
-                self.last_reset = timezone.now()
-                target_reset.send(sender=self.__class__, instance=self)
-        except Target.DoesNotExist:
-            pass
-
     def save(self, *args, **kwargs):
-        self._reset_if_target_changed()
         self.reset(from_save=True)
         super().save(*args, **kwargs)

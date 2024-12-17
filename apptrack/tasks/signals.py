@@ -13,6 +13,7 @@ logger = logging.getLogger(__name__)
 
 @receiver(target_reset)
 def create_target_task_on_reset(sender, instance, **kwargs):
+    print("Creating target task...")
     task_name = "Daily Applications Target"
     profile = instance.profile
 

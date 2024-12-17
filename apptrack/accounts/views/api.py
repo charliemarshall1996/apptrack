@@ -1,4 +1,5 @@
 
+from django.contrib.auth import get_user_model
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -8,17 +9,22 @@ from target.models import Target
 from accounts.models import Profile
 from .utils import ConversionCalculator
 
+User = get_user_model()
+
 
 class ProfileAPI(APIView):
 
     def get(self, request, id):
-
-        profile = Profile.objects.get(id=id)
+        print(f"GETTING API DATA FOR USER: {id}")
+        user = User(id=id)
+        profile = Profile.objects.get(user=user)
 
         data = {
             'basic_stats': self._get_basic_stats(profile),
             'streak': self._get_user_streak(profile),
         }
+
+        print(f"API DATA: {data}")
 
         return Response(data)
 
