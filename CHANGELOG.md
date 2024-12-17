@@ -5,10 +5,25 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [V1.0.3]
+
+### Added
+
+- Added script to export default data
+- Added script to import default data
+
+### Changed
+
+- Moved JobFunction model to core app
+- Moved LocationPolicy model to core app
+- Moved WorkContract model to core app
+- Moved PayRate model to core app
+
 ## [V1.0.2]
 
 ### Added
 
+- Service scripts to ease deployment
 - Target app to separate functionality from accounts
 - Tasks app to separate functionality
 
