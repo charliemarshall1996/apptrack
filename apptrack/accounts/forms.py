@@ -27,6 +27,14 @@ class UserRegistrationForm(UserCreationForm):
         self.fields["last_name"].required = True
 
     def clean_email(self):
+        """
+        Cleans the email field by validating the email address.
+
+        Raises:
+        - forms.ValidationError if the email is invalid.
+
+        Returns: 
+        - str: the cleaned email address."""
         email = self.cleaned_data.get('email')
         try:
             validate_email(email)
@@ -35,6 +43,25 @@ class UserRegistrationForm(UserCreationForm):
         return email
 
     def save(self):
+
+        return super().save(commit=False)
+
+
+class UserUpdateForm(forms.ModelForm):
+    honeypot = forms.CharField(required=False, widget=forms.HiddenInput)
+
+    class Meta:
+        model = User
+        fields = ['email', 'first_name', 'last_name']
+
+    def save(self):
+        """
+        Saves the user with the given data 
+        without committing to the database.
+
+        Returns:
+            User: the saved user
+        """
         return super().save(commit=False)
 
 
@@ -48,6 +75,14 @@ class ProfileRegistrationForm(forms.ModelForm):
         }
 
     def save(self) -> Profile:
+        """
+        Saves the profile with the given 
+        data without committing to the database.
+
+        Returns:
+            Profile: the saved profile instance
+        """
+
         return super().save(commit=False)
 
 
@@ -57,17 +92,13 @@ class ProfileUpdateForm(forms.ModelForm):
         fields = ['birth_date', 'email_comms_opt_in']
 
     def save(self) -> Profile:
-        return super().save(commit=False)
+        """
+        Saves the profile with the given 
+        data without committing to the database.
 
-
-class UserUpdateForm(forms.ModelForm):
-    honeypot = forms.CharField(required=False, widget=forms.HiddenInput)
-
-    class Meta:
-        model = User
-        fields = ['email', 'first_name', 'last_name']
-
-    def save(self):
+        Returns:
+            Profile: the saved profile instance
+        """
         return super().save(commit=False)
 
 

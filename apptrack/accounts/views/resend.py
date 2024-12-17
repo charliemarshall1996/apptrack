@@ -18,6 +18,19 @@ email_manager = AccountsEmailManager()
 
 
 def resend_view(request):
+    """
+    A view that handles the resend verification email form submission.
+
+    If the form is valid, it sends a verification email to the user and
+    redirects to the login page. If the form is invalid, it redirects to
+    the home page with an error message.
+
+    Args:
+        - request (`django.http.HttpRequest`): The request object.
+
+    Returns:
+        - `django.http.HttpResponse`: The response object.
+    """
     if request.method == 'POST':
         form = ResendVerificationEmailForm(request.POST)
 
@@ -39,18 +52,26 @@ def resend_view(request):
             timeout_duration = timedelta(minutes=10)
 
             if user.last_verification_email_sent:
+                # Calculate the time difference between the current time and
+                # the last time the verification email was sent
                 time_since_last_email = get_time_since_last_email(
                     user.last_verification_email_sent)
-                timeout_duration = timedelta(minutes=10)
+
+                # Calculate the time difference between the timeout duration
+                # and the time since the last verification email was sent
                 minutes_difference = get_minutes_left_before_resend(
                     time_since_last_email, timeout_duration)
 
+                # If the time difference is less than the timeout duration,
+                # show an info message to the user to wait
                 if time_since_last_email < timeout_duration:
                     messages.info(
                         request,
                         AccountsMessageManager.resend_email_wait(minutes_difference))
                     return redirect('accounts:resend')
 
+            # Send the verification email and save the last verification email
+            # sent time
             email_manager.mail_verification(request, user)
             user.last_verification_email_sent = timezone.now()
             user.save()

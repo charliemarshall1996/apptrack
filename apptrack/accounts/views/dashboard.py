@@ -18,8 +18,11 @@ def dashboard_view(request):
     All data is associated with the user making 
     the request.
 
-    :param request: The current request
-    :return: The rendered dashboard template
+    Args:
+        - request: The current request
+
+    Returns:
+        - The rendered dashboard template
     """
     jobs = Job.objects.filter(
         profile=request.user.profile, archived=False).order_by("updated").all()[:10]

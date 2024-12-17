@@ -8,14 +8,30 @@ from accounts.messages import AccountsMessageManager
 
 @ login_required
 def delete_account_view(request):
-    # Handle the POST request (when the user confirms the deletion)
+    """Delete a user account
+
+    This view is used to delete a user account. If the request 
+    method is POST, it deletes the user and their associated
+    profile.
+
+    If the request method is GET, it renders a confirmation page
+    asking the user whether they want to delete their account.
+
+    Args:
+        - request: The HTTP request object
+
+    Returns:
+        - A redirect to the home page if the request method is POST
+        - A confirmation page if the request method is GET
+    """
+
     if request.method == 'POST':
-        user = request.user  # Get the logged-in user
-        user.profile.delete()  # Delete the user's profile
-        user.delete()  # Delete the user account
+        user = request.user
+        user.profile.delete()
+        user.delete()
         messages.success(
             request, AccountsMessageManager.account_deleted_success)
-        return redirect('core:home')  # Redirect to the homepage after deletion
+        return redirect('core:home')
 
     # Render the confirmation page
     return render(request, 'accounts/delete_account.html')

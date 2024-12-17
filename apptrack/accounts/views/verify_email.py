@@ -7,6 +7,19 @@ from accounts.messages import AccountsMessageManager
 
 
 def verify_email_view(request, user_id, token):
+    """
+    View that verifies a user's email address.
+
+    Args:
+        - request (`django.http.HttpRequest`): The request object.
+        - user_id (`int`): The ID of the user to verify.
+        - token (`str`): The verification token.
+
+    Returns:
+        - A redirect to the login page if the token is valid, 
+        or a 404 if the user or token is invalid.
+
+    """
     from accounts.tokens import email_verification_token  # Import the token generator
     UserModel = get_user_model()
     user = get_object_or_404(UserModel, id=user_id)

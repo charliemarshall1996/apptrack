@@ -14,17 +14,35 @@ email_manager = AccountsEmailManager()
 
 
 def registration_view(request):
+    """
+    A view that handles the user registration form submission.
+
+    This view validates the form and sends a verification email
+    to the user if the form is valid. If the form is invalid, it
+    redirects to the registration page with an error message. If
+    the request is GET, it creates an empty form and renders the
+    registration page.
+
+    Args:
+        - request (`django.http.HttpRequest`): The request object.
+
+    Returns:
+        - `django.http.HttpResponse`: The response object.
+    """
     if request.method == 'POST':
+
+        # Validate the form
         user_form = UserRegistrationForm(request.POST)
         profile_form = ProfileRegistrationForm(request.POST)
-
         if user_form.is_valid() and profile_form.is_valid():
 
+            # Check if the honeypot field is filled
             if user_form.cleaned_data['honeypot']:
                 messages.error(
                     request, AccountsMessageManager.spam)
                 return redirect('core:home')
 
+            # Save the user and profile
             user = user_form.save()
             user.email_verified = False
             user.save()
@@ -37,10 +55,11 @@ def registration_view(request):
 
             messages.success(
                 request, "Your account has been created.\nPlease check your email to verify your account.")
-
-            # Redirect to profile or job application list
             return redirect('accounts:login')
+
         else:
+            # If the form is invalid,
+            # show error messages
             if user_form.errors:
                 error_data = user_form.errors.as_data()
                 email_error = error_data.get("email")
@@ -58,6 +77,7 @@ def registration_view(request):
             return redirect('accounts:register')
 
     else:
+        # If the request is GET, create an empty form
         user_form = UserRegistrationForm()
         profile_form = ProfileRegistrationForm()
     return render(request, 'accounts/register.html', {'user_form': user_form,

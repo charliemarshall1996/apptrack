@@ -18,6 +18,24 @@ User = get_user_model()
 
 @login_required
 def settings_view(request, id):
+    """
+    A view that handles user profile settings.
+
+    This view renders a form for the user to edit their profile
+    settings. If the request is POST, it validates the form and
+    saves the changes. If the form is invalid, it redirects to the
+    same page with an error message.
+
+    If the request is GET, it renders the form with the user's
+    current information.
+
+    Args:
+        - request (`django.http.HttpRequest`): The HTTP request object
+        - id (`int`): The ID of the profile to be edited
+
+    Returns:
+        - `django.http.HttpResponse`: The response object
+    """
     # Fetch the profile using the slug
     profile = get_object_or_404(Profile, id=id)
 

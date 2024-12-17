@@ -25,6 +25,21 @@ user_login = Signal()
 
 
 def login_non_verified_email(request, email):
+    """
+    Redirects the user to the login page and displays a message depending on
+    the user's email verification status.
+
+    If the user's email is not verified and a verification email has been sent
+    within the last 10 minutes, the user is asked to wait. If the user's email
+    is not verified and a verification email has not been sent within the last
+    10 minutes, the user is given the option to resend the verification email.
+
+    If the user's email is verified, the user is given an error message and
+    redirected to the login page.
+
+    If the user's email is not found, the user is given an error message and
+    redirected to the login page.
+    """
     logger.info("Login request. Email: %s", email)
 
     try:
@@ -71,19 +86,28 @@ def login_non_verified_email(request, email):
 
 
 def login_view(request):
+
     logger.info(f"Login request. Method: {request.method}")
+
+    # Handle POST request
     if request.method == "POST":
         form = LoginForm(request.POST)
 
+        # Check if the form is valid
         if form.is_valid():
+
+            # Check if the honeypot field is filled
             if form.cleaned_data['honeypot']:
                 messages.error(request, AccountsMessageManager.spam)
                 return redirect('core:home')
 
+            # Retrieve the email and password
             email = form.cleaned_data['email']
             password = form.cleaned_data['password']
+
             user = authenticate(request, email=email, password=password)
 
+            # Sign in the user if the email has been verified
             if user is not None:
                 if user.email_verified:
                     for backend in get_backends():
@@ -96,7 +120,8 @@ def login_view(request):
                     return redirect('accounts:dashboard')
 
             else:
-                # Use the return value from login_non_verified_email
+                logger.info("Email not verified")
+                # Handle non-verified email login attempts
                 return login_non_verified_email(request, email)
         else:
             messages.error(request, AccountsMessageManager.invalid_login_form)

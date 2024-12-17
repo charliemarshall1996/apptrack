@@ -23,10 +23,12 @@ class EmailVerificationBackend(ModelBackend):
         try:
             # Authenticate using the email field
             user = UserModel.objects.get(email=email)
+
             if user.email_verified:
-                # Check the password if the email has been verified
+
+                # Check the password if
+                # the email has been verified
                 if user.check_password(password):
-                    print(f"User email verified: {user.email_verified}")
                     return user
             else:
                 # Return None if the email has not been verified
