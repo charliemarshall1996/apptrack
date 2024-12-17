@@ -12,14 +12,22 @@ on:
         type: boolean
         description: Migrate database?
         required: false
+        default: false
+      init_new_db:
+        type: boolean
+        description: Initialize new database?
+        required: false
+        default: false
       install_dependencies:
         type: boolean
         description: Install dependencies?
         required: false
+        default: false
       collect_static:
         type: boolean
         description: Collect static files?
         required: false
+        default: false
 
 jobs:
   deploy:
@@ -49,25 +57,39 @@ jobs:
           source .virtualenvs/.venv/.bin/activate
           pip install -r requirements.txt
           EOF
-        if: ${{ success() }} && ${{ inputs.install_dependencies }} && not ${{ github.event_name == 'release' }}
+        if: ${{ success() }} && ${{ inputs.install_dependencies }} && ${{ github.event_name != 'release' }}
+      - name: Remove migrations
+        run: |
+          ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_ed25519 "${{ secrets.PYANYWHERE_USER }}"@ssh.pythonanywhere.com << EOF
+          cd apptrack/apptrack
+          python manage.py runscript db_init
+          EOF
+        if: ${{ inputs.init_new_db == true }}
       - name: Make migrations
         run: |
           ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_ed25519 "${{ secrets.PYANYWHERE_USER }}"@ssh.pythonanywhere.com << EOF
           cd apptrack/apptrack
           python manage.py makemigrations
           EOF
-        if: ${{ success() }} && ${{ inputs.migrate }} && not ${{ github.event_name == 'release' }}
+        if: ${{ inputs.migrate == true }} && ${{ github.event_name != 'release' }}
       - name: Make migrate
         run: |
           ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_ed25519 "${{ secrets.PYANYWHERE_USER }}"@ssh.pythonanywhere.com << EOF
           cd apptrack/apptrack
           python manage.py migrate
           EOF
-        if: ${{ success() }} && ${{ inputs.migrate }} && not ${{ github.event_name == 'release' }}
+        if: ${{ success() }} && ${{ inputs.migrate == true }} && ${{ github.event_name != 'release' }}
+      - name: Transfer data
+        run: |
+          ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_ed25519 "${{ secrets.PYANYWHERE_USER }}"@ssh.pythonanywhere.com << EOF
+          cd apptrack/apptrack
+          python manage.py runscript transfer_data
+          EOF
+        if: ${{ inputs.init_new_db == true }}
       - name: Collect static files
         run: |
           ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_ed25519 "${{ secrets.PYANYWHERE_USER }}"@ssh.pythonanywhere.com << EOF
           cd apptrack/apptrack
           python manage.py collectstatic --noinput
           EOF
-        if: ${{ success() }} && ${{ inputs.collect_static }} && not ${{ github.event_name == 'release' }}
+        if: ${{ inputs.collect_static == true }}
