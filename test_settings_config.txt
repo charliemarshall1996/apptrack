@@ -46,7 +46,7 @@ INSTALLED_APPS = [
     'blog',
     'core',
     'jobs',
-    'targets',
+    'target',
     'tasks',
     'anymail',
     'celery',
