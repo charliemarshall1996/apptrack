@@ -12,8 +12,6 @@ from .job_delete import JobDeleteView
 from .job_download import job_download_view
 from .job_edit import job_edit_view
 from .job_list import JobListView
-from .task_cards import task_cards_view
-from .task_edit import task_edit_view
 
 __all__ = [
     "board_view",
@@ -27,7 +25,5 @@ __all__ = [
     "JobDeleteView",
     "job_download_view",
     "job_edit_view",
-    "JobListView",
-    "task_cards_view",
-    "task_edit_view"
+    "JobListView"
 ]

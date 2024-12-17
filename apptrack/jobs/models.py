@@ -4,7 +4,6 @@ import logging
 from django.core.exceptions import ObjectDoesNotExist
 from django.db import models
 from django.utils import timezone
-from polymorphic.models import PolymorphicModel
 
 from accounts.models import Profile
 from target.models import Target
@@ -20,57 +19,6 @@ logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
 
 # Create your models here.
-
-
-class Task(PolymorphicModel):
-    profile = models.ForeignKey(
-        Profile, on_delete=models.CASCADE, related_name="tasks")
-    name = models.CharField(max_length=100)
-    is_completed = models.BooleanField(default=False)
-    priority = models.IntegerField(default=0, null=True, blank=True)
-
-
-class TargetTask(Task):
-    target = models.ForeignKey(
-        Target, related_name="task", on_delete=models.CASCADE)
-
-    @property
-    def current_val(self):
-        return self.target.current
-
-    @property
-    def target_val(self):
-        return self.target.amount
-
-    @property
-    def type(self):
-        return "target"
-
-    def save(self, *args, **kwargs):
-        if self.target.met:
-            logger.info("Target met %s %s", self.target.amount,
-                        self.target.current)
-            self.is_completed = True
-        self.priority = 1
-        super().save(*args, **kwargs)
-
-
-class Feedback(PolymorphicModel):
-    name = models.CharField(max_length=255)
-
-
-class PositiveFeedback(Feedback):
-
-    @property
-    def type(self):
-        return "positive"
-
-
-class NegativeFeedback(Feedback):
-
-    @property
-    def type(self):
-        return "negative"
 
 
 class Board(models.Model):
@@ -189,11 +137,6 @@ class Job(models.Model):
     archived = models.BooleanField(null=True, blank=True, default=False)
     auto_archive = models.BooleanField(null=True, blank=True, default=False)
     archive_after_weeks = models.IntegerField(null=True, blank=True, default=2)
-
-    positive_feedback = models.ManyToManyField(
-        PositiveFeedback, blank=True, null=True)
-    negative_feedback = models.ManyToManyField(
-        NegativeFeedback, blank=True, null=True)
 
     def __str__(self):
         return f"{self.company} - {self.job_title}"
@@ -385,29 +328,3 @@ class InterviewReminder(Reminder):
     @property
     def message(self):
         return f"Reminder: Interview for {self.interview.job.job_title} at {self.interview.job.company} in {self.alert_before} {self.alert_before_unit}"
-
-
-class InterviewTask(Task):
-    interview = models.ForeignKey(
-        Interview, related_name="tasks", on_delete=models.CASCADE)
-
-    @property
-    def type(self):
-        return "interview"
-
-    def save(self, *args, **kwargs):
-        self.priority = 2
-        super().save(*args, **kwargs)
-
-
-class JobTask(Task):
-    job = models.ForeignKey(
-        Job, related_name="tasks", on_delete=models.CASCADE)
-
-    @property
-    def type(self):
-        return "job"
-
-    def save(self, *args, **kwargs):
-        self.priority = 3
-        super().save(*args, **kwargs)

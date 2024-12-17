@@ -20,9 +20,6 @@ urlpatterns = [
     path('job-delete/<int:pk>/', views.JobDeleteView.as_view(), name='delete_job'),
     path('job-download/', views.job_download_view, name='download_job'),
     path("job-edit/<int:pk>/", views.job_edit_view, name="edit_job"),
-    path('job-list/', views.JobListView.as_view(), name='list'),
-
-    path('task-cards/', views.task_cards_view, name='task_cards'),
-    path('task-edit/<int:id>/', views.task_edit_view, name='update_task'),
+    path('job-list/', views.JobListView.as_view(), name='list')
 
 ]

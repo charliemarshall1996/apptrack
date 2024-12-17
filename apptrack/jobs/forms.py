@@ -1,5 +1,5 @@
 
-from .models import Interview, InterviewTask, InterviewReminder
+from .models import Interview, InterviewReminder
 from django import forms
 
 from core.models import Country
@@ -106,9 +106,3 @@ class AddReminderForm(forms.ModelForm):
     class Meta:
         model = InterviewReminder
         fields = ['offset', 'unit']
-
-
-class TaskForm(forms.ModelForm):
-    class Meta:
-        model = InterviewTask
-        fields = ['name', 'is_completed']

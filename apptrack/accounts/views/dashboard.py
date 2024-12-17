@@ -2,7 +2,8 @@
 from django.shortcuts import render
 from django.utils import timezone
 
-from jobs.models import Job, Interview, Task
+from jobs.models import Job, Interview
+from tasks.models import Task
 
 
 def dashboard_view(request):
