@@ -91,7 +91,7 @@ def login_view(request):
                             user.backend = f'{backend.__module__}.{backend.__class__.__name__}'
                             break
 
-                    user_login.send(sender=user.__class__, user=user)
+                    user_login.send(sender=user.__class__, user=user.id)
                     login(request, user)
                     return redirect('accounts:dashboard')
 
