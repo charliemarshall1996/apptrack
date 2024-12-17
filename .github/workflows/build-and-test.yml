@@ -31,7 +31,7 @@ jobs:
       - name: add secret_key
         run: echo "SECRET_KEY = '${{ secrets.DJANGO_SECRET_KEY }}'" > $GITHUB_WORKSPACE/apptrack/apptrack/settings.py
       - name: populate settings.py
-        run: cat django_settings.txt >> $GITHUB_WORKSPACE/apptrack/apptrack/settings.py
+        run: cat test_django_config.txt >> $GITHUB_WORKSPACE/apptrack/apptrack/settings.py
       - name: add email secrets
         run: |
           echo "ANYMAIL = {'BREVO_API_KEY': '${{ secrets.BREVO_API_KEY }}', 'IGNORE_RECIPIENT_STATUS': True}" >> $GITHUB_WORKSPACE/apptrack/apptrack/settings.py
