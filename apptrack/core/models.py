@@ -15,3 +15,35 @@ class Country(models.Model):
 
     def __str__(self):
         return self.name
+
+
+class JobFunction(models.Model):
+    code = models.CharField(max_length=4)
+    name = models.CharField(max_length=100)
+
+    def __str__(self):
+        return self.name
+
+
+class LocationPolicy(models.Model):
+    code = models.CharField(max_length=2)
+    name = models.CharField(max_length=100)
+
+    def __str__(self):
+        return self.name
+
+
+class PayRate(models.Model):
+    code = models.CharField(max_length=2)
+    name = models.CharField(max_length=100)
+
+    def __str__(self):
+        return self.name
+
+
+class WorkContract(models.Model):
+    code = models.CharField(max_length=2)
+    name = models.CharField(max_length=100)
+
+    def __str__(self):
+        return self.name

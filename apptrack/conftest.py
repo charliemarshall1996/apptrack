@@ -11,7 +11,7 @@ import pytest
 from accounts.models import Profile
 from core.models import Country, Currency
 from core.utils import get_country_choices, get_currency_choices
-from jobs.choices import (
+from apptrack.core.choices import (
     JobFunctionChoices,
     StatusChoices,
     SourceChoices,

@@ -5,8 +5,7 @@ from django.dispatch import receiver
 from accounts.models import Profile
 
 from .apps import JobsConfig
-from .choices import JobFunctionChoices
-from .models import Board, Column, JobFunction
+from .models import Board, Column
 
 
 @receiver(post_save, sender=Profile)
@@ -34,9 +33,3 @@ def create_columns(sender, instance, created, **kwargs):
             column = Column.objects.create(
                 board=instance, name=name, position=position)
             column.save()
-
-
-@receiver(post_migrate, sender=JobsConfig)
-def post_migration(sender, instance, *args, **kwargs):
-    for code, name in JobFunctionChoices.choices():
-        JobFunction.objects.get_or_create(code=code, name=name)
