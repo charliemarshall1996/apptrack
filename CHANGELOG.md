@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [V1.0.1]
 
+### Added
+
+- Input options on deploy.yml
+
 ### Changed
 
 - Made unauthenticated.html navbar responsive
