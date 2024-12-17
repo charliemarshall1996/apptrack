@@ -32,7 +32,7 @@ jobs:
         run: |
           ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_ed25519 "${{ secrets.PYANYWHERE_USER }}"@ssh.pythonanywhere.com << EOF
           cd apptrack
-          ls
+          chmod +x ~/.virtualenvs/.venv/bin/activate
           source .virtualenvs/.venv/.bin/activate
           pip install -r requirements.txt
           EOF

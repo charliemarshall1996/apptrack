@@ -4,54 +4,54 @@
 {% load static %}
 
 {% block content %}
-<div class="container-fluid justify-content-center align-items-center index-header">
-    <div class="row text-center">
-        <div class="col-8 mx-auto">
-            <div class="row text-center">
-                <p class="hero-heading">Stay on top.</p>
-                <p class="hero-heading">Streamline your search.</p>
-                <p class="hero-heading">Secure your opportunity.</p>
+
+<div class="row text-center">
+    <div class="col-10 mx-auto">
+        <div class="row text-center">
+            <div class="col mx-auto p-0">
+                <p class="hero-heading display-5">Stay on top.</p>
+                <p class="hero-heading display-5">Streamline your search.</p>
+                <p class="hero-heading display-5">Secure your opportunity.</p>
                 <p class="mx-auto hero-description">Take control of your job search for <strong>free</strong> with AppTrack. Effortlessly organize and track every application in one place. Stay focused, stay prepared, and land your next opportunity.</p>
-            </div>
-            <div class="row text-center">
-                <div class="col-4 mx-auto text-center p-0">
-                    <a type="button" class="btn btn-hero btn-primary btn-lg px-4 gap-3" href="{% url 'accounts:register' %}">Sign Up</a>
-                </div>
+            </div>            
+        </div>
+        <div class="row text-center">
+            <div class="col mx-auto p-0">
+                <a type="button" class="btn btn-hero btn-primary btn-lg px-4 gap-3" href="{% url 'accounts:register' %}">Sign Up</a>
             </div>
         </div>
     </div>
 </div>
+
 <hr>
-<div class="container-fluid">
-    <div class="row">
-        <div class="col">
-            <div class="row">
-                <div class="col">
-                    <h2 class="text-start display-5">About AppTrack</h2>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col">
-                    <p class="text-start mx-auto fs-4">
-                        AppTrack is an intuitive web app designed to help job seekers efficiently manage and track their job applications. Whether you're applying to multiple positions or organizing follow-ups, Apptrack simplifies the process by allowing candidates to monitor their progress, set reminders, and store essential application details - all in one place.
-                        With AppTrack, staying organized during your job search has never been easier. The platform is designed to save time, reduce stress, and increase your chances of landing the perfect job. From application submission to interview scheduling, keep track of every step on your career journey with ease.
-                    </p>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col">
-                    <p class="fs-5"><strong>Stay on top of your job search:</strong></p>
-                </div>
-            </div>
-            <div class="row d-flex flex-row align-self-center py-2 px-0">
-                <div class="col align-content-center">
-                    <a type="button" class="text-start btn btn-outline-primary btn-sm fs-5" href="{% url 'accounts:register' %}">Register with AppTrack today!</a>
-                </div>
+<div class="row">
+    <div class="col">
+        <div class="row">
+            <div class="col">
+                <h2 class="text-start display-5">About AppTrack</h2>
             </div>
         </div>
-        <div class="col d-flex justify-self-end align-items-center d-none d-lg-flex">
-            <img class="img-fluid mx-auto px-0" src="{% static 'core/man-in-suit.jpg' %}" alt="">
+        <div class="row">
+            <div class="col">
+                <p class="text-start mx-auto fs-4">
+                    AppTrack is an intuitive web app designed to help job seekers efficiently manage and track their job applications. Whether you're applying to multiple positions or organizing follow-ups, Apptrack simplifies the process by allowing candidates to monitor their progress, set reminders, and store essential application details - all in one place.
+                    With AppTrack, staying organized during your job search has never been easier. The platform is designed to save time, reduce stress, and increase your chances of landing the perfect job. From application submission to interview scheduling, keep track of every step on your career journey with ease.
+                </p>
+            </div>
         </div>
+        <div class="row">
+            <div class="col">
+                <p class="fs-5"><strong>Stay on top of your job search:</strong></p>
+            </div>
+        </div>
+        <div class="row d-flex flex-row align-self-center py-2 px-0">
+            <div class="col align-content-center">
+                <a type="button" class="text-start btn btn-outline-primary btn-sm fs-5" href="{% url 'accounts:register' %}">Register with AppTrack today!</a>
+            </div>
+        </div>
+    </div>
+    <div class="col d-flex justify-self-end align-items-center d-none d-lg-flex">
+        <img class="img-fluid mx-auto px-0" src="{% static 'core/man-in-suit.jpg' %}" alt="">
     </div>
 </div>
 
