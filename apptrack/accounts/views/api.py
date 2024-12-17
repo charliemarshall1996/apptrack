@@ -23,7 +23,11 @@ class ProfileAPI(APIView):
         return Response(data)
 
     def _get_user_streak(self, profile):
-        target = Target.objects.get(profile=profile)
+        try:
+            target = Target.objects.get(profile=profile)
+        except Target.DoesNotExist:
+            target = Target(profile=profile)
+            target.save()
         current_applications = target.current
         streak = target.streak.current_streak
 

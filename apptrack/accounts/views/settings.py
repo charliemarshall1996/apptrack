@@ -7,7 +7,7 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404, redirect, render
 
 from accounts.models import Profile
-from accounts.forms import UserUpdateForm, ProfileUpdateForm, TargetUpdateForm
+from accounts.forms import UserUpdateForm, ProfileUpdateForm
 from accounts.messages import AccountsMessageManager
 
 

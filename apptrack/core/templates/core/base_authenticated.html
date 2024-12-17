@@ -84,20 +84,25 @@
       </div>
     </nav>
     <nav class="navbar navbar-expand navbar-light px-5" >
-      {% if user.profile.target.amount > 0 %}
-      <li class="nav-item navbar-text d-flex align-items-center px-2" style="white-space: nowrap;">
-        <small>
-          <strong id="target"></strong>
-        </small>
-      </li>
-      <li class="nav-item navbar-text d-flex align-items-center px-3" style="white-space: nowrap;">
-        <span>
+      <ul class="navbar-nav w-100">
+        {% if user.profile.target.amount > 0 %}
+        <li class="nav-item navbar-text d-flex align-items-center px-2" style="white-space: nowrap;">
           <small>
-            <strong id="streak"></strong>
+            <strong id="target"></strong>
           </small>
-        </span>
-      </li>
-      {% endif %}
+        </li>
+        <li class="nav-item navbar-text d-flex align-items-center px-3" style="white-space: nowrap;">
+          <span>
+            <small>
+              <strong id="streak"></strong>
+            </small>
+          </span>
+        </li>
+        {% endif %}
+        <li class="nav-item px-3" style="white-space: nowrap;">
+          <a class="nav-link {% if request.path == 'target:update' %}active{% endif %}" href="{% url 'target:update' %}">Update Target</a>
+        </li>
+      </ul>
     </nav>
         
   </header>

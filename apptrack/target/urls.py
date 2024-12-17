@@ -2,8 +2,8 @@
 from django.urls import path
 from . import views
 
-app_name = "targets"
+app_name = "target"
 
 urlpatterns = [
-    path("update/", views.target_update_view, name="update_target")
+    path("update/", views.target_update_view, name="update")
 ]

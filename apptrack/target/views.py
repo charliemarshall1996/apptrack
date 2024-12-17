@@ -12,13 +12,12 @@ from .models import Target
 
 @login_required
 def target_update_view(request):
+    target = Target.objects.get(profile=request.user.profile)
     if request.method == "GET":
-        target = Target.objects.get(user=request.user)
         form = TargetUpdateForm(instance=target)
-        return render(request, 'target/target_update.html', {'form': form})
+        return render(request, 'target/target_update.html', {'form': form, 'user_id': request.user.id})
 
     if request.method == "POST":
-        target = Target.objects.get(user=request.user)
         form = TargetUpdateForm(request.POST, instance=target)
         if form.is_valid():
             form.save(commit=True)

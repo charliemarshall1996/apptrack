@@ -23,4 +23,7 @@ def save_target_on_login(sender, user, **kwargs):
         target, created = Target.objects.get_or_create(profile=profile)
     except MultipleObjectsReturned:
         target = Target.objects.filter(profile=profile).first()
+    except Target.DoesNotExist:
+        target = Target(profile=profile)
+        target.save()
     target.save()
