@@ -29,6 +29,8 @@ def run():
     for table in tables:
         table_name = table[0]
 
+        print(f"Transferring data from table: {table_name}")
+
         # Get the schema for the table
         old_cursor.execute(f"PRAGMA table_info({table_name});")
         columns = old_cursor.fetchall()

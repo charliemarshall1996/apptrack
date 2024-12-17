@@ -11,7 +11,7 @@ from jobs.models import (Job,
                          LocationPolicy,
                          PayRate,
                          WorkContract)
-from jobs.choices import StatusChoices
+from apptrack.core.choices import StatusChoices
 from tasks.models import InterviewTask
 
 logger = logging.getLogger(__name__)

@@ -7,9 +7,14 @@ from django.utils import timezone
 
 from accounts.models import Profile
 from target.models import Target
-from core.models import Country, Currency
+from core.models import (Country,
+                         Currency,
+                         JobFunction,
+                         LocationPolicy,
+                         WorkContract,
+                         PayRate)
 
-from .choices import (
+from core.choices import (
     StatusChoices,
     SourceChoices,
     ReminderUnitChoices
@@ -41,38 +46,6 @@ class Column(models.Model):
     class Meta:
         ordering = ['position']
         unique_together = ('board', 'name', 'position')
-
-
-class JobFunction(models.Model):
-    code = models.CharField(max_length=4)
-    name = models.CharField(max_length=100)
-
-    def __str__(self):
-        return self.name
-
-
-class LocationPolicy(models.Model):
-    code = models.CharField(max_length=2)
-    name = models.CharField(max_length=100)
-
-    def __str__(self):
-        return self.name
-
-
-class PayRate(models.Model):
-    code = models.CharField(max_length=2)
-    name = models.CharField(max_length=100)
-
-    def __str__(self):
-        return self.name
-
-
-class WorkContract(models.Model):
-    code = models.CharField(max_length=2)
-    name = models.CharField(max_length=100)
-
-    def __str__(self):
-        return self.name
 
 
 class Job(models.Model):
