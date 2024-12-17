@@ -2,7 +2,8 @@
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from jobs.models import (Job, Target)
+from jobs.models import Job
+from targets.models import Target
 
 from accounts.models import Profile
 from .utils import ConversionCalculator
