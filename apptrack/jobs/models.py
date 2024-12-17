@@ -6,7 +6,8 @@ from django.db import models
 from django.utils import timezone
 from polymorphic.models import PolymorphicModel
 
-from accounts.models import Profile, Target
+from accounts.models import Profile
+from target.models import Target
 from core.models import Country, Currency
 
 from .choices import (

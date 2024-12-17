@@ -3,7 +3,8 @@ from django.core.exceptions import MultipleObjectsReturned
 from django.db.models.signals import post_save, post_migrate
 from django.dispatch import receiver
 
-from accounts.models import target_reset, Profile, Target
+from accounts.models import Profile
+from target.models import Target, target_reset
 
 from .apps import JobsConfig
 from .choices import JobFunctionChoices
