@@ -7,6 +7,20 @@ from tasks.models import Task
 
 
 def dashboard_view(request):
+    """
+    A view that renders a dashboard for the user 
+    with the following data:
+
+    - The 10 most recently updated jobs
+    - The 10 most recently scheduled interviews
+    - The 10 tasks with the highest priority
+
+    All data is associated with the user making 
+    the request.
+
+    :param request: The current request
+    :return: The rendered dashboard template
+    """
     jobs = Job.objects.filter(
         profile=request.user.profile, archived=False).order_by("updated").all()[:10]
     interviews = Interview.objects.filter(

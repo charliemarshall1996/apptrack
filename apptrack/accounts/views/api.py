@@ -15,7 +15,17 @@ User = get_user_model()
 class ProfileAPI(APIView):
 
     def get(self, request, id):
-        print(f"GETTING API DATA FOR USER: {id}")
+        """
+        Handles GET requests to the API for a given user.
+
+        This function gets the data for a given user and 
+        returns it as a JSON response.
+
+        :param request: The HTTP request object
+        :param id: The id of the user whose data is being requested
+        :return: A Response object containing the JSON data
+        """
+
         user = User(id=id)
         profile = Profile.objects.get(user=user)
 
@@ -23,8 +33,6 @@ class ProfileAPI(APIView):
             'basic_stats': self._get_basic_stats(profile),
             'streak': self._get_user_streak(profile),
         }
-
-        print(f"API DATA: {data}")
 
         return Response(data)
 
