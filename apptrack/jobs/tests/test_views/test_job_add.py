@@ -4,8 +4,7 @@ import pytest
 
 
 @pytest.mark.django_db
-def test_add_job_view(client, profile_factory, job_data_factory, _init_choice_models):
-    _init_choice_models()
+def test_add_job_view(client, profile_factory, job_data_factory):
     PASSWORD = "securepassword"
 
     profile = profile_factory(password=PASSWORD)
@@ -13,8 +12,6 @@ def test_add_job_view(client, profile_factory, job_data_factory, _init_choice_mo
 
     data = job_data_factory()
     data['referrer'] = reverse('jobs:board')
-    data.pop('country')
-    data.pop('currency')
     response = client.post(reverse("accounts:login"), {
         "email": profile.user.email, "password": PASSWORD})
 

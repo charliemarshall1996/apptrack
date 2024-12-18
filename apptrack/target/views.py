@@ -5,11 +5,8 @@ from django.dispatch import Signal
 from django.shortcuts import redirect, render
 from django.utils import timezone
 
-from accounts.models import Profile
-
 from .forms import TargetUpdateForm
 from .models import Target
-# Create your views here.
 
 target_reset = Signal()
 
@@ -20,7 +17,8 @@ def target_update_view(request):
     if request.method == "GET":
 
         form = TargetUpdateForm(instance=target)
-        return render(request, 'target/target_update.html', {'form': form, 'user_id': request.user.id})
+        return render(request, 'target/target_update.html',
+                      {'form': form, 'user_id': request.user.id})
 
     if request.method == "POST":
         form = TargetUpdateForm(request.POST, instance=target)
@@ -32,8 +30,6 @@ def target_update_view(request):
             target_reset.send(sender=target.__class__, instance=Target.objects.get(
                 profile=request.user.profile))
 
-            print(f"Target updated for user: {request.user.id}")
-            print(f"Target amount: {target.amount}")
             messages.success(request, "Target updated successfully")
             return redirect('accounts:dashboard')
         else:

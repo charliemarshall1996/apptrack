@@ -1,5 +1,5 @@
 
-from apptrack.core.choices import (
+from core.choices import (
     PayRateChoices,
     StatusChoices,
     SourceChoices,

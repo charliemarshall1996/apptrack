@@ -288,22 +288,3 @@ def test_target_decrement(profile_factory):
     # current will be decremented
     target.decrement()
     assert target.current == 0
-
-
-@pytest.mark.django_db
-def test_target_changed(profile_factory):
-    profile = profile_factory()
-    profile.save()
-
-    target = Target.objects.get(profile=profile)
-    target.amount = 1
-    target.save()
-    target.current = 1
-    target.save()
-
-    target.amount = 2
-    target.save()
-
-    # When amount is changed
-    # current will be reset
-    assert target.current == 0

@@ -4,8 +4,8 @@ import pytest
 
 
 @pytest.mark.django_db
-def test_delete_job_view(client, job_factory, profile_factory, _init_choice_models):
-    _init_choice_models()
+def test_delete_job_view(client, job_factory, profile_factory):
+
     PASSWORD = "securepassword"
 
     profile = profile_factory(password=PASSWORD)

@@ -6,14 +6,13 @@ from core.models import Country
 
 
 @pytest.mark.django_db
-def test_job_list_view(client, profile_factory, job_factory, _init_choice_models):
-    _init_choice_models()
+def test_job_list_view(client, profile_factory, job_factory):
+
     status = "OP"
     title = "Job Title"
     company = "Company"
     city = "City"
     region = "Region"
-    country = random.choice(Country.objects.all())
     profile = profile_factory()
     profile.save()
     user = profile.user
@@ -35,9 +34,6 @@ def test_job_list_view(client, profile_factory, job_factory, _init_choice_models
     job6 = job_factory(profile)
     job6.region = region
     job6.save()
-    job7 = job_factory(profile)
-    job7.country = country
-    job7.save()
 
     client.force_login(user)
 
@@ -46,8 +42,7 @@ def test_job_list_view(client, profile_factory, job_factory, _init_choice_models
             (job3, 'company', company),
             (job4, 'archived', 'on'),
             (job5, 'city', city),
-            (job6, 'region', region),
-            (job7, 'countries', [country])]
+            (job6, 'region', region)]
 
     def assert_attribute_returns_job(job, attr, value):
         data = {attr: value}

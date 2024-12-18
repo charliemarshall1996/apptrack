@@ -7,8 +7,8 @@ from jobs.models import Job
 
 
 @pytest.mark.django_db
-def test_edit_job_view(client, job_factory, profile_factory, jobs_data, _init_choice_models):
-    _init_choice_models()
+def test_edit_job_view(client, job_factory, profile_factory, jobs_data):
+
     PASSWORD = "securepassword"
 
     profile = profile_factory(password=PASSWORD)

@@ -9,8 +9,8 @@ import pytest
 
 
 @pytest.mark.django_db
-def test_download_jobs_view(client, profile_factory, job_factory, _init_choice_models):
-    _init_choice_models()
+def test_download_jobs_view(client, profile_factory, job_factory):
+
     profile = profile_factory()
     profile.save()
     client.force_login(profile.user)

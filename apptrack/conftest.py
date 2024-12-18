@@ -10,8 +10,7 @@ import pytest
 
 from accounts.models import Profile
 from core.models import Country, Currency
-from core.utils import get_country_choices, get_currency_choices
-from apptrack.core.choices import (
+from core.choices import (
     JobFunctionChoices,
     StatusChoices,
     SourceChoices,
@@ -27,20 +26,6 @@ from blog.models import BlogPost
 UserModel = get_user_model()
 
 fake = Faker()
-
-
-@pytest.fixture
-def _init_choice_models():
-    def _init():
-        for alpha_2, country in get_country_choices():
-            Country.objects.get_or_create(alpha_2=alpha_2, name=country)
-
-        for alpha_3, currency in get_currency_choices():
-            Currency.objects.get_or_create(alpha_3=alpha_3, name=currency)
-
-        for code, name in JobFunctionChoices.choices():
-            JobFunction.objects.get_or_create(code=code, name=name)
-    return _init
 
 
 SOURCES = [source[0] for source in SourceChoices.choices()]
@@ -166,8 +151,13 @@ def jobs_data():
 @pytest.fixture()
 def job_data_factory():
     def factory(**kwargs):
-        COUNTRIES = [country for country in Country.objects.all()]
-        CURRENCIES = [currency for currency in Currency.objects.all()]
+        COUNTRIES = [c.alpha_2 for c in Country.objects.all()]
+        CURRENCIES = [c.alpha_3 for c in Currency.objects.all()]
+        if not COUNTRIES:
+            country = 'us'
+
+        if not CURRENCIES:
+            currency = 'usd'
         updated_days_previous = kwargs.pop('updated_days_previous', None)
         url = kwargs.pop('url', None)
         source = kwargs.pop('source', None)
@@ -176,6 +166,7 @@ def job_data_factory():
         max_pay = kwargs.pop('max_pay', None)
         status = kwargs.pop('status', None)
         company = kwargs.pop("company", None)
+        currency = kwargs.pop("currency", None)
         city = kwargs.pop("city", None)
         region = kwargs.pop("region", None)
         country = kwargs.pop("country", None)
@@ -190,12 +181,12 @@ def job_data_factory():
             'min_pay': min_pay or random.randint(0, 10000),
             'max_pay': max_pay or random.randint(10000, 100000),
             # 'pay_rate': random.choice(PAY_RATES),
-            'currency': random.choice(CURRENCIES),
+            # 'currency': currency or random.choice(CURRENCIES),
             'note': fake.text(),
             'status': status or random.choice(STATUSES),
             'company': company or fake.company(),
             'city': city or fake.city(),
-            'country': country or random.choice(COUNTRIES),
+            # 'country': country or random.choice(COUNTRIES),
             'region': region or fake.state(),
             'updated': timezone.now() - timedelta(days=updated_days_previous) if updated_days_previous else timezone.now(),  # noqa
         }

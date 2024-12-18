@@ -11,7 +11,7 @@ from jobs.models import (Job,
                          LocationPolicy,
                          PayRate,
                          WorkContract)
-from apptrack.core.choices import StatusChoices
+from core.choices import StatusChoices
 from tasks.models import InterviewTask
 
 logger = logging.getLogger(__name__)
@@ -59,8 +59,8 @@ def test_column(board_factory, column_data_factory):
 
 
 @pytest.mark.django_db
-def test_job(profile_factory, column_factory, job_data_factory, _init_choice_models):
-    _init_choice_models()
+def test_job(profile_factory, column_factory, job_data_factory):
+
     data = job_data_factory()
     profile = profile_factory()
     profile.save()
@@ -85,8 +85,8 @@ def test_job(profile_factory, column_factory, job_data_factory, _init_choice_mod
 
 
 @pytest.mark.django_db
-def test_job_updated(profile_factory, column_factory, job_data_factory, _init_choice_models):
-    _init_choice_models()
+def test_job_updated(profile_factory, column_factory, job_data_factory):
+
     profile = profile_factory()
     profile.save()
     board = profile.board
@@ -120,8 +120,8 @@ def test_job_updated(profile_factory, column_factory, job_data_factory, _init_ch
 
 
 @pytest.mark.django_db
-def test_job_status_no_column(profile_factory, job_data_factory, _init_choice_models):
-    _init_choice_models()
+def test_job_status_no_column(profile_factory, job_data_factory):
+
     profile = profile_factory()
     profile.save()
     board = profile.board
@@ -135,8 +135,8 @@ def test_job_status_no_column(profile_factory, job_data_factory, _init_choice_mo
 
 
 @pytest.mark.django_db
-def test_job_status_applied(profile_factory, job_data_factory, _init_choice_models):
-    _init_choice_models()
+def test_job_status_applied(profile_factory, job_data_factory):
+
     applied_statuses = StatusChoices.get_applied_statuses()
     data = job_data_factory()
     for status in applied_statuses:
@@ -158,8 +158,8 @@ def test_job_status_applied(profile_factory, job_data_factory, _init_choice_mode
 
 
 @pytest.mark.django_db
-def test_interview(interview_data_factory, _init_choice_models):
-    _init_choice_models()
+def test_interview(interview_data_factory):
+
     data = interview_data_factory()
     job = data['job']
     profile = job.profile
@@ -181,8 +181,8 @@ def test_interview(interview_data_factory, _init_choice_models):
 
 
 @pytest.mark.django_db
-def test_interview_creates_default_tasks(interview_factory, _init_choice_models):
-    _init_choice_models()
+def test_interview_creates_default_tasks(interview_factory):
+
     interview = interview_factory()
     interview.job.save()
     interview.profile.user.save()
@@ -206,8 +206,8 @@ def test_interview_creates_default_tasks(interview_factory, _init_choice_models)
 
 
 @pytest.mark.django_db
-def test_interview_task(interview_task_data_factory, _init_choice_models):
-    _init_choice_models()
+def test_interview_task(interview_task_data_factory):
+
     data = interview_task_data_factory()
     interview = data['interview']
 
@@ -219,8 +219,8 @@ def test_interview_task(interview_task_data_factory, _init_choice_models):
 
 
 @pytest.mark.django_db
-def test_reminder(reminder_data_factory, _init_choice_models):
-    _init_choice_models()
+def test_reminder(reminder_data_factory):
+
     data = reminder_data_factory()
     reminder = Reminder.objects.create(**data)
     assert reminder.offset == data["offset"]

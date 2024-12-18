@@ -4,8 +4,8 @@ import pytest
 
 
 @pytest.mark.django_db
-def test_assign_job_view(client, profile_factory, job_factory, _init_choice_models):
-    _init_choice_models()
+def test_assign_job_view(client, profile_factory, job_factory):
+
     PASSWORD = "securepassword"
 
     profile = profile_factory(password=PASSWORD)
