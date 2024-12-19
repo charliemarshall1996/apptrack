@@ -1,4 +1,3 @@
-
 from django.db import models
 from ckeditor_uploader.fields import RichTextUploadingField
 
@@ -10,7 +9,7 @@ class BlogPost(models.Model):
     published = models.DateTimeField()
 
     class Meta:
-        ordering = ['-published']
+        ordering = ["-published"]
 
     def __str__(self):
         return self.title

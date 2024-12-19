@@ -1,5 +1,3 @@
-
-
 from .board import board_view
 from .calendar import calendar_view
 from .interview_add import interview_add_view
@@ -25,5 +23,5 @@ __all__ = [
     "JobDeleteView",
     "job_download_view",
     "job_edit_view",
-    "JobListView"
+    "JobListView",
 ]

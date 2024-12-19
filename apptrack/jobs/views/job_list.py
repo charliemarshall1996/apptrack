@@ -1,4 +1,3 @@
-
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import ListView
 
@@ -7,12 +6,11 @@ from jobs.forms import JobForm, JobFilterForm
 
 
 class JobListView(LoginRequiredMixin, ListView):
-
     model = Job
-    template_name = 'jobs/list.html'
-    context_object_name = 'jobs'
+    template_name = "jobs/list.html"
+    context_object_name = "jobs"
     paginate_by = 10
-    ordering = ['-updated']
+    ordering = ["-updated"]
 
     def get_queryset(self):
         """
@@ -29,21 +27,20 @@ class JobListView(LoginRequiredMixin, ListView):
 
         # If the form is valid, filter the queryset
         if form.is_valid():
-            statuses = form.cleaned_data.get('status')
-            title = form.cleaned_data.get('title')
-            job_functions = form.cleaned_data.get('job_functions')
-            company = form.cleaned_data.get('company')
-            city = form.cleaned_data.get('city')
-            region = form.cleaned_data.get('region')
-            countries = form.cleaned_data.get('countries')
-            archived = form.cleaned_data.get('archived')
+            statuses = form.cleaned_data.get("status")
+            title = form.cleaned_data.get("title")
+            job_functions = form.cleaned_data.get("job_functions")
+            company = form.cleaned_data.get("company")
+            city = form.cleaned_data.get("city")
+            region = form.cleaned_data.get("region")
+            countries = form.cleaned_data.get("countries")
+            archived = form.cleaned_data.get("archived")
 
             # Check if the archived filter is set
-            if archived != 'in':
-
+            if archived != "in":
                 # If the archived filter is set to "only",
                 # filter the queryset to show only archived jobs
-                if archived == 'on':
+                if archived == "on":
                     queryset = queryset.filter(archived=True)
 
                 # If the archived filter is set to "exclude",
@@ -93,9 +90,10 @@ class JobListView(LoginRequiredMixin, ListView):
             dict: The context data.
         """
         context = super().get_context_data(**kwargs)
-        context['user_id'] = self.request.user.id
-        context['filter_form'] = JobFilterForm(
-            self.request.GET)  # Pass form to template
+        context["user_id"] = self.request.user.id
+        context["filter_form"] = JobFilterForm(
+            self.request.GET
+        )  # Pass form to template
 
-        context['job_form'] = JobForm()
+        context["job_form"] = JobForm()
         return context

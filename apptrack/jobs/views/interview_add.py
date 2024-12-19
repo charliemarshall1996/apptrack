@@ -1,4 +1,3 @@
-
 import json
 
 from django.contrib.auth.decorators import login_required
@@ -20,16 +19,14 @@ def interview_add_view(request):
 
             # Get the Reminders JSON string from the POST data
             # Use 'Reminders' as the key, as it's the name of the hidden input field
-            reminders_json = request.POST.get('reminders')
+            reminders_json = request.POST.get("reminders")
 
             # Parse the JSON string back into a Python list (or another appropriate type)
             if reminders_json:
                 reminders = json.loads(reminders_json)
                 for r in reminders:
                     InterviewReminder.objects.create(
-                        interview=interview,
-                        offset=r['offset'],
-                        unit=r['unit']
+                        interview=interview, offset=r["offset"], unit=r["unit"]
                     )
             else:
                 reminders = []

@@ -1,7 +1,11 @@
-
 import pandas as pd
 
-from core.models import Country, Currency, JobFunction, LocationPolicy, WorkContract, PayRate
+from core.models import (
+    Country,
+    Currency,
+    JobFunction,
+    PayRate
+)
 
 
 def populate_countries():
@@ -11,7 +15,8 @@ def populate_countries():
 
     for _, row in df.iterrows():
         country, _ = Country.objects.get_or_create(
-            alpha_2=row.alpha_2, name=row['name'])
+            alpha_2=row.alpha_2, name=row["name"]
+        )
         country.save()
 
 
@@ -22,7 +27,8 @@ def populate_currencies():
 
     for _, row in df.iterrows():
         currency, _ = Currency.objects.get_or_create(
-            alpha_3=row.alpha_3, name=row['name'])
+            alpha_3=row.alpha_3, name=row["name"]
+        )
         currency.save()
 
 
@@ -33,7 +39,8 @@ def populate_job_functions():
 
     for _, row in df.iterrows():
         job_function, _ = JobFunction.objects.get_or_create(
-            code=row.code, name=row['name'])
+            code=row.code, name=row["name"]
+        )
         job_function.save()
 
 
@@ -44,7 +51,7 @@ def populate_pay_rates():
 
     for _, row in df.iterrows():
         pay_rate, _ = PayRate.objects.get_or_create(
-            code=row.code, name=row['name'])
+            code=row.code, name=row["name"])
         pay_rate.save()
 
 

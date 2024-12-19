@@ -2,11 +2,7 @@ import logging
 from datetime import timedelta
 
 from django.contrib import messages
-from django.contrib.auth import (
-    authenticate,
-    get_backends,
-    get_user_model,
-    login)
+from django.contrib.auth import authenticate, get_backends, get_user_model, login
 from django.dispatch import Signal
 from django.shortcuts import redirect, render
 from django.urls import reverse
@@ -14,7 +10,11 @@ from django.urls import reverse
 from accounts.forms import LoginForm
 from accounts.messages import AccountsMessageManager
 
-from .utils import get_time_since_last_email, get_minutes_left_before_resend, get_can_resend
+from .utils import (
+    get_time_since_last_email,
+    get_minutes_left_before_resend,
+    get_can_resend,
+)
 
 
 logger = logging.getLogger(__name__)
@@ -60,33 +60,30 @@ def login_non_verified_email(request, email):
     if user.last_verification_email_sent:
         logger.info("Email already sent")
         time_since_last_email = get_time_since_last_email(
-            user.last_verification_email_sent)
+            user.last_verification_email_sent
+        )
 
-        can_resend = get_can_resend(
-            timeout_duration, time_since_last_email)
+        can_resend = get_can_resend(timeout_duration, time_since_last_email)
 
         if can_resend:
-            url = reverse(
-                'accounts:resend')
+            url = reverse("accounts:resend")
             message = AccountsMessageManager.resend_verification_email(url)
         else:
             minutes_difference = get_minutes_left_before_resend(
-                time_since_last_email, timeout_duration)
+                time_since_last_email, timeout_duration
+            )
             minutes_difference = round(minutes_difference)
-            message = AccountsMessageManager.resend_email_wait(
-                minutes_difference)
+            message = AccountsMessageManager.resend_email_wait(minutes_difference)
     else:
         logger.info("Email not sent")
-        url = reverse(
-            'accounts:resend')
+        url = reverse("accounts:resend")
         message = AccountsMessageManager.resend_verification_email(url)
 
     messages.info(request, message)
-    return redirect('accounts:login')
+    return redirect("accounts:login")
 
 
 def login_view(request):
-
     logger.info(f"Login request. Method: {request.method}")
 
     # Handle POST request
@@ -95,15 +92,14 @@ def login_view(request):
 
         # Check if the form is valid
         if form.is_valid():
-
             # Check if the honeypot field is filled
-            if form.cleaned_data['honeypot']:
+            if form.cleaned_data["honeypot"]:
                 messages.error(request, AccountsMessageManager.spam)
-                return redirect('core:home')
+                return redirect("core:home")
 
             # Retrieve the email and password
-            email = form.cleaned_data['email']
-            password = form.cleaned_data['password']
+            email = form.cleaned_data["email"]
+            password = form.cleaned_data["password"]
 
             user = authenticate(request, email=email, password=password)
 
@@ -112,12 +108,14 @@ def login_view(request):
                 if user.email_verified:
                     for backend in get_backends():
                         if user == backend.get_user(user.id):
-                            user.backend = f'{backend.__module__}.{backend.__class__.__name__}'
+                            user.backend = (
+                                f"{backend.__module__}.{backend.__class__.__name__}"
+                            )
                             break
 
                     user_login.send(sender=user.__class__, user=user.id)
                     login(request, user)
-                    return redirect('accounts:dashboard')
+                    return redirect("accounts:dashboard")
 
             else:
                 logger.info("Email not verified")
@@ -129,5 +127,5 @@ def login_view(request):
     else:
         form = LoginForm()
 
-    context = {'form': form}
-    return render(request, 'accounts/login.html', context)
+    context = {"form": form}
+    return render(request, "accounts/login.html", context)

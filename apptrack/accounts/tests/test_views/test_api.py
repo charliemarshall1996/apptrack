@@ -1,4 +1,3 @@
-
 import pytest
 
 from accounts.views import ProfileAPI
@@ -17,5 +16,5 @@ def test_api_view(client, profile_factory):
     assert response.status_code == 200
 
     data = response.data
-    assert data['basic_stats'] == api._get_basic_stats(profile)
-    assert data['streak'] == api._get_user_streak(profile)
+    assert data["basic_stats"] == api._get_basic_stats(profile)
+    assert data["streak"] == api._get_user_streak(profile)

@@ -1,4 +1,3 @@
-
 from django.contrib import messages
 from django.contrib.auth import get_user_model
 from django.shortcuts import get_object_or_404, redirect
@@ -16,17 +15,17 @@ def verify_email_view(request, user_id, token):
         - token (`str`): The verification token.
 
     Returns:
-        - A redirect to the login page if the token is valid, 
+        - A redirect to the login page if the token is valid,
         or a 404 if the user or token is invalid.
 
     """
     from accounts.tokens import email_verification_token  # Import the token generator
+
     UserModel = get_user_model()
     user = get_object_or_404(UserModel, id=user_id)
 
     if email_verification_token.check_token(user, token):
         user.email_verified = True
         user.save()
-        messages.success(
-            request, AccountsMessageManager.email_verified)
-        return redirect('accounts:login')
+        messages.success(request, AccountsMessageManager.email_verified)
+        return redirect("accounts:login")

@@ -25,7 +25,6 @@ class EmailVerificationBackend(ModelBackend):
             user = UserModel.objects.get(email=email)
 
             if user.email_verified:
-
                 # Check the password if
                 # the email has been verified
                 if user.check_password(password):

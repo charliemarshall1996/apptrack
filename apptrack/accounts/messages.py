@@ -1,19 +1,17 @@
-
 from core.messages import BaseMessageManager
 
 
 class AccountsMessageManager(BaseMessageManager):
-
     invalid_password = "Please enter a valid password."
     invalid_email = "Please enter a valid email address."
 
-    profile_update_success = 'Your profile has been updated!'
+    profile_update_success = "Your profile has been updated!"
     email_not_found = "We can't find a user with that email address."
     account_deleted_success = "Your account has been successfully deleted."
     email_verification_sent = "A verification email has been sent."
 
     email_not_verified = "Your email has not been verified yet."
-    email_verified = 'Your email has been verified. You can now log in.'
+    email_verified = "Your email has been verified. You can now log in."
     email_already_verified = "Your email has already been verified."
 
     password_reset_success = """We've emailed you instructions for setting your password, 

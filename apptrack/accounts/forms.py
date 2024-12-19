@@ -15,8 +15,7 @@ class UserRegistrationForm(UserCreationForm):
 
     class Meta:
         model = User
-        fields = ['email', 'password1',
-                  'password2', 'first_name', 'last_name']
+        fields = ["email", "password1", "password2", "first_name", "last_name"]
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -33,9 +32,9 @@ class UserRegistrationForm(UserCreationForm):
         Raises:
         - forms.ValidationError if the email is invalid.
 
-        Returns: 
+        Returns:
         - str: the cleaned email address."""
-        email = self.cleaned_data.get('email')
+        email = self.cleaned_data.get("email")
         try:
             validate_email(email)
         except ValidationError:
@@ -43,7 +42,6 @@ class UserRegistrationForm(UserCreationForm):
         return email
 
     def save(self):
-
         return super().save(commit=False)
 
 
@@ -52,11 +50,11 @@ class UserUpdateForm(forms.ModelForm):
 
     class Meta:
         model = User
-        fields = ['email', 'first_name', 'last_name']
+        fields = ["email", "first_name", "last_name"]
 
     def save(self):
         """
-        Saves the user with the given data 
+        Saves the user with the given data
         without committing to the database.
 
         Returns:
@@ -68,15 +66,15 @@ class UserUpdateForm(forms.ModelForm):
 class ProfileRegistrationForm(forms.ModelForm):
     class Meta:
         model = Profile
-        fields = ['birth_date', 'email_comms_opt_in']
+        fields = ["birth_date", "email_comms_opt_in"]
 
         widgets = {
-            'birth_date': forms.DateInput(attrs={'type': 'date'}),
+            "birth_date": forms.DateInput(attrs={"type": "date"}),
         }
 
     def save(self) -> Profile:
         """
-        Saves the profile with the given 
+        Saves the profile with the given
         data without committing to the database.
 
         Returns:
@@ -89,11 +87,11 @@ class ProfileRegistrationForm(forms.ModelForm):
 class ProfileUpdateForm(forms.ModelForm):
     class Meta:
         model = Profile
-        fields = ['birth_date', 'email_comms_opt_in']
+        fields = ["birth_date", "email_comms_opt_in"]
 
     def save(self) -> Profile:
         """
-        Saves the profile with the given 
+        Saves the profile with the given
         data without committing to the database.
 
         Returns:
@@ -103,7 +101,6 @@ class ProfileUpdateForm(forms.ModelForm):
 
 
 class LoginForm(forms.Form):
-
     honeypot = forms.CharField(required=False, widget=forms.HiddenInput)
     email = forms.EmailField(required=True)
     password = forms.CharField(required=True, widget=forms.PasswordInput)

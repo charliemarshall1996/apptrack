@@ -1,16 +1,17 @@
-
 import logging
 
 import pytest
 
-from jobs.models import (Job,
-                         Column,
-                         Interview,
-                         Reminder,
-                         JobFunction,
-                         LocationPolicy,
-                         PayRate,
-                         WorkContract)
+from jobs.models import (
+    Job,
+    Column,
+    Interview,
+    Reminder,
+    JobFunction,
+    LocationPolicy,
+    PayRate,
+    WorkContract,
+)
 from core.choices import StatusChoices
 from tasks.models import InterviewTask
 
@@ -33,18 +34,17 @@ def test_board(profile_factory):
     assert "Rejected" in board_columns
     assert "Closed" in board_columns
     expected_columns = [
-        ('Open', 1),
-        ('Applied', 2),
-        ('Shortlisted', 3),
-        ('Interview', 4),
-        ('Offer', 5),
-        ('Rejected', 6),
-        ('Closed', 7),
+        ("Open", 1),
+        ("Applied", 2),
+        ("Shortlisted", 3),
+        ("Interview", 4),
+        ("Offer", 5),
+        ("Rejected", 6),
+        ("Closed", 7),
     ]
 
     for name, position in expected_columns:
-        assert Column.objects.filter(
-            name=name, position=position, board=board).exists()
+        assert Column.objects.filter(name=name, position=position, board=board).exists()
 
 
 @pytest.mark.django_db
@@ -60,7 +60,6 @@ def test_column(board_factory, column_data_factory):
 
 @pytest.mark.django_db
 def test_job(profile_factory, column_factory, job_data_factory):
-
     data = job_data_factory()
     profile = profile_factory()
     profile.save()
@@ -86,13 +85,11 @@ def test_job(profile_factory, column_factory, job_data_factory):
 
 @pytest.mark.django_db
 def test_job_updated(profile_factory, column_factory, job_data_factory):
-
     profile = profile_factory()
     profile.save()
     board = profile.board
     column = column_factory(board=board)
-    job = Job(profile=profile, column=column,
-              board=board, **job_data_factory())
+    job = Job(profile=profile, column=column, board=board, **job_data_factory())
 
     job.save()
 
@@ -121,7 +118,6 @@ def test_job_updated(profile_factory, column_factory, job_data_factory):
 
 @pytest.mark.django_db
 def test_job_status_no_column(profile_factory, job_data_factory):
-
     profile = profile_factory()
     profile.save()
     board = profile.board
@@ -130,13 +126,11 @@ def test_job_status_no_column(profile_factory, job_data_factory):
 
     assert job.column
     assert StatusChoices.get_status_name(job.status) == job.column.name
-    assert StatusChoices.get_status_column_position(
-        job.status) == job.column.position
+    assert StatusChoices.get_status_column_position(job.status) == job.column.position
 
 
 @pytest.mark.django_db
 def test_job_status_applied(profile_factory, job_data_factory):
-
     applied_statuses = StatusChoices.get_applied_statuses()
     data = job_data_factory()
     for status in applied_statuses:
@@ -159,16 +153,15 @@ def test_job_status_applied(profile_factory, job_data_factory):
 
 @pytest.mark.django_db
 def test_interview(interview_data_factory):
-
     data = interview_data_factory()
-    job = data['job']
+    job = data["job"]
     profile = job.profile
 
     interview = Interview(**data)
 
     assert interview.job == job
     assert interview.profile == profile
-    assert interview.round == data['round']
+    assert interview.round == data["round"]
     assert interview.start_date == data["start_date"]
     assert interview.end_date == data["end_date"]
     assert interview.post_code == data["post_code"]
@@ -182,7 +175,6 @@ def test_interview(interview_data_factory):
 
 @pytest.mark.django_db
 def test_interview_creates_default_tasks(interview_factory):
-
     interview = interview_factory()
     interview.job.save()
     interview.profile.user.save()
@@ -201,26 +193,23 @@ def test_interview_creates_default_tasks(interview_factory):
     ]
 
     for task in default_tasks:
-        assert InterviewTask.objects.filter(
-            interview=interview, name=task).exists()
+        assert InterviewTask.objects.filter(interview=interview, name=task).exists()
 
 
 @pytest.mark.django_db
 def test_interview_task(interview_task_data_factory):
-
     data = interview_task_data_factory()
-    interview = data['interview']
+    interview = data["interview"]
 
     task = InterviewTask(**data)
 
     assert task.interview == interview
-    assert task.name == data['name']
-    assert task.is_completed == data['is_completed']
+    assert task.name == data["name"]
+    assert task.is_completed == data["is_completed"]
 
 
 @pytest.mark.django_db
 def test_reminder(reminder_data_factory):
-
     data = reminder_data_factory()
     reminder = Reminder.objects.create(**data)
     assert reminder.offset == data["offset"]

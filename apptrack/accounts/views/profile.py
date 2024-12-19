@@ -12,9 +12,9 @@ User = get_user_model()
 
 class ProfileView(LoginRequiredMixin, DetailView):
     model = User
-    template_name = 'accounts/profile.html'
-    slug_field = 'id'
-    slug_url_kwarg = 'slug'
+    template_name = "accounts/profile.html"
+    slug_field = "id"
+    slug_url_kwarg = "slug"
 
     def get_object(self):
         """
@@ -40,5 +40,5 @@ class ProfileView(LoginRequiredMixin, DetailView):
         """
 
         context = super().get_context_data(**kwargs)
-        context['user_id'] = self.request.user.id
+        context["user_id"] = self.request.user.id
         return context

@@ -1,13 +1,9 @@
-
-import random
 from django.urls import reverse
 import pytest
-from core.models import Country
 
 
 @pytest.mark.django_db
 def test_job_list_view(client, profile_factory, job_factory):
-
     status = "OP"
     title = "Job Title"
     company = "Company"
@@ -37,19 +33,21 @@ def test_job_list_view(client, profile_factory, job_factory):
 
     client.force_login(user)
 
-    jobs = [(job1, 'status', [status]),
-            (job2, 'title', title),
-            (job3, 'company', company),
-            (job4, 'archived', 'on'),
-            (job5, 'city', city),
-            (job6, 'region', region)]
+    jobs = [
+        (job1, "status", [status]),
+        (job2, "title", title),
+        (job3, "company", company),
+        (job4, "archived", "on"),
+        (job5, "city", city),
+        (job6, "region", region),
+    ]
 
     def assert_attribute_returns_job(job, attr, value):
         data = {attr: value}
-        url = reverse('jobs:list')
+        url = reverse("jobs:list")
         response = client.get(url, data)
         assert response.status_code == 200
-        assert job in response.context['view'].object_list
+        assert job in response.context["view"].object_list
 
     for job, attr, value in jobs:
         assert_attribute_returns_job(job, attr, value)

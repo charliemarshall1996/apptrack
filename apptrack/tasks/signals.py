@@ -1,4 +1,3 @@
-
 import logging
 
 from django.core.exceptions import MultipleObjectsReturned
@@ -17,8 +16,7 @@ def create_target_task_on_reset(sender, instance, **kwargs):
     task_name = "Daily Applications Target"
     profile = instance.profile
 
-    task, created = TargetTask.objects.get_or_create(
-        profile=profile, target=instance)
+    task, created = TargetTask.objects.get_or_create(profile=profile, target=instance)
 
     task.is_completed = False
     task.name = task_name
@@ -28,14 +26,13 @@ def create_target_task_on_reset(sender, instance, **kwargs):
 
 @receiver(post_save, sender=Target)
 def check_target_task(sender, instance, **kwargs):
-
     try:
         task, _ = TargetTask.objects.get_or_create(
-            target=instance, profile=instance.profile)
+            target=instance, profile=instance.profile
+        )
     except MultipleObjectsReturned:
         # If multiple objects exist, retain the first and delete the rest
-        tasks = TargetTask.objects.filter(
-            target=instance, profile=instance.profile)
+        tasks = TargetTask.objects.filter(target=instance, profile=instance.profile)
         # Get the first task
         task = tasks.first()
         # Delete the other tasks
@@ -64,7 +61,8 @@ def create_tasks_on_interview_creation(sender, instance, created, **kwargs):
 
             try:
                 InterviewTask.objects.create(
-                    interview=instance, profile=instance.profile, name=task)
+                    interview=instance, profile=instance.profile, name=task
+                )
             except Exception as e:
                 logger.error("Error creating task: %s", e)
                 raise e

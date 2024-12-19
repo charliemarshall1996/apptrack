@@ -1,4 +1,3 @@
-
 from django.urls import reverse
 import pytest
 
@@ -8,7 +7,6 @@ from jobs.models import Job
 
 @pytest.mark.django_db
 def test_edit_job_view(client, job_factory, profile_factory, jobs_data):
-
     PASSWORD = "securepassword"
 
     profile = profile_factory(password=PASSWORD)
@@ -22,9 +20,10 @@ def test_edit_job_view(client, job_factory, profile_factory, jobs_data):
     job.save()
 
     data = JobForm(data=jobs_data).data
-    data['editJobReferrer'] = reverse('jobs:board')
-    response = client.post(reverse("accounts:login"), {
-        "email": profile.user.email, "password": PASSWORD})
+    data["editJobReferrer"] = reverse("jobs:board")
+    response = client.post(
+        reverse("accounts:login"), {"email": profile.user.email, "password": PASSWORD}
+    )
 
     assert response.status_code == 302
 
@@ -34,11 +33,11 @@ def test_edit_job_view(client, job_factory, profile_factory, jobs_data):
     # Get the updated job
     job = Job.objects.get(pk=job.pk)
 
-    assert job.url == data['url']
-    assert job.source == data['source']
-    assert job.job_title == data['job_title']
-    assert job.description == data['description']
+    assert job.url == data["url"]
+    assert job.source == data["source"]
+    assert job.job_title == data["job_title"]
+    assert job.description == data["description"]
     assert job.company == data["company"]
-    assert job.min_pay == data['min_pay']
+    assert job.min_pay == data["min_pay"]
     assert job.max_pay == data["max_pay"]
     assert job.note == data["note"]

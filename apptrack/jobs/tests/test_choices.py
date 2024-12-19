@@ -1,4 +1,3 @@
-
 from core.choices import (
     PayRateChoices,
     StatusChoices,
@@ -59,12 +58,12 @@ def test_pay_rate_choices():
     YEARLY = "YR"
 
     CHOICES = [
-        (UNKNOWN, 'Unknown'),
-        (HOURLY, 'Hourly'),
-        (DAILY, 'Daily'),
-        (WEEKLY, 'Weekly'),
-        (MONTHLY, 'Monthly'),
-        (YEARLY, 'Yearly'),
+        (UNKNOWN, "Unknown"),
+        (HOURLY, "Hourly"),
+        (DAILY, "Daily"),
+        (WEEKLY, "Weekly"),
+        (MONTHLY, "Monthly"),
+        (YEARLY, "Yearly"),
     ]
 
     assert PayRateChoices.choices() == CHOICES
@@ -80,13 +79,13 @@ def test_status_choices():
     CLOSED = "CL"
 
     CHOICES = [
-        (OPEN, 'Open'),
-        (APPLIED, 'Applied'),
-        (REJECTED, 'Rejected'),
-        (SHORTLISTED, 'Shortlisted'),
-        (INTERVIEW, 'Interview'),
-        (OFFER, 'Offer'),
-        (CLOSED, 'Closed'),
+        (OPEN, "Open"),
+        (APPLIED, "Applied"),
+        (REJECTED, "Rejected"),
+        (SHORTLISTED, "Shortlisted"),
+        (INTERVIEW, "Interview"),
+        (OFFER, "Offer"),
+        (CLOSED, "Closed"),
     ]
 
     assert StatusChoices.choices() == CHOICES
@@ -108,7 +107,7 @@ def test_get_status_column():
         (INTERVIEW, 4),
         (OFFER, 5),
         (REJECTED, 6),
-        (CLOSED, 7)
+        (CLOSED, 7),
     ]
 
     for status, column in status_columns:
@@ -131,7 +130,7 @@ def test_get_column_status():
         (INTERVIEW, 4),
         (OFFER, 5),
         (REJECTED, 6),
-        (CLOSED, 7)
+        (CLOSED, 7),
     ]
 
     for status, column in status_columns:
@@ -139,15 +138,14 @@ def test_get_column_status():
 
 
 def test_get_column_name():
-
     status_columns = [
-        (1, 'Open'),
-        (2, 'Applied'),
-        (3, 'Shortlisted'),
-        (4, 'Interview'),
-        (5, 'Offer'),
+        (1, "Open"),
+        (2, "Applied"),
+        (3, "Shortlisted"),
+        (4, "Interview"),
+        (5, "Offer"),
         (6, "Rejected"),
-        (7, 'Closed'),
+        (7, "Closed"),
     ]
 
     for column, name in status_columns:

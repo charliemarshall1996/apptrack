@@ -1,5 +1,3 @@
-
-
 import logging
 
 from django.contrib.auth import logout
@@ -16,8 +14,8 @@ def logout_view(request):
     """
     Log out the user and redirect to the home page.
 
-    This view logs out the currently authenticated user and 
-    redirects them to the home page. It requires the user to 
+    This view logs out the currently authenticated user and
+    redirects them to the home page. It requires the user to
     be logged in before accessing it.
 
     Args:
@@ -28,4 +26,4 @@ def logout_view(request):
     """
 
     logout(request)
-    return redirect('core:home')
+    return redirect("core:home")

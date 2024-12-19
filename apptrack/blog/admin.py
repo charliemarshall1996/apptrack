@@ -6,6 +6,6 @@ from .models import BlogPost
 
 @admin.register(BlogPost)
 class BlogPostAdmin(admin.ModelAdmin):
-    list_display = ('title', 'published')
-    search_fields = ('title', 'content')
-    ordering = ('-published',)
+    list_display = ("title", "published")
+    search_fields = ("title", "content")
+    ordering = ("-published",)

@@ -1,4 +1,3 @@
-
 import csv
 from datetime import timedelta
 from io import StringIO
@@ -10,7 +9,6 @@ import pytest
 
 @pytest.mark.django_db
 def test_download_jobs_view(client, profile_factory, job_factory):
-
     profile = profile_factory()
     profile.save()
     client.force_login(profile.user)
@@ -31,8 +29,7 @@ def test_download_jobs_view(client, profile_factory, job_factory):
     assert response.status_code == 200
 
     url = reverse("jobs:download_job")  # Replace with your view's URL name
-    response = client.post(
-        url, {"start_date": start_date, "end_date": end_date})
+    response = client.post(url, {"start_date": start_date, "end_date": end_date})
 
     # Verify the response
     assert response.status_code == 200
@@ -83,8 +80,10 @@ def test_download_jobs_view(client, profile_factory, job_factory):
             assert str(job.updated) == updated
         except AssertionError:
             print(
-                f"ID: {job.id}, Job Title: {job.job_title}, Company: {job.company}, URL: {job.url}, Status: {job.get_status_display()}, Updated: {job.updated}")
+                f"ID: {job.id}, Job Title: {job.job_title}, Company: {job.company}, URL: {job.url}, Status: {job.get_status_display()}, Updated: {job.updated}"
+            )
             print(
-                f"id: {id}, job_title: {job_title}, company: {company}, url: {url}, status: {status}, updated: {updated}")
+                f"id: {id}, job_title: {job_title}, company: {company}, url: {url}, status: {status}, updated: {updated}"
+            )
 
     assert i == 3

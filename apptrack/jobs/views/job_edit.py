@@ -1,5 +1,3 @@
-
-
 import logging
 
 from django.contrib.auth.decorators import login_required
@@ -19,7 +17,7 @@ def job_edit_view(request, pk):
     job = Job.objects.get(pk=pk)
     referer_url = request.POST.get("editJobReferrer")
     logger.info("Referer URL: %s", referer_url)
-    if request.method == 'POST':
+    if request.method == "POST":
         logger.info("Request method is POST")
         form = JobForm(request.POST, instance=job)
         if form.is_valid():

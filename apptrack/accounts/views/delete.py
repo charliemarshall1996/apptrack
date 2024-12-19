@@ -1,4 +1,3 @@
-
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect, render
@@ -6,11 +5,11 @@ from django.shortcuts import redirect, render
 from accounts.messages import AccountsMessageManager
 
 
-@ login_required
+@login_required
 def delete_account_view(request):
     """Delete a user account
 
-    This view is used to delete a user account. If the request 
+    This view is used to delete a user account. If the request
     method is POST, it deletes the user and their associated
     profile.
 
@@ -25,13 +24,12 @@ def delete_account_view(request):
         - A confirmation page if the request method is GET
     """
 
-    if request.method == 'POST':
+    if request.method == "POST":
         user = request.user
         user.profile.delete()
         user.delete()
-        messages.success(
-            request, AccountsMessageManager.account_deleted_success)
-        return redirect('core:home')
+        messages.success(request, AccountsMessageManager.account_deleted_success)
+        return redirect("core:home")
 
     # Render the confirmation page
-    return render(request, 'accounts/delete_account.html')
+    return render(request, "accounts/delete_account.html")

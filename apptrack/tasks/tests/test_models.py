@@ -1,4 +1,3 @@
-
 import pytest
 
 from tasks.models import Task, TargetTask
@@ -6,7 +5,6 @@ from tasks.models import Task, TargetTask
 
 @pytest.mark.django_db
 def test_task(profile_factory):
-
     # Initialise data
     name = "Test Task"
     priority = 1
@@ -15,8 +13,9 @@ def test_task(profile_factory):
     profile.save()
 
     # Create a task
-    task = Task(profile=profile, name=name,
-                priority=priority, is_completed=is_completed)
+    task = Task(
+        profile=profile, name=name, priority=priority, is_completed=is_completed
+    )
     task.save()
 
     assert task.priority == priority
@@ -27,7 +26,6 @@ def test_task(profile_factory):
 
 @pytest.mark.django_db
 def test_target_task(profile_factory):
-
     # Initialise data
     name = "Test Task"
     priority = 1
@@ -41,8 +39,13 @@ def test_target_task(profile_factory):
     target.save()
 
     # Create a task
-    task = TargetTask(profile=profile, target=target, name=name,
-                      priority=priority, is_completed=is_completed)
+    task = TargetTask(
+        profile=profile,
+        target=target,
+        name=name,
+        priority=priority,
+        is_completed=is_completed,
+    )
     task.save()
 
     assert task.priority == priority
@@ -51,12 +54,11 @@ def test_target_task(profile_factory):
     assert task.target == target
     assert task.current_val == 0
     assert task.target_val == amount
-    assert task.type == 'target'
+    assert task.type == "target"
 
 
 @pytest.mark.django_db
 def test_target_task_save_met(profile_factory):
-
     # Initialise data
     name = "Test Task"
     priority = 1
@@ -70,8 +72,13 @@ def test_target_task_save_met(profile_factory):
     target.save()
 
     # Create a task
-    task = TargetTask(profile=profile, target=target, name=name,
-                      priority=priority, is_completed=is_completed)
+    task = TargetTask(
+        profile=profile,
+        target=target,
+        name=name,
+        priority=priority,
+        is_completed=is_completed,
+    )
     task.save()
 
     target.increment()

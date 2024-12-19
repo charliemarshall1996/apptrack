@@ -6,7 +6,7 @@ from pathlib import Path
 # Paths configuration
 BASE_DIR = Path(__file__).resolve().parent.parent
 DB_FILE = BASE_DIR / "db.sqlite3"
-OLD_DB_FILE = BASE_DIR / "db_old.sqlite3"  # Replace with your apps directory
+OLD_DB_FILE = BASE_DIR / "db_old.sqlite3"
 
 
 def backup_database():
@@ -29,10 +29,7 @@ def remove_migrations():
             for file in migrations_folder.iterdir():
                 if file.name != "__init__.py":
                     if file.name == "__pycache__":
-                        try:
-                            subprocess.call(["rm", "-f", file.name])
-                        except:
-                            continue
+                        subprocess.call(["rm", "-f", file.name])
                     else:
                         file.unlink()
             print(f"Cleared migrations for app: {app.name}")
@@ -41,8 +38,7 @@ def remove_migrations():
 def create_new_database():
     print("Creating new database...")
     try:
-        subprocess.run(
-            ["python", "manage.py", "makemigrations"], check=True)
+        subprocess.run(["python", "manage.py", "makemigrations"], check=True)
     except Exception as e:
         print("FAILED to create migrations:", e)
 

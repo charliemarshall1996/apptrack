@@ -1,4 +1,3 @@
-
 from django.contrib import messages
 from django.contrib.auth import get_user_model
 from django.shortcuts import redirect, render
@@ -29,31 +28,27 @@ def password_reset_view(request):
     if request.method == "POST":
         form = PasswordResetForm(request.POST)
         if form.is_valid():
-
             # Check if the honeypot field is filled
-            if form.cleaned_data['honeypot']:
-                messages.error(
-                    request, AccountsMessageManager.spam)
-                return redirect('core:home')
+            if form.cleaned_data["honeypot"]:
+                messages.error(request, AccountsMessageManager.spam)
+                return redirect("core:home")
 
             # Retrieve the email from the form
-            email = form.cleaned_data['email']
+            email = form.cleaned_data["email"]
 
             # Check if the user exists
             user = User.objects.filter(email=email).first()
             if user:
                 # Send the password reset email
                 email_manager.mail_password_reset(request, user)
-                messages.success(
-                    request, AccountsMessageManager.password_reset_success)
+                messages.success(request, AccountsMessageManager.password_reset_success)
                 return redirect("accounts:password_reset")
             else:
                 # If the user does not exist, show an error message
-                messages.error(
-                    request, AccountsMessageManager.email_not_found)
-            return redirect('accounts:password_reset')
+                messages.error(request, AccountsMessageManager.email_not_found)
+            return redirect("accounts:password_reset")
     else:
         # If the request is GET,
         # create an empty form
         form = PasswordResetForm()
-    return render(request, 'accounts/password_reset.html', {'form': form})
+    return render(request, "accounts/password_reset.html", {"form": form})

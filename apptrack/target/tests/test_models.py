@@ -1,4 +1,3 @@
-
 import datetime
 from unittest.mock import Mock, patch
 
@@ -157,7 +156,7 @@ def test_target_reset_does_not_call_save(profile_factory):
     target.save()
     mock_save = Mock()
 
-    with patch('target.models.Target.save', mock_save):
+    with patch("target.models.Target.save", mock_save):
         target.last_reset = timezone.now() - datetime.timedelta(days=1)
         target.reset(from_save=True)
     mock_save.assert_not_called()
@@ -175,7 +174,7 @@ def test_target_reset_does_call_save(profile_factory):
     target.save()
 
     mock_save = Mock()
-    with patch('target.models.Target.save', mock_save):
+    with patch("target.models.Target.save", mock_save):
         target.last_reset = timezone.now() - datetime.timedelta(days=1)
         target.reset(from_save=False)
     mock_save.assert_called()

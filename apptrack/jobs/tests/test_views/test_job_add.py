@@ -1,4 +1,3 @@
-
 from django.urls import reverse
 import pytest
 
@@ -11,15 +10,16 @@ def test_add_job_view(client, profile_factory, job_data_factory):
     profile.save()
 
     data = job_data_factory()
-    data['referrer'] = reverse('jobs:board')
-    response = client.post(reverse("accounts:login"), {
-        "email": profile.user.email, "password": PASSWORD})
+    data["referrer"] = reverse("jobs:board")
+    response = client.post(
+        reverse("accounts:login"), {"email": profile.user.email, "password": PASSWORD}
+    )
 
     assert response.status_code == 302
 
-    url = reverse('jobs:add_job')
+    url = reverse("jobs:add_job")
 
     # POST request with valid data should add job
     response = client.post(url, data)
     assert response.status_code == 302
-    assert response.url == reverse('jobs:board')
+    assert response.url == reverse("jobs:board")

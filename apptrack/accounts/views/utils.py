@@ -1,4 +1,3 @@
-
 from django.utils import timezone
 
 
@@ -55,7 +54,6 @@ def get_minutes_left_before_resend(time_since_last_email, timeout_duration):
 
 
 class ConversionCalculator:
-
     @staticmethod
     def calculate_basic_conversion_rate(applications, interviews_or_offers):
         if interviews_or_offers > 0 and applications > 0:

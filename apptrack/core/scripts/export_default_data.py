@@ -1,4 +1,3 @@
-
 import pandas as pd
 
 from core.choices import (
@@ -7,7 +6,7 @@ from core.choices import (
     JobFunctionChoices,
     PayRateChoices,
     SourceChoices,
-    StatusChoices
+    StatusChoices,
 )
 
 
@@ -16,7 +15,7 @@ def export_country_data():
 
     data = []
     for alpha_2, name in get_country_choices():
-        data.append({'alpha_2': alpha_2, 'name': name})
+        data.append({"alpha_2": alpha_2, "name": name})
 
     df = pd.DataFrame(data)
     df.to_csv("core/default_data/countries.csv", index=False)
@@ -27,7 +26,7 @@ def export_currency_data():
 
     data = []
     for alpha_3, name in get_currency_choices():
-        data.append({'alpha_3': alpha_3, 'name': name})
+        data.append({"alpha_3": alpha_3, "name": name})
 
     df = pd.DataFrame(data)
     df.to_csv("core/default_data/currencies.csv", index=False)
@@ -38,7 +37,7 @@ def export_job_function_data():
 
     data = []
     for code, name in JobFunctionChoices.choices():
-        data.append({'code': code, 'name': name})
+        data.append({"code": code, "name": name})
 
     df = pd.DataFrame(data)
     df.to_csv("core/default_data/job_functions.csv", index=False)
@@ -49,7 +48,7 @@ def export_pay_rate_data():
 
     data = []
     for code, name in PayRateChoices.choices():
-        data.append({'code': code, 'name': name})
+        data.append({"code": code, "name": name})
 
     df = pd.DataFrame(data)
     df.to_csv("core/default_data/pay_rates.csv", index=False)
@@ -60,7 +59,7 @@ def export_source_data():
 
     data = []
     for code, name in SourceChoices.choices():
-        data.append({'code': code, 'name': name})
+        data.append({"code": code, "name": name})
 
     df = pd.DataFrame(data)
     df.to_csv("core/default_data/sources.csv", index=False)
@@ -71,7 +70,7 @@ def export_status_data():
 
     data = []
     for code, name in StatusChoices.choices():
-        data.append({'code': code, 'name': name})
+        data.append({"code": code, "name": name})
 
     df = pd.DataFrame(data)
     df.to_csv("core/default_data/statuses.csv", index=False)

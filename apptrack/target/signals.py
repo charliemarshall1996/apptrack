@@ -1,4 +1,3 @@
-
 import logging
 
 from django.core.exceptions import MultipleObjectsReturned

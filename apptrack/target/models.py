@@ -1,4 +1,3 @@
-
 import logging
 
 from django.db import models
@@ -15,7 +14,8 @@ target_reset = Signal()
 
 class Streak(models.Model):
     current_streak_start = models.DateTimeField(
-        null=True, blank=True, auto_now_add=True)
+        null=True, blank=True, auto_now_add=True
+    )
     current_streak = models.IntegerField(default=0, null=True, blank=True)
 
     longest_streak_start = models.DateTimeField(null=True, blank=True)
@@ -39,12 +39,19 @@ class Streak(models.Model):
 
 class Target(models.Model):
     profile = models.OneToOneField(
-        Profile, on_delete=models.CASCADE, related_name='target', unique=True)
+        Profile, on_delete=models.CASCADE, related_name="target", unique=True
+    )
     amount = models.IntegerField(default=5, null=True, blank=True)
     current = models.IntegerField(default=0, null=True, blank=True)
     total_targets_met = models.IntegerField(default=0)
     streak = models.ForeignKey(
-        Streak, on_delete=models.CASCADE, related_name='target', null=True, default=Streak.objects.create, unique=True)
+        Streak,
+        on_delete=models.CASCADE,
+        related_name="target",
+        null=True,
+        default=Streak.objects.create,
+        unique=True,
+    )
     last_reset = models.DateTimeField(auto_now_add=True)
 
     @property
@@ -60,10 +67,8 @@ class Target(models.Model):
         if self.amount and self.last_reset:
             # if there is a target
             if self.amount > 0:
-                logger.info(
-                    "Amount is greater than 0. from_save: %s", from_save)
+                logger.info("Amount is greater than 0. from_save: %s", from_save)
                 if now.date() > self.last_reset.date():
-
                     logger.info("Date is different. from_save: %s", from_save)
                     logger.info("Different date")
                     if self.met:

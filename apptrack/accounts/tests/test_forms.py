@@ -17,17 +17,17 @@ def test_user_registration_form_valid(user_registration_form_data):
     form = UserRegistrationForm(data=user_registration_form_data)
     assert form.is_valid()
     user = form.save()
-    assert user.email == user_registration_form_data['email']
+    assert user.email == user_registration_form_data["email"]
     user.save()
     user.delete()
 
 
 @pytest.mark.django_db
 def test_user_registration_form_invalid_email(user_registration_form_data):
-    user_registration_form_data['email'] = "invalid-email"
+    user_registration_form_data["email"] = "invalid-email"
     form = UserRegistrationForm(data=user_registration_form_data)
     assert not form.is_valid()
-    assert 'Enter a valid email address.' in form.errors["email"]
+    assert "Enter a valid email address." in form.errors["email"]
 
 
 @pytest.mark.django_db
@@ -35,17 +35,17 @@ def test_user_registration_form_clean_email(user_registration_form_data):
     form = UserRegistrationForm(data=user_registration_form_data)
     assert form.is_valid()
     user = form.save()
-    assert user.email == user_registration_form_data['email']
+    assert user.email == user_registration_form_data["email"]
 
 
 @pytest.mark.django_db
 def test_user_registration_form_invalid_email_raises(user_registration_form_data):
-    user_registration_form_data['email'] = "invalid-email"
+    user_registration_form_data["email"] = "invalid-email"
     form = UserRegistrationForm(data=user_registration_form_data)
     assert not form.is_valid()
     with pytest.raises(ValidationError):
         form.clean_email()
-    assert 'Enter a valid email address.' in form.errors["email"]
+    assert "Enter a valid email address." in form.errors["email"]
 
 
 @pytest.mark.django_db

@@ -1,4 +1,3 @@
-
 import logging
 
 from django.db import models
@@ -15,16 +14,14 @@ logger.setLevel(logging.DEBUG)
 
 
 class Task(PolymorphicModel):
-    profile = models.ForeignKey(
-        Profile, on_delete=models.CASCADE, related_name="tasks")
+    profile = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name="tasks")
     name = models.CharField(max_length=100)
     is_completed = models.BooleanField(default=False)
     priority = models.IntegerField(default=0, null=True, blank=True)
 
 
 class TargetTask(Task):
-    target = models.ForeignKey(
-        Target, related_name="task", on_delete=models.CASCADE)
+    target = models.ForeignKey(Target, related_name="task", on_delete=models.CASCADE)
 
     @property
     def current_val(self):
@@ -40,8 +37,7 @@ class TargetTask(Task):
 
     def save(self, *args, **kwargs):
         if self.target.met:
-            logger.info("Target met %s %s", self.target.amount,
-                        self.target.current)
+            logger.info("Target met %s %s", self.target.amount, self.target.current)
             self.is_completed = True
         self.priority = 1
         super().save(*args, **kwargs)
@@ -49,7 +45,8 @@ class TargetTask(Task):
 
 class InterviewTask(Task):
     interview = models.ForeignKey(
-        'jobs.Interview', related_name="tasks", on_delete=models.CASCADE)
+        "jobs.Interview", related_name="tasks", on_delete=models.CASCADE
+    )
 
     @property
     def type(self):
@@ -61,8 +58,7 @@ class InterviewTask(Task):
 
 
 class JobTask(Task):
-    job = models.ForeignKey(
-        'jobs.Job', related_name="tasks", on_delete=models.CASCADE)
+    job = models.ForeignKey("jobs.Job", related_name="tasks", on_delete=models.CASCADE)
 
     @property
     def type(self):

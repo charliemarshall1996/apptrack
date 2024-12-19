@@ -1,11 +1,9 @@
-
 from django.urls import reverse
 import pytest
 
 
 @pytest.mark.django_db
 def test_delete_job_view(client, job_factory, profile_factory):
-
     PASSWORD = "securepassword"
 
     profile = profile_factory(password=PASSWORD)
@@ -17,8 +15,9 @@ def test_delete_job_view(client, job_factory, profile_factory):
     job.board = board
     job.save()
 
-    response = client.post(reverse("accounts:login"), {
-        "email": profile.user.email, "password": PASSWORD})
+    response = client.post(
+        reverse("accounts:login"), {"email": profile.user.email, "password": PASSWORD}
+    )
 
     assert response.status_code == 302
 
