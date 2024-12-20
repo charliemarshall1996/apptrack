@@ -138,8 +138,7 @@ class Target(models.Model):
         if self.amount and self.last_reset:
             # if there is a target
             if self.amount > 0:
-                logger.info(
-                    "Amount is greater than 0. from_save: %s", from_save)
+                logger.info("Amount is greater than 0. from_save: %s", from_save)
                 if now.date() > self.last_reset.date():
                     logger.info("Date is different. from_save: %s", from_save)
                     logger.info("Different date")

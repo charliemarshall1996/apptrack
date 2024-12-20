@@ -12,8 +12,12 @@ pythonpath = "./apptrack"
 python_files = "tests.py test_*.py *_tests.py"
 
 # RUFF
-lint.select = ["A", "B", "C", "D", "E", "F", "N", "S"]  # Select error codes
-lint.extend-select = ["D"]  # Enable pydocstyle rules
+[tool.ruff]
+# Specify any rules to ignore
+output-format = "grouped"
+[tool.ruff.lint]
+select = ["A", "B", "C", "D", "E", "F", "N", "S"]  # Select error codes
+extend-select = ["D"]  # Enable pydocstyle rules
 exclude = [
     ".bzr",
     ".direnv",
@@ -44,18 +48,15 @@ exclude = [
     "*migrations/"
 ]
 
-# Specify any rules to ignore
-output-format = "grouped"
-
 # Enable Google-style docstrings
-[lint.pydocstyle]
+[tool.ruff.lint.pydocstyle]
 convention = "google"
 
-[format]
+[tool.ruff.format]
 # Enable reformatting of code snippets in docstrings.
 docstring-code-format = true
 docstring-code-line-length = 80
 
-[lint.per-file-ignores]
+[tool.ruff.lint.per-file-ignores]
 "**/tests/*.py" = ["S101"]
 

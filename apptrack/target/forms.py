@@ -1,6 +1,6 @@
 """Contains forms for the target app.
 
-This module contains the forms for the target app. The TargetUpdateForm is used to 
+This module contains the forms for the target app. The TargetUpdateForm is used to
 update the target amount in the target update page.
 """
 
@@ -24,6 +24,7 @@ class TargetUpdateForm(forms.ModelForm):
             model (class): The model class for the form.
             fields (list): The list of fields to include in the form.
         """
+
         model = Target
         fields = ["amount"]
 

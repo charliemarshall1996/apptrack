@@ -1,3 +1,5 @@
+"""Manages sending emails to users pertaining to their accounts."""
+
 from django.urls import reverse
 from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode
@@ -6,19 +8,23 @@ from core.mail import EmailManager
 
 
 class AccountsEmailManager(EmailManager):
-    def __init__(self):
+    """Manages sending emails to users pertaining to their accounts.
+
+    AccountsEmailManager inherits from EmailManager and provides a centralised point for
+    sending emails which pertain to a users account.
+    """
+
+    def __init__(self):  # noqa: D107
         super().__init__()
 
     def mail_verification(self, request, user):
-        """
-        Sends an email to the user with a verification link to
-        confirm their email address.
+        """Sends an email to the user with a verification link to confirm their email.
 
         Args:
-        - `request`: The HTTP request object, used to build the
-          absolute URI for the verification link.
-        - `user`: The user object for whom the email verification
-          link is being generated.
+            request (`django.http.HttpRequest`): The HTTP request object, used to build 
+            the absolute URI for the verification link.
+            user (`django.contrib.auth.models.User`): The user object for whom the email
+            verification link is being generated.
 
         The email contains a token-based verification URL which
         when clicked will verify the user's email address.
@@ -45,20 +51,17 @@ class AccountsEmailManager(EmailManager):
         self.send(subject, message, html_message, recipient)
 
     def mail_password_reset(self, request, user):
-        """
-        Sends an email to the user with a password reset link.
+        """Sends an email to the user with a link to reset their password.
 
         Args:
-        - `request`: The HTTP request object, used to build the
-        absolute URI for the password reset link.
-        - `user`: The user object for whom the password reset
-        link is being generated.
+            request (`django.http.HttpRequest`): The HTTP request object, used to build 
+            the absolute URI for the password reset link.
+            user (`django.contrib.auth.models.User`): The user object for whom the 
+            password reset link is being generated.
 
-        The email contains a token-based password reset URL
-        which, when clicked, allows the user to reset their
-        password.
+        The email contains a token-based verification URL which
+        when clicked will allow the user to reset their password.
         """
-        # Generate password reset token
         from .tokens import password_reset_token
 
         token = password_reset_token.make_token(user)
