@@ -1,11 +1,6 @@
 import pandas as pd
 
-from core.models import (
-    Country,
-    Currency,
-    JobFunction,
-    PayRate
-)
+from core.models import Country, Currency, JobFunction, PayRate
 
 
 def populate_countries():
@@ -50,8 +45,7 @@ def populate_pay_rates():
     df = pd.read_csv("core/default_data/pay_rates.csv")
 
     for _, row in df.iterrows():
-        pay_rate, _ = PayRate.objects.get_or_create(
-            code=row.code, name=row["name"])
+        pay_rate, _ = PayRate.objects.get_or_create(code=row.code, name=row["name"])
         pay_rate.save()
 
 

@@ -27,6 +27,5 @@ def create_columns(sender, instance, created, **kwargs):
 
     if created and not instance.columns.exists():
         for name, position in default_columns:
-            column = Column.objects.create(
-                board=instance, name=name, position=position)
+            column = Column.objects.create(board=instance, name=name, position=position)
             column.save()

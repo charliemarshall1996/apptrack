@@ -1,3 +1,5 @@
+"""Tests for tasks models."""
+
 import pytest
 
 from tasks.models import Task, TargetTask
@@ -5,6 +7,7 @@ from tasks.models import Task, TargetTask
 
 @pytest.mark.django_db
 def test_task(profile_factory):
+    """Test task model."""
     # Initialise data
     name = "Test Task"
     priority = 1
@@ -26,6 +29,7 @@ def test_task(profile_factory):
 
 @pytest.mark.django_db
 def test_target_task(profile_factory):
+    """Test target task model."""
     # Initialise data
     name = "Test Task"
     priority = 1
@@ -59,6 +63,10 @@ def test_target_task(profile_factory):
 
 @pytest.mark.django_db
 def test_target_task_save_met(profile_factory):
+    """Test target task model.
+
+    Test that is_completed is set to True when current_val == target_val
+    """
     # Initialise data
     name = "Test Task"
     priority = 1

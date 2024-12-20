@@ -1,3 +1,5 @@
+"""Tests for target models."""
+
 import datetime
 from unittest.mock import Mock, patch
 
@@ -20,6 +22,7 @@ def test_streak():
 
 @pytest.mark.django_db
 def test_streak_increment():
+    """Test the Streak model increment method, which increments the current_streak."""
     streak = Streak()
     streak.save()
 
@@ -35,6 +38,7 @@ def test_streak_increment():
 
 @pytest.mark.django_db
 def test_streak_reset_new_longest():
+    """Test the Streak model reset method with new longest streak."""
     streak = Streak()
     streak.save()
 
@@ -57,6 +61,7 @@ def test_streak_reset_new_longest():
 
 @pytest.mark.django_db
 def test_streak_reset_not_new_longest():
+    """Test the Streak model reset method with no new longest streak."""
     streak = Streak(longest_streak=2)
     streak.save()
 
@@ -77,6 +82,7 @@ def test_streak_reset_not_new_longest():
 
 @pytest.mark.django_db
 def test_target(profile_factory):
+    """Test the Target model."""
     profile = profile_factory()
     profile.save()
 
@@ -94,6 +100,7 @@ def test_target(profile_factory):
 
 @pytest.mark.django_db
 def test_target_met(profile_factory):
+    """Test the Target model."""
     profile = profile_factory()
     profile.save()
 
@@ -121,6 +128,7 @@ def test_target_met(profile_factory):
 
 @pytest.mark.django_db
 def test_target_not_met(profile_factory):
+    """Test the Target model."""
     profile = profile_factory()
     profile.save()
 
@@ -146,6 +154,7 @@ def test_target_not_met(profile_factory):
 
 @pytest.mark.django_db
 def test_target_reset_does_not_call_save(profile_factory):
+    """Test the Target model reset method does not call save()."""
     profile = profile_factory()
     profile.save()
 
@@ -164,6 +173,7 @@ def test_target_reset_does_not_call_save(profile_factory):
 
 @pytest.mark.django_db
 def test_target_reset_does_call_save(profile_factory):
+    """Test the Target model reset method calls save()."""
     profile = profile_factory()
     profile.save()
 
@@ -182,6 +192,7 @@ def test_target_reset_does_call_save(profile_factory):
 
 @pytest.mark.django_db
 def test_target_reset_no_target(profile_factory):
+    """Test the Target model reset method with no target."""
     profile = profile_factory()
     profile.save()
 
@@ -197,6 +208,7 @@ def test_target_reset_no_target(profile_factory):
 
 @pytest.mark.django_db
 def test_target_reset_same_day(profile_factory):
+    """Test the Target model reset method with same day."""
     profile = profile_factory()
     profile.save()
 
@@ -214,6 +226,7 @@ def test_target_reset_same_day(profile_factory):
 
 @pytest.mark.django_db
 def test_target_reset_new_day_met(profile_factory):
+    """Test the Target model reset method with new day and met."""
     profile = profile_factory()
     profile.save()
 
@@ -237,6 +250,12 @@ def test_target_reset_new_day_met(profile_factory):
 
 @pytest.mark.django_db
 def test_target_reset_new_day_not_met(profile_factory):
+    """Test the Target model reset method with new day and not met.
+
+    Ensures that if the reset method is called on a new day and the target
+    is not met, the total_targets_met and streak.current_streak do not
+    increment.
+    """
     profile = profile_factory()
     profile.save()
 
@@ -259,6 +278,11 @@ def test_target_reset_new_day_not_met(profile_factory):
 
 @pytest.mark.django_db
 def test_target_increment(profile_factory):
+    """Test the Target model increment method.
+
+    Ensures that when the increment method is called,
+    the current value is incremented.
+    """
     profile = profile_factory()
     profile.save()
 
@@ -274,6 +298,11 @@ def test_target_increment(profile_factory):
 
 @pytest.mark.django_db
 def test_target_decrement(profile_factory):
+    """Test the Target model decrement method.
+
+    Ensures that when the decrement method is called,
+    the current value is decremented.
+    """
     profile = profile_factory()
     profile.save()
 

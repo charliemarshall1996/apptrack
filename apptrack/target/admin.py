@@ -1,3 +1,7 @@
+"""Target model registration.
+
+This module registers the target models with the admin site.
+"""
 from django.contrib import admin
 from django.apps import apps
 

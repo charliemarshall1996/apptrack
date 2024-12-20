@@ -1,3 +1,5 @@
+"""Target views."""
+
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.dispatch import Signal
@@ -12,6 +14,15 @@ target_reset = Signal()
 
 @login_required
 def target_update_view(request):
+    """Update target.
+
+    Args:
+        request:
+            The request object.
+
+    Returns:
+        A rendered template response or a redirect response.
+    """
     target = Target.objects.get(profile=request.user.profile)
     if request.method == "GET":
         form = TargetUpdateForm(instance=target)

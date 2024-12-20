@@ -146,7 +146,6 @@ def jobs_data():
 @pytest.fixture()
 def job_data_factory():
     def factory(**kwargs):
-
         updated_days_previous = kwargs.pop("updated_days_previous", None)
         url = kwargs.pop("url", None)
         source = kwargs.pop("source", None)

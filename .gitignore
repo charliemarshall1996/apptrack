@@ -158,3 +158,8 @@ apptrack/keys.json
 apptrack/db.sqlite3
 apptrack/.env
 *experimental/
+
+# Tests and Linting
+.ruff_cache
+.coverage
+.htmlcov

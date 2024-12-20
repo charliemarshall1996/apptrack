@@ -1,3 +1,5 @@
+"""Tasks signals."""
+
 import logging
 
 from django.core.exceptions import MultipleObjectsReturned
@@ -12,7 +14,7 @@ logger = logging.getLogger(__name__)
 
 @receiver(target_reset)
 def create_target_task_on_reset(sender, instance, **kwargs):
-    print("Creating target task...")
+    """Create a target task when a target is reset."""
     task_name = "Daily Applications Target"
     profile = instance.profile
 
@@ -26,6 +28,7 @@ def create_target_task_on_reset(sender, instance, **kwargs):
 
 @receiver(post_save, sender=Target)
 def check_target_task(sender, instance, **kwargs):
+    """Check if a target task exists and create one if not."""
     try:
         task, _ = TargetTask.objects.get_or_create(
             target=instance, profile=instance.profile
@@ -45,6 +48,7 @@ def check_target_task(sender, instance, **kwargs):
 
 @receiver(post_save, sender=Interview)
 def create_tasks_on_interview_creation(sender, instance, created, **kwargs):
+    """Create tasks when an interview is created."""
     logger.debug("Interview saved: %s", instance)
     if created:
         logger.debug("Interview is new. Creating tasks...")

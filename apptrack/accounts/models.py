@@ -45,8 +45,7 @@ class Profile(models.Model):
     )
     email_comms_opt_in = models.BooleanField(default=False)
     birth_date = models.DateField(null=True, blank=True)
-    current_applications_made = models.IntegerField(
-        null=True, blank=True, default=0)
+    current_applications_made = models.IntegerField(null=True, blank=True, default=0)
     last_reset = models.DateTimeField(auto_now=True)
 
     def __str__(self):
