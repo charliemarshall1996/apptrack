@@ -1,3 +1,4 @@
+"""Script to transfer data from an old database to a new database using sqlite3."""
 import sqlite3
 from pathlib import Path
 
@@ -9,6 +10,16 @@ OLD_DB_FILE = BASE_DIR / "db_old.sqlite3"  # Replace with your apps directory
 
 def run():
     # Connect to the old and new databases
+    """Transfers data from an old database to a new database using sqlite3.
+
+    Connects to the old and new databases, creates a cursor for each database, gets a
+    list of tables in the old database, excludes the sqlite_sequence table, loops 
+    through the tables and transfers data from the old table to the new table, 
+    committing each insert individually to see if it was ignored.
+
+    Raises:
+        sqlite3.IntegrityError: If a row is ignored from the new database
+    """
     old_db = sqlite3.connect(OLD_DB_FILE)
     new_db = sqlite3.connect(DB_FILE)
 
@@ -34,26 +45,30 @@ def run():
         columns = old_cursor.fetchall()
 
         # Create the table in the new database if it doesn't exist
-        column_definitions = ", ".join([f"{col[1]} {col[2]}" for col in columns])
+        column_definitions = ", ".join(
+            [f"{col[1]} {col[2]}" for col in columns])
         create_table_sql = (
             f"CREATE TABLE IF NOT EXISTS {table_name} ({column_definitions});"
         )
         new_cursor.execute(create_table_sql)
 
+        query = "SELECT * FROM ?"
+        args = [table_name]
         # Get all data from the old table
-        old_cursor.execute(f"SELECT * FROM {table_name}")
+        old_cursor.execute(query, args)
         rows = old_cursor.fetchall()
 
         # Prepare the INSERT OR IGNORE query to avoid conflicts
         if rows:
             # Placeholder for each column
             placeholders = ", ".join(["?" for _ in columns])
-            insert_sql = f"INSERT OR IGNORE INTO {table_name} VALUES ({placeholders});"
+            args = [table_name, placeholders]
+            query = "INSERT OR IGNORE INTO ? VALUES (?);"
 
             # Check for ignored rows
             for row in rows:
                 try:
-                    new_cursor.execute(insert_sql, row)
+                    new_cursor.execute(query, args)
                     # Commit each insert individually to see if it was ignored
                     new_db.commit()
                 except sqlite3.IntegrityError:
