@@ -15,9 +15,7 @@ python_files = "tests.py test_*.py *_tests.py"
 [tool.ruff]
 # Specify any rules to ignore
 output-format = "grouped"
-[tool.ruff.lint]
-select = ["A", "B", "C", "D", "E", "F", "N", "S"]  # Select error codes
-extend-select = ["D"]  # Enable pydocstyle rules
+
 exclude = [
     ".bzr",
     ".direnv",
@@ -47,6 +45,11 @@ exclude = [
     "venv",
     "*migrations/"
 ]
+
+
+[tool.ruff.lint]
+select = ["A", "B", "C", "D", "E", "F", "N", "S"]  # Select error codes
+extend-select = ["D"]  # Enable pydocstyle rules
 
 # Enable Google-style docstrings
 [tool.ruff.lint.pydocstyle]
