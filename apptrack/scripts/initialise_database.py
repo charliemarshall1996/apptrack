@@ -1,4 +1,4 @@
-"""Script which initialise deployed database ready for deployment.
+"""Script which initialises the database ready for deployment.
 
 Script removes all migrations and backs-up existing database.
 """
