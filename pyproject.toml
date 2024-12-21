@@ -43,7 +43,8 @@ exclude = [
     "node_modules",
     "site-packages",
     "venv",
-    "*migrations/"
+    "*migrations/",
+    "conf.py"
 ]
 
 

@@ -1,4 +1,3 @@
-
 """Tests for target signals.
 
 This module contains tests for the target signals.

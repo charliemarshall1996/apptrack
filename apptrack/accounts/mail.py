@@ -21,7 +21,7 @@ class AccountsEmailManager(EmailManager):
         """Sends an email to the user with a verification link to confirm their email.
 
         Args:
-            request (`django.http.HttpRequest`): The HTTP request object, used to build 
+            request (`django.http.HttpRequest`): The HTTP request object, used to build
             the absolute URI for the verification link.
             user (`django.contrib.auth.models.User`): The user object for whom the email
             verification link is being generated.
@@ -54,9 +54,9 @@ class AccountsEmailManager(EmailManager):
         """Sends an email to the user with a link to reset their password.
 
         Args:
-            request (`django.http.HttpRequest`): The HTTP request object, used to build 
+            request (`django.http.HttpRequest`): The HTTP request object, used to build
             the absolute URI for the password reset link.
-            user (`django.contrib.auth.models.User`): The user object for whom the 
+            user (`django.contrib.auth.models.User`): The user object for whom the
             password reset link is being generated.
 
         The email contains a token-based verification URL which

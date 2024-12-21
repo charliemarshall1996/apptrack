@@ -1,4 +1,5 @@
 """Script to transfer data from an old database to a new database using sqlite3."""
+
 import sqlite3
 from pathlib import Path
 
@@ -13,8 +14,8 @@ def run():
     """Transfers data from an old database to a new database using sqlite3.
 
     Connects to the old and new databases, creates a cursor for each database, gets a
-    list of tables in the old database, excludes the sqlite_sequence table, loops 
-    through the tables and transfers data from the old table to the new table, 
+    list of tables in the old database, excludes the sqlite_sequence table, loops
+    through the tables and transfers data from the old table to the new table,
     committing each insert individually to see if it was ignored.
 
     Raises:
@@ -45,8 +46,7 @@ def run():
         columns = old_cursor.fetchall()
 
         # Create the table in the new database if it doesn't exist
-        column_definitions = ", ".join(
-            [f"{col[1]} {col[2]}" for col in columns])
+        column_definitions = ", ".join([f"{col[1]} {col[2]}" for col in columns])
         create_table_sql = (
             f"CREATE TABLE IF NOT EXISTS {table_name} ({column_definitions});"
         )

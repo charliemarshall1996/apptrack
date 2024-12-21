@@ -2,6 +2,7 @@
 
 Script removes all migrations and backs-up existing database.
 """
+
 import logging
 import os
 import shutil
@@ -61,13 +62,14 @@ def remove_migrations():
                 if file.name != "__init__.py":
                     try:
                         logger.info("Removing migration: %s", file.name)
-                        subprocess.call(shell=True, args=[
-                                        "rm", "-f", file.name])
+                        subprocess.call(shell=True, args=["rm", "-f", file.name])
                         logger.info("Migration removed: %s", file.name)
                     except subprocess.CalledProcessError as e:
                         logger.error(
-                            "Error removing migration %s for app %s: %s", file.name,
-                            app.name, e.output
+                            "Error removing migration %s for app %s: %s",
+                            file.name,
+                            app.name,
+                            e.output,
                         )
                     else:
                         file.unlink()
@@ -81,7 +83,7 @@ def run():
 
     Backs up the existing database to a file named 'db_old.sqlite3',
     and removes all migrations from all apps in the project. If an error occurs removing
-    a migration, the error is logged. At the end of the function, a message is printed 
+    a migration, the error is logged. At the end of the function, a message is printed
     to the console, indicating which apps have had their migrations cleared.
     """
     logger.info("Running initialise_deployment_migrations script...")
