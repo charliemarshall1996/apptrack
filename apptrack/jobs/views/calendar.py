@@ -1,3 +1,4 @@
+"""Allows for a calendar-based for the requesting user's interviews."""
 import json
 
 from django.contrib.auth.decorators import login_required
@@ -12,6 +13,18 @@ from jobs.models import Interview
 @require_GET
 def calendar_view(request):
     # Prepare get data
+    """Displays a calendar for the requesting user's interviews.
+
+    The calendar displays each interview with its title, start and end times,
+    and id. The user can add new interviews and reminders, edit existing ones,
+    and view all their associated reminders.
+
+    Args:
+        request (HttpRequest): The request object.
+
+    Returns:
+        HttpResponseRedirect: Redirects to the calendar view.
+    """
     add_form = AddInterviewForm()
     add_reminder_form = AddReminderForm()
     all_interviews = Interview.objects.filter(profile=request.user.profile)
