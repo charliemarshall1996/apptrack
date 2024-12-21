@@ -1,3 +1,4 @@
+"""Manages the adding of jobs for the requesting user."""
 import logging
 
 from django.contrib.auth.decorators import login_required
@@ -13,7 +14,20 @@ logger = logging.getLogger(__name__)
 @login_required
 @require_POST
 def job_add_view(request):
-    logger.info("Adding job...")
+    """Handles POST requests to add a new job for the requesting user.
+
+    This view processes the submitted job form data. If the form is valid,
+    it saves the job, associates it with the user's profile and board, and
+    redirects to the referring URL. The referring URL is obtained from the
+    request.POST dictionary, passed as a hidden input field on the add_job_modal.
+
+    Args:
+        request (HttpRequest): The request object containing form data.
+
+    Returns:
+        HttpResponseRedirect: Redirects to the referring URL if the form is valid.
+    """
+    logger.debug("Adding job...")
     board = Board.objects.filter(profile=request.user.profile).first()
     referer_url = request.POST.get("referrer")
     logger.debug("Referer URL: %s", referer_url)
