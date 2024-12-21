@@ -1,3 +1,4 @@
+# noqa: D100
 from django.urls import reverse
 import pytest
 
@@ -6,10 +7,10 @@ from jobs.models import Job
 
 
 @pytest.mark.django_db
-def test_edit_job_view(client, job_factory, profile_factory, jobs_data):
-    PASSWORD = "securepassword"
+def test_edit_job_view(client, job_factory, profile_factory, jobs_data):  # noqa: D103
+    password = "securepassword"  # noqa: S105
 
-    profile = profile_factory(password=PASSWORD)
+    profile = profile_factory(password=password)
     profile.save()
 
     board = profile.board
@@ -22,7 +23,8 @@ def test_edit_job_view(client, job_factory, profile_factory, jobs_data):
     data = JobForm(data=jobs_data).data
     data["editJobReferrer"] = reverse("jobs:board")
     response = client.post(
-        reverse("accounts:login"), {"email": profile.user.email, "password": PASSWORD}
+        reverse("accounts:login"), {
+            "email": profile.user.email, "password": password}
     )
 
     assert response.status_code == 302

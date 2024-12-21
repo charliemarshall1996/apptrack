@@ -1,9 +1,11 @@
+# noqa: D100
 from django.urls import reverse
 import pytest
 
 
 @pytest.mark.django_db
 def test_job_list_view(client, profile_factory, job_factory):
+    """Ensures the jobs list view works over a variety of filters."""
     status = "OP"
     title = "Job Title"
     company = "Company"

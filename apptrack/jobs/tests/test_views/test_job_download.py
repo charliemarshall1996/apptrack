@@ -1,3 +1,4 @@
+# noqa: D100
 import csv
 from datetime import timedelta
 from io import StringIO
@@ -9,6 +10,7 @@ import pytest
 
 @pytest.mark.django_db
 def test_download_jobs_view(client, profile_factory, job_factory):
+    """Ensures the jobs list view works over a variety of date filters."""
     profile = profile_factory()
     profile.save()
     client.force_login(profile.user)
@@ -29,7 +31,8 @@ def test_download_jobs_view(client, profile_factory, job_factory):
     assert response.status_code == 200
 
     url = reverse("jobs:download_job")  # Replace with your view's URL name
-    response = client.post(url, {"start_date": start_date, "end_date": end_date})
+    response = client.post(
+        url, {"start_date": start_date, "end_date": end_date})
 
     # Verify the response
     assert response.status_code == 200
@@ -55,13 +58,13 @@ def test_download_jobs_view(client, profile_factory, job_factory):
     i = 0
     for row in r:
         i += 1
-        id, job_title, company, url, status, updated = row
+        pk, job_title, company, url, status, updated = row
 
-        if id == str(job1.id):
+        if pk == str(job1.id):
             job = job1
-        elif id == str(job2.id):
+        elif pk == str(job2.id):
             job = job2
-        elif id == str(job3.id):
+        elif pk == str(job3.id):
             job = job3
         else:
             assert job_title == "Job Title"
@@ -72,7 +75,7 @@ def test_download_jobs_view(client, profile_factory, job_factory):
             continue
 
         try:
-            assert job.id == int(id)
+            assert job.id == int(pk)
             assert job.job_title == job_title
             assert job.company == company
             assert job.url == url
@@ -80,10 +83,13 @@ def test_download_jobs_view(client, profile_factory, job_factory):
             assert str(job.updated) == updated
         except AssertionError:
             print(
-                f"ID: {job.id}, Job Title: {job.job_title}, Company: {job.company}, URL: {job.url}, Status: {job.get_status_display()}, Updated: {job.updated}"
+                f"ID: {job.id}, Job Title: {job.job_title}, Company: {job.company}, \
+                URL: {job.url}, Status: {job.get_status_display()}, \
+                Updated: {job.updated}"
             )
             print(
-                f"id: {id}, job_title: {job_title}, company: {company}, url: {url}, status: {status}, updated: {updated}"
+                f"id: {pk}, job_title: {job_title}, company: {company}, url: {url}, \
+                status: {status}, updated: {updated}"
             )
 
     assert i == 3
