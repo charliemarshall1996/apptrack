@@ -1,3 +1,4 @@
+"""Views for the jobs app, including a kanban board view and a calendar view."""
 from .board import board_view
 from .calendar import calendar_view
 from .interview_add import interview_add_view
