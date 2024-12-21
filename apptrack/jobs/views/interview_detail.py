@@ -1,8 +1,21 @@
+"""Manages the provision of interview details."""
 from django.http import JsonResponse
 from jobs.models import Interview
 
+# TODO: Make this a class-based APIview
+
 
 def interview_detail_view(request, interview_id):
+    """Provides the details of an interview as JSON.
+
+    Args:
+        request: The request object.
+        interview_id: The ID of the interview to retrieve.
+
+    Returns:
+        A JSON response containing the interview details if the interview is found,
+        otherwise a 404 response with an error message.
+    """
     try:
         interview = Interview.objects.get(id=interview_id)
         print(interview.start_date.isoformat())
