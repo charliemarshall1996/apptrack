@@ -1,5 +1,7 @@
+"""Manages the interview add view for the requesting user."""
 import json
 
+from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect
 from django.views.decorators.http import require_POST
@@ -11,28 +13,40 @@ from jobs.models import InterviewReminder
 @login_required
 @require_POST
 def interview_add_view(request):
-    print(f"request {request}")
-    if request.method == "POST":
-        form = AddInterviewForm(request.POST)
-        if form.is_valid():
-            interview = form.save()
+    """Manages POST requests for the interview add view.
 
-            # Get the Reminders JSON string from the POST data
-            # Use 'Reminders' as the key, as it's the name of the hidden input field
-            reminders_json = request.POST.get("reminders")
+    If the request method is POST, it validates the form and saves the changes.
+    If also handles associated reminders for the added interview, saving them.
 
-            # Parse the JSON string back into a Python list (or another appropriate type)
-            if reminders_json:
-                reminders = json.loads(reminders_json)
-                for r in reminders:
-                    InterviewReminder.objects.create(
-                        interview=interview, offset=r["offset"], unit=r["unit"]
-                    )
-            else:
-                reminders = []
+    Args:
+        request (HttpRequest): The request object.
 
-            # Save the interview data and associated reminders
-            interview.profile = request.user.profile
-            interview.save()
+    Returns:
+        HttpResponseRedirect: The response object.
+    """
+    form = AddInterviewForm(request.POST)
+    if form.is_valid():
+        interview = form.save()
 
-            return redirect("interview:calendar")
+        # Get the Reminders JSON string from the POST data
+        # Use 'Reminders' as the key, as it's the name of the hidden input field
+        reminders_json = request.POST.get("reminders")
+
+        # Parse the JSON string back into a Python list (or another appropriate type)
+        if reminders_json:
+            reminders = json.loads(reminders_json)
+            for r in reminders:
+                InterviewReminder.objects.create(
+                    interview=interview, offset=r["offset"], unit=r["unit"]
+                )
+        else:
+            reminders = []
+
+        interview.profile = request.user.profile
+        interview.save()
+
+        messages.success(request, "Interview added successfully")
+    else:
+        messages.error(
+            request, "Error adding interview: {}".format(form.errors))
+    return redirect("interview:calendar")
