@@ -1,9 +1,10 @@
+# noqa: D100
 from django.urls import reverse
 import pytest
 
 
 @pytest.mark.django_db
-def test_calendar_view(client, profile_factory):
+def test_calendar_view(client, profile_factory):  # noqa: D103
     profile = profile_factory()
     profile.save()
     url = reverse("jobs:calendar")

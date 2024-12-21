@@ -1,16 +1,18 @@
+# noqa: D100
 from django.urls import reverse
 import pytest
 
 
 @pytest.mark.django_db
-def test_board_view(client, profile_factory):
-    PASSWORD = "securepassword"
+def test_board_view(client, profile_factory):  # noqa: D103
+    password = "securepassword"  # noqa: S105
 
-    profile = profile_factory(password=PASSWORD)
+    profile = profile_factory(password=password)
     profile.save()
 
     response = client.post(
-        reverse("accounts:login"), {"email": profile.user.email, "password": PASSWORD}
+        reverse("accounts:login"), {
+            "email": profile.user.email, "password": password}
     )
 
     assert response.status_code == 302
