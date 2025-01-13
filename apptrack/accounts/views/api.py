@@ -3,7 +3,6 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from jobs.models import Job
-from target.models import Target
 
 from accounts.models import Profile
 from .utils import ConversionCalculator
@@ -13,8 +12,7 @@ User = get_user_model()
 
 class ProfileAPI(APIView):
     def get(self, request, id):
-        """
-        Handles GET requests to the API for a given user.
+        """Handles GET requests to the API for a given user.
 
         This function gets the data for a given user and
         returns it as a JSON response.
@@ -31,51 +29,12 @@ class ProfileAPI(APIView):
 
         data = {
             "basic_stats": self._get_basic_stats(profile),
-            "streak": self._get_user_streak(profile),
         }
 
         return Response(data)
 
-    def _get_user_streak(self, profile):
-        """
-        Retrieves the user's current application target and streak information.
-
-        This method attempts to fetch the Target object associated with the user's
-        profile. If no Target exists, a new one is created and saved. It then collects
-        the current number of applications and the current streak from the Target.
-
-        Args:
-            - profile (`Profile`): The Profile object representing the user's profile.
-
-        Returns:
-            - `dict`: A dictionary containing the current application target, current
-            streak, and formatted display strings for the target and streak.
-        """
-
-        # Retrieve the Target object
-        # associated with the user's profile
-        try:
-            target = Target.objects.get(profile=profile)
-        except Target.DoesNotExist:
-            target = Target(profile=profile)
-            target.save()
-
-        # Collect the current number of applications
-        # and the current streak
-        current_applications = target.current
-        streak = target.streak.current_streak
-
-        return {
-            "target": target.amount,
-            "current_applications": current_applications,
-            "streak": streak,
-            "target_display": f"Application Target: {current_applications}/{target.amount}",
-            "streak_display": f"Current Streak: {streak} Days",
-        }
-
     def _get_basic_stats(self, profile):
-        """
-        Retrieves basic statistics related to job applications for a given user profile.
+        """Retrieves basic statistics related to job applications for a given user profile.
 
         This method calculates various statistics such as the total number of jobs,
         active jobs, applied jobs, interviewed jobs, and offers associated with the
@@ -99,10 +58,11 @@ class ProfileAPI(APIView):
                 - `interview_conversion_rate`: Conversion rate from applications to interviews.
                 - `offer_conversion_rate`: Conversion rate from applications to offers.
         """
-
         total_jobs = Job.objects.filter(profile=profile).count()
-        total_active_jobs = Job.objects.filter(profile=profile, archived=False).count()
-        total_applied_jobs = Job.objects.filter(profile=profile, applied=True).count()
+        total_active_jobs = Job.objects.filter(
+            profile=profile, archived=False).count()
+        total_applied_jobs = Job.objects.filter(
+            profile=profile, applied=True).count()
         total_interviewed_jobs = Job.objects.filter(
             profile=profile, interviewed=True
         ).count()

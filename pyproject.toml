@@ -1,7 +1,7 @@
 
 # PYTEST
 [tool.pytest.ini_options]
-addopts = "--ignore=./apptrack/manage.py --ignore=*conftest.py --ignore=*__init__.py --ignore=*migrations/ --cov=apptrack --cov-report html:docs/reports/coverage/html --cov-report xml:docs/reports/coverage/xml"
+addopts = "--ignore=./apptrack/manage.py --ignore=*conftest.py --ignore=*__init__.py --ignore=*migrations/ --cov=apptrack --cov-report html:docs/reports/coverage/html"
 log_cli = "true"
 log_cli_level = "DEBUG"
 log_cli_format = "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
@@ -44,7 +44,9 @@ exclude = [
     "site-packages",
     "venv",
     "*migrations/",
-    "conf.py"
+    "conf.py",
+    "*tests*",
+    "conftest.py",
 ]
 
 

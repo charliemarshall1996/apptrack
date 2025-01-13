@@ -1,3 +1,4 @@
+
 import logging
 
 from django.core.exceptions import ObjectDoesNotExist
@@ -5,7 +6,6 @@ from django.db import models
 from django.utils import timezone
 
 from accounts.models import Profile
-from target.models import Target
 from core.models import (
     Country,
     Currency,
@@ -34,7 +34,8 @@ class Board(models.Model):
 
 
 class Column(models.Model):
-    board = models.ForeignKey("Board", on_delete=models.CASCADE, related_name="columns")
+    board = models.ForeignKey(
+        "Board", on_delete=models.CASCADE, related_name="columns")
     name = models.CharField(max_length=255)
     position = models.PositiveIntegerField()
 
@@ -138,7 +139,8 @@ class Job(models.Model):
         if not self.column and self.board:
             self.board.save()
             try:
-                position = StatusChoices.get_status_column_position(self.status)
+                position = StatusChoices.get_status_column_position(
+                    self.status)
                 name = StatusChoices.get_column_position_status_name(position)
 
                 # Retrieve the correct column
@@ -166,7 +168,8 @@ class Job(models.Model):
             if original and original.status != self.status:
                 self.column = Column.objects.filter(
                     board=self.board,
-                    position=StatusChoices.get_status_column_position(self.status),
+                    position=StatusChoices.get_status_column_position(
+                        self.status),
                 ).first()
             elif original and original.column != self.column:
                 self.status = StatusChoices.get_column_position_status(
@@ -190,8 +193,6 @@ class Job(models.Model):
                     ):
                         logger.info("Job is not applied")
                         self.applied = False
-                        self.profile.target.decrement()
-                        self.profile.target.save()
         except Job.DoesNotExist:
             pass
 
@@ -209,22 +210,6 @@ class Job(models.Model):
             if not self.date_offered_set:
                 self.date_offered_set = timezone.now()
 
-    def _manage_profile_streak(self):
-        profile_target = Target.objects.get(profile=self.profile)
-        # if job is applied
-        if self.applied:
-            # if job was not previously applied
-            try:
-                original = Job.objects.get(pk=self.pk)
-                if not original.applied:
-                    print("Incrementing applications made, job changed to applied")
-                    profile_target.increment()
-                    profile_target.save()
-            except Job.DoesNotExist:
-                print("Incrementing applications made, job created with applied")
-                profile_target.increment()
-                profile_target.save()
-
     def save(self, *args, **kwargs):
         self._manage_columns_and_boards()
         # Call the parent's save method to persist the object
@@ -233,7 +218,6 @@ class Job(models.Model):
 
         self._set_applied()
         self._set_interviewed()
-        self._manage_profile_streak()
         super().save(*args, **kwargs)
 
 
@@ -242,7 +226,8 @@ class Reminder(models.Model):
     profile = models.ForeignKey(Profile, on_delete=models.CASCADE)
 
     offset = models.IntegerField(default=1)
-    unit = models.CharField(max_length=1, choices=ReminderUnitChoices.choices())
+    unit = models.CharField(
+        max_length=1, choices=ReminderUnitChoices.choices())
 
     emailed = models.BooleanField(default=False, blank=True)
     read = models.BooleanField(default=False)
@@ -250,8 +235,8 @@ class Reminder(models.Model):
 
 class Interview(models.Model):
     interview_round = models.IntegerField(default=1)
-
-    job = models.ForeignKey(Job, on_delete=models.CASCADE, related_name="interviews")
+    job = models.ForeignKey(Job, on_delete=models.CASCADE,
+                            related_name="interviews")
     profile = models.ForeignKey(Profile, on_delete=models.CASCADE)
     round = models.IntegerField(default=1)
     start_date = models.DateTimeField()
@@ -278,4 +263,6 @@ class InterviewReminder(Reminder):
 
     @property
     def message(self):
-        return f"Reminder: Interview for {self.interview.job.job_title} at {self.interview.job.company} in {self.alert_before} {self.alert_before_unit}"
+        return f"Reminder: Interview for {self.interview.job.job_title} at \
+            {self.interview.job.company} in \
+                {self.alert_before} {self.alert_before_unit}"

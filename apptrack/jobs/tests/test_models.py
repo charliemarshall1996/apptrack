@@ -1,3 +1,4 @@
+# noqa: D100
 import logging
 
 import pytest
@@ -44,7 +45,8 @@ def test_board(profile_factory):
     ]
 
     for name, position in expected_columns:
-        assert Column.objects.filter(name=name, position=position, board=board).exists()
+        assert Column.objects.filter(
+            name=name, position=position, board=board).exists()
 
 
 @pytest.mark.django_db
@@ -89,7 +91,8 @@ def test_job_updated(profile_factory, column_factory, job_data_factory):
     profile.save()
     board = profile.board
     column = column_factory(board=board)
-    job = Job(profile=profile, column=column, board=board, **job_data_factory())
+    job = Job(profile=profile, column=column,
+              board=board, **job_data_factory())
 
     job.save()
 
@@ -126,7 +129,8 @@ def test_job_status_no_column(profile_factory, job_data_factory):
 
     assert job.column
     assert StatusChoices.get_status_name(job.status) == job.column.name
-    assert StatusChoices.get_status_column_position(job.status) == job.column.position
+    assert StatusChoices.get_status_column_position(
+        job.status) == job.column.position
 
 
 @pytest.mark.django_db
@@ -193,7 +197,8 @@ def test_interview_creates_default_tasks(interview_factory):
     ]
 
     for task in default_tasks:
-        assert InterviewTask.objects.filter(interview=interview, name=task).exists()
+        assert InterviewTask.objects.filter(
+            interview=interview, name=task).exists()
 
 
 @pytest.mark.django_db

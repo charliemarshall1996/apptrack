@@ -11,7 +11,6 @@ class Migration(migrations.Migration):
         ("accounts", "0001_initial"),
         ("contenttypes", "0002_remove_content_type_name"),
         ("jobs", "0001_initial"),
-        ("target", "0001_initial"),
     ]
 
     operations = [
@@ -112,33 +111,5 @@ class Migration(migrations.Migration):
             },
             bases=("tasks.task",),
         ),
-        migrations.CreateModel(
-            name="TargetTask",
-            fields=[
-                (
-                    "task_ptr",
-                    models.OneToOneField(
-                        auto_created=True,
-                        on_delete=django.db.models.deletion.CASCADE,
-                        parent_link=True,
-                        primary_key=True,
-                        serialize=False,
-                        to="tasks.task",
-                    ),
-                ),
-                (
-                    "target",
-                    models.ForeignKey(
-                        on_delete=django.db.models.deletion.CASCADE,
-                        related_name="task",
-                        to="target.target",
-                    ),
-                ),
-            ],
-            options={
-                "abstract": False,
-                "base_manager_name": "objects",
-            },
-            bases=("tasks.task",),
-        ),
+
     ]

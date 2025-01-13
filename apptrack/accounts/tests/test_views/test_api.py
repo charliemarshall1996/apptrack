@@ -17,4 +17,3 @@ def test_api_view(client, profile_factory):
 
     data = response.data
     assert data["basic_stats"] == api._get_basic_stats(profile)
-    assert data["streak"] == api._get_user_streak(profile)
