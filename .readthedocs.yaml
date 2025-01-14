@@ -17,7 +17,7 @@ build:
       - cat test_settings.txt >> apptrack/apptrack/settings.py
 
       # Add Anymail secrets
-      - echo "ANYMAIL = {'BREVO_API_KEY'':' '${BREVO_API_KEY}', 'IGNORE_RECIPIENT_STATUS'':' True}" >> apptrack/apptrack/settings.py
+      # - echo "ANYMAIL = {'BREVO_API_KEY': '${BREVO_API_KEY}', 'IGNORE_RECIPIENT_STATUS': True}" >> apptrack/apptrack/settings.py
 
 python:
   install:
