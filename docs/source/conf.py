@@ -12,7 +12,7 @@ import os
 project = 'AppTrack'
 copyright = '2025, Charlie Marshall'
 author = 'Charlie Marshall'
-release = 'v1.0.0'
+release = 'v1.0.2'
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
