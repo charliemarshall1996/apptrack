@@ -5,6 +5,19 @@ build:
   tools:
     python: "3.11"
   commands: []
+  jobs:
+    setup_environment:
+      # Set up settings directory
+      - mkdir -p apptrack/apptrack
+
+      # Add SECRET_KEY from environment variable
+      - echo "SECRET_KEY = '${DJANGO_SECRET_KEY}'" > apptrack/apptrack/settings.py
+
+      # Populate settings.py with test settings
+      - cat test_settings.txt >> apptrack/apptrack/settings.py
+
+      # Add Anymail secrets
+      - echo "ANYMAIL = {'BREVO_API_KEY': '${BREVO_API_KEY}', 'IGNORE_RECIPIENT_STATUS': True}" >> apptrack/apptrack/settings.py
 
 python:
   install:
