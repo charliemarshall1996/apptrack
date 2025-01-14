@@ -14,5 +14,3 @@ python:
 sphinx:
   builder: "html"
   configuration: "docs/source/conf.py"
-
-documentation_type: "sphinx"
