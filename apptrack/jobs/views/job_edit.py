@@ -6,6 +6,7 @@ import logging
 
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect
+from django.urls.exceptions import NoReverseMatch
 from django.views.decorators.http import require_POST
 
 from jobs.models import Job
@@ -42,4 +43,7 @@ def job_edit_view(request, pk):
             job.save()
             logger.info("Job saved")
             logger.info("New job url: %s", job.url)
-            return redirect(referer_url)
+            try:
+                return redirect(referer_url)
+            except (NoReverseMatch, TypeError):
+                return redirect("jobs:board")
