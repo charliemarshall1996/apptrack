@@ -15,7 +15,9 @@ build:
       # Populate settings.py with test settings
       - cat test_settings.txt >> apptrack/apptrack/settings.py
 
-      - python -m pip install -r requirements.txt
-
 sphinx:
   configuration: docs/source/conf.py
+
+python:
+  install:
+    - requirements: requirements.txt
