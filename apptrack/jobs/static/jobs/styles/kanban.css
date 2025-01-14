@@ -23,16 +23,18 @@
         }
 
 /* ---- BOARD ---- */
-.lanes {
+.swim-lane {
+    flex: 1 1 auto; /* Allow shrinking and growing with equal weight */
+    max-width: 300px;
     display: flex;
-    align-items: flex-start;
-    justify-content: start;
-    gap: 16px;
-    padding: 24px 32px;
-        
-    overflow: scroll;
-    height: 100%;
-        }
+    flex-direction: column;
+    border-radius: 5px;
+    border-width: 1px;
+    gap: 20px;
+    border: 0.5px solid black;
+    flex-shrink: 0;
+    align-items: stretch;
+}
 
 .open, .open.job-card.row.job-detail {
     color: #B0C4DE;
@@ -79,24 +81,17 @@
 .job-card {
     border-radius: 5px;
     --bs-card-border-color: black;
+    max-width: 175px;
 }
 
+.job-detail {
+    max-width: 95%;
+}
 
 
 .card-header {
     border-bottom: 0.5px solid black;
 }
-        
-.swim-lane {
-    display: flex;
-    flex-direction: column;
-    border-radius: 5px;
-    border-width: 1px;
-    gap: 20px;
-    border: 0.5px solid black;
-    flex-shrink: 0;
-    align-items: stretch;
-        }
 
 #open.card-header:-moz-drag-over {
     scale: 1.05;

@@ -31,23 +31,23 @@
     </div>
 
     <div class="row board mt-5">
-        <div class="lanes d-flex flex-nowrap overflow-auto py-3 justify-content-between">
+        <div class="lanes d-flex flex-nowrap py-3 justify-content-between">
             {% for column in columns %}
                 <div class="swim-lane card mx-2 {{ column.name|lower }}" id="{{ column.id }}">
                     <div class="card-header p-2 text-center text-truncate {{ column.name|lower }}">
                         <h2 class="{{ column.name|lower }}">{{ column.name }}</h2>
                     </div>
-                    <div class="card-body p-0 justify-content-center text-truncate {{ column.name|lower }}">
+                    <div class="card-body p-0 justify-content-center {{ column.name|lower }}">
 
                         {% for job in jobs|column_jobs:column %}
                             <div class="task m-2 card align-content-center job-card" draggable="true" id="{{ job.id }}">
-                                <div class="card-body py-0 px-1 job-card text-truncate">
-                                    <div class="d-flex justify-content-between align-items-start">
+                                <div class="card-body py-0 px-1 job-card">
+                                    <div class="d-flex justify-content-between align-items-start job-detail">
                                         <!-- Job details -->
-                                        <div class="list-group list-group-flush me-auto">
-                                            <div class="list-group-item"><strong>Title:</strong> {{ job.job_title }}</div>
-                                            <div class="list-group-item"><strong>Company:</strong> {{ job.company }}</div>
-                                            <div class="list-group-item"><strong>City:</strong> {{ job.city }}</div>
+                                        <div class="list-group list-group-flush me-auto job-detail">
+                                            <div class="list-group-item text-truncate"><strong>Title:</strong> {{ job.job_title }}</div>
+                                            <div class="list-group-item text-truncate"><strong>Company:</strong> {{ job.company }}</div>
+                                            <div class="list-group-item text-truncate"><strong>City:</strong> {{ job.city }}</div>
                                         </div>
 
                                         <!-- Move the 'a' tag to the top-right -->
