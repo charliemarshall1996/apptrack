@@ -28,7 +28,7 @@ class InterviewTask(Task):
     """Interview task model."""
 
     interview = models.ForeignKey(
-        "jobs.Interview", related_name="tasks", on_delete=models.CASCADE
+        "interviews.Interview", related_name="tasks", on_delete=models.CASCADE
     )
 
     @property

@@ -1,4 +1,4 @@
-from .models import Interview, InterviewReminder
+
 from django import forms
 
 from core.models import Country
@@ -36,7 +36,8 @@ class JobForm(forms.ModelForm):
 
 
 class DownloadJobsForm(forms.Form):
-    start_date = forms.DateField(widget=forms.DateInput(attrs={"type": "date"}))
+    start_date = forms.DateField(
+        widget=forms.DateInput(attrs={"type": "date"}))
     end_date = forms.DateField(widget=forms.DateInput(attrs={"type": "date"}))
 
 
@@ -87,33 +88,3 @@ class JobFilterForm(forms.Form):
             (job_function.code, job_function.name)
             for job_function in JobFunction.objects.all()
         ]
-
-
-class AddInterviewForm(forms.ModelForm):
-    class Meta:
-        model = Interview
-        fields = [
-            "job",
-            "start_date",
-            "end_date",
-            "post_code",
-            "building",
-            "street",
-            "city",
-            "region",
-            "country",
-            "notes",
-        ]
-        widgets = {
-            "start_date": forms.DateTimeInput(attrs={"type": "datetime-local"}),
-            "end_date": forms.DateTimeInput(attrs={"type": "datetime-local"}),
-        }
-
-    def save(self):
-        return super().save(commit=False)
-
-
-class AddReminderForm(forms.ModelForm):
-    class Meta:
-        model = InterviewReminder
-        fields = ["offset", "unit"]

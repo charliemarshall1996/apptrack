@@ -6,18 +6,6 @@ app_name = "jobs"
 
 urlpatterns = [
     path("board/", views.board_view, name="board"),
-    path("calendar/", views.calendar_view, name="calendar"),
-    path("interview-add/", views.interview_add_view, name="add_interview"),
-    path(
-        "interview-detail/<int:interview_id>/",
-        views.interview_detail_view,
-        name="interview_detail",
-    ),
-    path(
-        "interview-edit/<int:interview_id>/",
-        views.interview_edit_view,
-        name="edit_interview",
-    ),
     path("job-add/", views.job_add_view, name="add_job"),
     path("job-archive/", views.JobArchiveView.as_view(), name="archive_job"),
     path(

@@ -4,7 +4,7 @@ import logging
 
 from django.db.models.signals import post_save
 from django.dispatch import receiver
-from jobs.models import Interview
+from interviews.models import Interview
 from .models import InterviewTask
 
 logger = logging.getLogger(__name__)

@@ -13,7 +13,8 @@ from core.choices import (
     SourceChoices,
     ReminderUnitChoices,
 )
-from jobs.models import Job, Board, Column, Interview
+from jobs.models import Job, Board, Column
+from interviews.models import Interview
 from blog.models import BlogPost
 
 UserModel = get_user_model()

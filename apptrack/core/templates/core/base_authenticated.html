@@ -68,7 +68,7 @@
             <a class="nav-link {% if request.path == '/tasks/task-cards/' %}active{% endif %}" href="{% url 'tasks:cards' %}">Tasks</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link {% if request.path == '/jobs/calendar/' %}active{% endif %}" href="{% url 'jobs:calendar' %}">Interview Calendar</a>
+            <a class="nav-link {% if request.path == '/interviews/' %}active{% endif %}" href="{% url 'interviews:home' %}">Interviews</a>
           </li>
           <li class="nav-item">
             <a class="nav-link {% if request.path == '/jobs/job-download/' %}active{% endif %}" href="{% url 'jobs:download_job' %}">Download Report</a>

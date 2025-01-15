@@ -1,7 +1,8 @@
 from django.shortcuts import render
 from django.utils import timezone
 
-from jobs.models import Job, Interview
+from jobs.models import Job
+from interviews.models import Interview
 from tasks.models import Task
 
 
