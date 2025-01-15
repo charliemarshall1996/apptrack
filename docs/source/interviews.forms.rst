@@ -1,6 +1,7 @@
-calendar
-======
-.. automodule:: jobs.views.calendar
+forms
+=====
+
+.. automodule:: interviews.forms
    :members:
    :undoc-members:
    :show-inheritance:

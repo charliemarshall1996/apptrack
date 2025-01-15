@@ -8,5 +8,6 @@ AppTrack documentation
    accounts
    blog
    core
+   interviews
    jobs
    tasks

@@ -1,6 +1,7 @@
-interview_add
+models
 ======
-.. automodule:: jobs.views.interview_add
+
+.. automodule:: interviews.models
    :members:
    :undoc-members:
    :show-inheritance:
