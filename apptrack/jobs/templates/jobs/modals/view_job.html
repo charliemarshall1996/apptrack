@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 {% load static %}
 {% for job in jobs %}
+    {% if job.id %}
     <div class="modal fade" id="jobDetailModal{{ job.id }}" tabindex="-1" aria-labelledby="jobDetailModalLabel{{ job.id }}" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -141,5 +142,6 @@
             </div>
         </div>
     </div>
+    {% endif %}
 
 {% endfor %}

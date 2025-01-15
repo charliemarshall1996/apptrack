@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 
 {% for job in jobs %}
+    {% if job.id %}
     <div class="modal fade" id="jobDeleteConfirm{{ job.id }}" tabindex="-1" aria-labelledby="jobDeleteConfirmLabel{{ job.id }}" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -21,4 +22,5 @@
             </div>
         </div>
     </div>
+    {% endif %}
 {% endfor %}

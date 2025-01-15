@@ -4,7 +4,8 @@
 
 {% for key, val in edit_forms.items %}
     {% for job in jobs %}
-        {% if key == job.id %}
+        {% if job.id %}
+            {% if job.id == key %}
             <div class="modal fade" id="editJobModal{{ job.id }}" tabindex="-1" aria-labelledby="editJobModalLabel{{ job.id }}" aria-hidden="true">
                 <div class="modal-dialog">
                     <div class="modal-content">
@@ -143,6 +144,7 @@
                     </div>
                 </div>
             </div>
+            {% endif %}
         {% endif %}
     
     {% endfor %}
