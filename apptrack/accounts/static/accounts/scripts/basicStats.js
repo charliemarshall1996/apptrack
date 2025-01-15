@@ -2,9 +2,8 @@
 
 $.ajax({ 
     method: "GET", 
-    url: userDataEndpoint, 
+    url: userDataEndpoint + userID, 
     success: function(data) {
-      data = data.basic_stats
       displayBasicStat(data, 'interviewConversionRate');
       displayBasicStat(data, 'totalApplications');
       displayBasicStat(data, 'totalInterviews')
@@ -21,7 +20,7 @@ $.ajax({
         if (id == "interviewConversionRate") {
             statData = data.interview_conversion_rate;
         } else if (id == "totalApplications") {
-            statData = data.total_jobs;
+            statData = data.total_applied_jobs;
         } else {
             statData = data.total_interviewed_jobs;
         }

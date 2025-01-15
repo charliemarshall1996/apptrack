@@ -24,13 +24,15 @@ class ProfileAPI(APIView):
         Returns:
             - :return: A Response object containing the JSON data
         """
+        print("Request recieved for user: " + id)
         user = User(id=id)
+        print("User found: " + user.email)
         profile = Profile.objects.get(user=user)
-
+        print("Profile found: " + str(profile.id))
         data = {
             "basic_stats": self._get_basic_stats(profile),
         }
-
+        print("Data: " + str(data))
         return Response(data)
 
     def _get_basic_stats(self, profile):
