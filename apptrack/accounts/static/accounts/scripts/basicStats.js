@@ -2,8 +2,9 @@
 
 $.ajax({ 
     method: "GET", 
-    url: userDataEndpoint + userID, 
+    url: userDataEndpoint, 
     success: function(data) {
+      data = data.basic_stats;
       displayBasicStat(data, 'interviewConversionRate');
       displayBasicStat(data, 'totalApplications');
       displayBasicStat(data, 'totalInterviews')
@@ -15,6 +16,7 @@ $.ajax({
   }); 
 
     function displayBasicStat(data, id) {
+        console.log("DATA: " + data);
         var statData = "";
         var statElement = document.getElementById(id);
         if (id == "interviewConversionRate") {

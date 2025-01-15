@@ -24,7 +24,7 @@ class ProfileAPI(APIView):
         Returns:
             - :return: A Response object containing the JSON data
         """
-        print("Request recieved for user: " + id)
+        print("Request recieved for user: " + str(id))
         user = User(id=id)
         print("User found: " + user.email)
         profile = Profile.objects.get(user=user)

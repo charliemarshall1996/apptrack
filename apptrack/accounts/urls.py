@@ -6,7 +6,7 @@ from . import views
 
 app_name = "accounts"
 urlpatterns = [
-    path("api/", views.ProfileAPI.as_view(), name="api"),
+    path("api/<int:id>/", views.ProfileAPI.as_view(), name="api"),
     path("registration/", views.registration_view, name="register"),
     path("login/", views.login_view, name="login"),
     path("logout/", views.logout_view, name="logout"),

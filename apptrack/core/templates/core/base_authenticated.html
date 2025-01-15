@@ -34,7 +34,7 @@
   <!-- UserID -->
   <script>
     const userID = "{{ user_id }}";
-    var userDataEndpoint = "{% url 'accounts:api' %}";
+    var userDataEndpoint = "{% url 'accounts:api' 0 %}".replace("0", userID);
   </script>
   
   {% block css %}
