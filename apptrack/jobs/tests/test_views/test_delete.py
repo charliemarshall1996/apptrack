@@ -23,7 +23,7 @@ def test_delete_job_view(client, job_factory, profile_factory):  # noqa: D103
 
     assert response.status_code == 302
 
-    url = reverse("jobs:delete_job", kwargs={"pk": job.pk})
+    url = reverse("jobs:delete", kwargs={"pk": job.pk})
     response = client.get(url)
 
     try:

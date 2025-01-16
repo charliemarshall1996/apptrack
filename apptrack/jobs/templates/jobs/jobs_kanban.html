@@ -1,9 +1,9 @@
 
 <!DOCTYPE html>
 
-{% extends 'core/base_authenticated.html' %}
+{% extends 'jobs/base.html' %}
 
-{% block content %}
+{% block page_content %}
 
 {% load static %}
 {% load filter %}
@@ -66,10 +66,10 @@
 </div>
 
 
-{% include 'jobs/modals/view_job.html' %}
-{% include 'jobs/modals/add_job.html' %}
-{% include 'jobs/modals/edit_job.html' %}
-{% include 'jobs/modals/delete_job.html' %}
+{% include 'jobs/modals/detail.html' %}
+{% include 'jobs/modals/add.html' %}
+{% include 'jobs/modals/edit.html' %}
+{% include 'jobs/modals/delete.html' %}
 {% include 'jobs/modals/archive.html' %}
 
 

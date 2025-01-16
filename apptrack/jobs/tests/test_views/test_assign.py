@@ -32,7 +32,7 @@ def test_assign_job_view(client, profile_factory, job_factory):  # noqa: D103
     assert response.status_code == 302
 
     url = reverse(
-        "jobs:assign_job", kwargs={"job_id": str(job.id), "col_id": str(columns[1])}
+        "jobs:assign", kwargs={"job_id": str(job.id), "col_id": str(columns[1])}
     )
 
     response = client.post(url)

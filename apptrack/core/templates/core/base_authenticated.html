@@ -59,19 +59,13 @@
             <a class="nav-link {% if request.path == 'accounts/dashboard/' %}active{% endif %}" href="{% url 'accounts:dashboard' %}">Dashboard</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link {% if request.path == '/jobs/board/' %}active{% endif %}" href="{% url 'jobs:board' %}">Board</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link {% if request.path == 'jobs:list/' %}active{% endif %}" href="{% url 'jobs:list' %}">List</a>
+            <a class="nav-link {% if request.path == '/jobs/board/' %}active{% endif %}" href="{% url 'jobs:board' %}">Jobs</a>
           </li>
           <li class="nav-item">
             <a class="nav-link {% if request.path == '/tasks/task-cards/' %}active{% endif %}" href="{% url 'tasks:cards' %}">Tasks</a>
           </li>
           <li class="nav-item">
             <a class="nav-link {% if request.path == '/interviews/' %}active{% endif %}" href="{% url 'interviews:home' %}">Interviews</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link {% if request.path == '/jobs/job-download/' %}active{% endif %}" href="{% url 'jobs:download_job' %}">Download Report</a>
           </li>
           <li class="nav-item">
             <a class="nav-link {% if request.path == '/accounts/profile/{{ user.profile.id }}' %}active{% endif %}" href="{% url 'accounts:profile' user.profile.id %}">Profile</a>

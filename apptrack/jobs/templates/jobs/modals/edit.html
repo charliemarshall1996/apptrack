@@ -14,7 +14,7 @@
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
                         <div class="modal-body">
-                            <form method="POST" id="editJobForm{{ job.id }}" action="{% url 'jobs:edit_job' job.id %}">
+                            <form method="POST" id="editJobForm{{ job.id }}" action="{% url 'jobs:edit' job.id %}">
                                 {% csrf_token %}
                                 {% load crispy_forms_tags %}
                                 <div class="row">

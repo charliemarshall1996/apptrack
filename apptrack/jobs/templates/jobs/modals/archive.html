@@ -12,7 +12,7 @@
         The job's status is marked as Rejected or Closed. Would you like to archive this job?
       </div>
       <div class="modal-footer">
-        <form method="POST" action="{% url 'jobs:archive_job' %}">
+        <form method="POST" action="{% url 'jobs:archive' %}">
           {% csrf_token %}
           <input type="hidden" name="job_id" id="jobIdToArchive" value="">
           <button type="submit" class="btn btn-primary">Yes, Archive</button>

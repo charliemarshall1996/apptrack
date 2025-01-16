@@ -29,7 +29,7 @@ def test_edit_job_view(client, job_factory, profile_factory, jobs_data):  # noqa
 
     assert response.status_code == 302
 
-    url = reverse("jobs:edit_job", kwargs={"pk": job.pk})
+    url = reverse("jobs:edit", kwargs={"pk": job.pk})
     response = client.post(url, data)
 
     # Get the updated job

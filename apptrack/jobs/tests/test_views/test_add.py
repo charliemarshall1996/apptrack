@@ -19,7 +19,7 @@ def test_add_job_view(client, profile_factory, job_data_factory):  # noqa: D103
 
     assert response.status_code == 302
 
-    url = reverse("jobs:add_job")
+    url = reverse("jobs:add")
 
     # POST request with valid data should add job
     response = client.post(url, data)

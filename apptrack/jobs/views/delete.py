@@ -24,4 +24,4 @@ class JobDeleteView(LoginRequiredMixin, SuccessMessageMixin, View):
     def post(self, request, *args, **kwargs):  # noqa: D102
         job = self.model.objects.get(id=kwargs["pk"])
         job.delete()
-        return redirect(reverse("core:home"))
+        return redirect(reverse("jobs:board"))

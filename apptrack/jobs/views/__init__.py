@@ -1,12 +1,12 @@
 """Views for the jobs app, including a kanban board view and a calendar view."""
 from .board import board_view
-from .job_add import job_add_view
-from .job_archive import JobArchiveView
-from .job_assign import JobAssignView
-from .job_delete import JobDeleteView
-from .job_download import job_download_view
-from .job_edit import job_edit_view
-from .job_list import JobListView
+from .add import job_add_view
+from .archive import JobArchiveView
+from .assign import JobAssignView
+from .delete import JobDeleteView
+from .download import job_download_view
+from .edit import job_edit_view
+from .list import JobListView
 
 __all__ = [
     "board_view",

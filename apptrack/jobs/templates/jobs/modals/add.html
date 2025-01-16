@@ -8,7 +8,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <form method="POST" id="addJobForm" action="{% url 'jobs:add_job' %}">
+                <form method="POST" id="addJobForm" action="{% url 'jobs:add' %}">
                     {% load crispy_forms_tags %}
                     {% csrf_token %}
                     <div class="row">

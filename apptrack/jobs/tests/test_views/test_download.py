@@ -9,7 +9,7 @@ import pytest
 
 
 @pytest.mark.django_db
-def test_download_jobs_view(client, profile_factory, job_factory):
+def test_downloads_view(client, profile_factory, job_factory):
     """Ensures the jobs list view works over a variety of date filters."""
     profile = profile_factory()
     profile.save()
@@ -24,13 +24,13 @@ def test_download_jobs_view(client, profile_factory, job_factory):
     end_date = timezone.now()
     start_date = end_date - timedelta(days=15)
 
-    url = reverse("jobs:download_job")
+    url = reverse("jobs:download")
 
     response = client.get(url)
 
     assert response.status_code == 200
 
-    url = reverse("jobs:download_job")  # Replace with your view's URL name
+    url = reverse("jobs:download")  # Replace with your view's URL name
     response = client.post(
         url, {"start_date": start_date, "end_date": end_date})
 
