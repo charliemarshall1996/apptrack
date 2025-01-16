@@ -1,1 +1,25 @@
 
+<!DOCTYPE html>
+{% extends 'jobs/base.html' %}
+
+{% block page_content %}
+
+  <div class="card w-50 m-auto">
+      <div class="card-header">
+        <h2>Jobs Settings</h2>
+      </div>
+
+      <div class="card-body">
+        {% load crispy_forms_tags %}
+        <form method="POST">
+            {% csrf_token %}
+            {{ form|crispy }}
+            <button type="submit" class="btn btn-primary">Update</button>
+        </form>
+    </div>
+    <div class="card-footer text-center">
+        <a class="btn btn-danger" href="{% url 'accounts:delete_account' %}">Delete Account</a>
+    </div>
+  </div>
+
+{% endblock %}
