@@ -7,10 +7,13 @@ creating default columns for the board.
 """
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+from django.utils import timezone
 
 from accounts.models import Profile
+from accounts.views import user_login
+from core.choices import StatusChoices
 
-from .models import Board, Column
+from .models import Board, Column, Job
 
 
 @receiver(post_save, sender=Profile)
@@ -37,3 +40,18 @@ def create_columns_on_board_creation(sender, instance, created, **kwargs):  # no
             column = Column.objects.create(
                 board=instance, name=name, position=position)
             column.save()
+
+
+@receiver(user_login)
+def auto_archive(sender, instance, created, **kwargs):
+    profile = instance.profile
+    jobs = Job.objects.filter(profile=profile)
+    settings = profile.job_settings
+
+    for job in jobs:
+        if settings.auto_archive and job.status == StatusChoices.APPLIED[0]:
+            today = timezone.now().date()
+
+            if (today - job.date_applied.date()) >= (settings.archive_after_weeks * 7):
+                job.archived = True
+                job.save()

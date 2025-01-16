@@ -73,7 +73,8 @@ def login_non_verified_email(request, email):
                 time_since_last_email, timeout_duration
             )
             minutes_difference = round(minutes_difference)
-            message = AccountsMessageManager.resend_email_wait(minutes_difference)
+            message = AccountsMessageManager.resend_email_wait(
+                minutes_difference)
     else:
         logger.info("Email not sent")
         url = reverse("accounts:resend")
@@ -113,7 +114,7 @@ def login_view(request):
                             )
                             break
 
-                    user_login.send(sender=user.__class__, user=user.id)
+                    user_login.send(sender=user.__class__, instance=user)
                     login(request, user)
                     return redirect("accounts:dashboard")
 
