@@ -111,8 +111,8 @@ class Job(models.Model):
     date_offered_set = models.DateField(null=True, blank=True)
 
     archived = models.BooleanField(null=True, blank=True, default=False)
-    auto_archive = models.BooleanField(null=True, blank=True, default=False)
-    archive_after_weeks = models.IntegerField(null=True, blank=True, default=2)
+    has_been_archived = models.BooleanField(
+        null=True, blank=True, default=False)
 
     def __str__(self):
         return f"{self.company} - {self.job_title}"
@@ -213,9 +213,18 @@ class Job(models.Model):
     def save(self, *args, **kwargs):
         self._manage_columns_and_boards()
         # Call the parent's save method to persist the object
-
         self._update_if_changed()
-
         self._set_applied()
         self._set_interviewed()
         super().save(*args, **kwargs)
+
+
+class Settings(models.Model):
+    """This model represents the job settings for a user."""
+
+    profile = models.OneToOneField(
+        Profile, on_delete=models.CASCADE, related_name="job_settings"
+    )
+
+    auto_archive = models.BooleanField(null=True, blank=True, default=True)
+    archive_after_weeks = models.IntegerField(null=True, blank=True, default=2)

@@ -17,4 +17,5 @@ urlpatterns = [
     path("download/", views.job_download_view, name="download"),
     path("edit/<int:pk>/", views.job_edit_view, name="edit"),
     path("list/", views.JobListView.as_view(), name="list"),
+    path("settings/", views.settings_view, name="settings"),
 ]

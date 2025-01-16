@@ -2,7 +2,7 @@
 from django import forms
 
 from core.models import Country
-from .models import Job, StatusChoices, JobFunction
+from .models import Job, StatusChoices, JobFunction, Settings
 
 
 class JobForm(forms.ModelForm):
@@ -88,3 +88,14 @@ class JobFilterForm(forms.Form):
             (job_function.code, job_function.name)
             for job_function in JobFunction.objects.all()
         ]
+
+
+class SettingsForm(forms.ModelForm):
+    class Meta:
+        model = Settings
+        fields = [
+            "auto_archive",
+            "archive_after_weeks",
+        ]
+
+        widgets = {"auto_archive": forms.CheckboxInput()}
