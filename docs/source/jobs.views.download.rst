@@ -1,6 +1,6 @@
-job_edit
+download
 ========
-.. automodule:: jobs.views.job_edit
+.. automodule:: jobs.views.download
    :members:
    :undoc-members:
    :show-inheritance:

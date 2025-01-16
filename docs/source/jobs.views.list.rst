@@ -1,6 +1,6 @@
-job_add
-=======
-.. automodule:: jobs.views.job_add
+list
+====
+.. automodule:: jobs.views.list
    :members:
    :undoc-members:
    :show-inheritance:
