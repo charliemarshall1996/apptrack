@@ -13,7 +13,7 @@ from accounts.models import Profile
 from accounts.views import user_login
 from core.choices import StatusChoices
 
-from .models import Board, Column, Job
+from .models import Board, Column, Job, Settings
 
 
 @receiver(post_save, sender=Profile)
@@ -43,11 +43,13 @@ def create_columns_on_board_creation(sender, instance, created, **kwargs):  # no
 
 
 @receiver(user_login)
-def auto_archive(sender, instance, created, **kwargs):
+def auto_archive(sender, instance, **kwargs):
     profile = instance.profile
     jobs = Job.objects.filter(profile=profile)
-    settings = profile.job_settings
+    settings, created = Settings.objects.get_or_create(profile=profile)
 
+    if created:
+        settings.save()
     for job in jobs:
         if settings.auto_archive and job.status == StatusChoices.APPLIED[0]:
             today = timezone.now().date()
