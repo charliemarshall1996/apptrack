@@ -4,7 +4,7 @@ from django_ckeditor_5.fields import CKEditor5Field
 
 class BlogPost(models.Model):
     title = models.CharField(max_length=200)
-    content = CKEditor5Field('Text', config_name='extends')
+    content = CKEditor5Field('text', config_name='extends')
     summary = models.TextField()
     published = models.DateTimeField()
 

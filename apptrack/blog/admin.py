@@ -1,11 +1,7 @@
 from django.contrib import admin
+from django.apps import apps
 
-# Register your models here.
-from .models import BlogPost
+app_models = apps.get_app_config("blog").get_models()
 
-
-@admin.register(BlogPost)
-class BlogPostAdmin(admin.ModelAdmin):
-    list_display = ("title", "published")
-    search_fields = ("title", "content")
-    ordering = ("-published",)
+for model in app_models:
+    admin.site.register(model)
