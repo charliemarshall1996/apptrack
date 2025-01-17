@@ -1,7 +1,7 @@
 """This module contains the signals for the jobs app.
 
 The create_board_on_profile_creation function is called when a new profile is created,
-creating a corresponding board for the profile instance. The 
+creating a corresponding board for the profile instance. The
 create_columns_on_board_creation function is called when a new board is created,
 creating default columns for the board.
 """
@@ -53,7 +53,11 @@ def auto_archive(sender, instance, **kwargs):
     for job in jobs:
         if settings.auto_archive and job.status == StatusChoices.APPLIED[0]:
             today = timezone.now().date()
-
-            if (today - job.date_applied.date()) >= (settings.archive_after_weeks * 7):
-                job.archived = True
+            if job.date_applied:
+                date_diff = today - job.date_applied
+                if date_diff.days >= (settings.archive_after_weeks * 7):
+                    job.archived = True
+                    job.save()
+            else:
+                job.date_applied = today
                 job.save()
