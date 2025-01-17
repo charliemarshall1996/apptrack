@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [V1.1.0]
 
+### Added
+
+- auto_archive receiver added to jobs signals.py, to auto archive jobs on user login, based on user settings.
+
 ### Changed
 
 - Put jobs app onto single nav-link in base authenticated navigation
