@@ -7,9 +7,9 @@ from tasks.models import Task
 
 
 def dashboard_view(request):
-    """
-    A view that renders a dashboard for the user
-    with the following data:
+    """A view that renders a dashboard for the user.
+
+    This view renders the dashboard template with the following data:
 
     - The 10 most recently updated jobs
     - The 10 most recently scheduled interviews
@@ -27,19 +27,19 @@ def dashboard_view(request):
     jobs = (
         Job.objects.filter(profile=request.user.profile, archived=False)
         .order_by("updated")
-        .all()[:10]
+        .all()[:5]
     )
     interviews = (
         Interview.objects.filter(
             profile=request.user.profile, start_date__gte=timezone.now()
         )
         .order_by("start_date")
-        .all()[:10]
+        .all()[:5]
     )
     tasks = (
         Task.objects.filter(profile=request.user.profile, is_completed=False)
         .order_by("priority")
-        .all()[:10]
+        .all()[:5]
     )
 
     context = {
