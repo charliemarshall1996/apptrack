@@ -23,7 +23,7 @@ from django.urls import path, include
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("", include("core.urls")),
-    path("ckeditor/", include("ckeditor_uploader.urls")),
+    path("ckeditor5/", include('django_ckeditor_5.urls')),
     path("accounts/", include("accounts.urls")),
     path("blog/", include("blog.urls")),
     path("jobs/", include("jobs.urls")),
