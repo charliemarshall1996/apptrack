@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- Changed board cards detail to provide more info
 - Put jobs app onto single nav-link in base authenticated navigation
 - Separated interviews into separate app
 
