@@ -26,7 +26,8 @@ def board_view(request):
     job board and sends a warning message.
     """
     jobs = Job.objects.filter(
-        profile=request.user.profile, archived=False).all()
+        profile=request.user.profile, archived=False).order_by('job_title',
+                                                               'company').all()
     board, created = Board.objects.get_or_create(profile=request.user.profile)
     if created:
         messages.warning(
