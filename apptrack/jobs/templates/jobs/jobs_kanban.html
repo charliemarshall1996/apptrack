@@ -8,7 +8,7 @@
 {% load static %}
 {% load filter %}
 {% csrf_token %}
-
+<head>{% block subtitle %}<title>Jobs | Board</title>{% endblock %}</head>
 <meta name="csrf-token" content="{{ csrf_token }}">
 
 <link rel="stylesheet" href="{% static 'jobs/styles/kanban.css' %}" />

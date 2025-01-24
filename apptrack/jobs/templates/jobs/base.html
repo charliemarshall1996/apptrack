@@ -2,6 +2,13 @@
 
 {% extends 'core/base_authenticated.html' %}
 
+<head>
+    {% block title %}
+        {% block subtitle %}
+        {% endblock %}
+    {% endblock %}
+</head>
+
 {% block content %}
     <nav class="navbar navbar navbar-expand-md navbar-light px-3">
         
