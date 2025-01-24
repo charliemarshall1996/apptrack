@@ -14,12 +14,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- Made jobs be ordered by job title on board view
 - Changed board cards detail to provide more info
 - Put jobs app onto single nav-link in base authenticated navigation
 - Separated interviews into separate app
 
 ### Fixed
 
+- Ensured that board refreshes on all status changes
 - Fixed missing .ico on authenticated base
 - Fixed edit job button on list view
 - Fixed add job button on list view, to point to correct modal
