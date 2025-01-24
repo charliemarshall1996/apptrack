@@ -15,7 +15,7 @@ from core.models import (
     PayRate,
 )
 
-from core.choices import StatusChoices, SourceChoices, ReminderUnitChoices
+from core.choices import StatusChoices, SourceChoices
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)

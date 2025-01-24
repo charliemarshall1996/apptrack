@@ -45,9 +45,21 @@
                                     <div class="d-flex justify-content-between align-items-start job-detail">
                                         <!-- Job details -->
                                         <div class="list-group list-group-flush me-auto job-detail">
-                                            <div class="list-group-item text-truncate"><strong>Title:</strong> {{ job.job_title }}</div>
-                                            <div class="list-group-item text-truncate"><strong>Company:</strong> {{ job.company }}</div>
-                                            <div class="list-group-item text-truncate"><strong>City:</strong> {{ job.city }}</div>
+                                            {% if job.job_title and job.job_title != 'None' %}
+                                            <div class="list-group-item text-truncate">
+                                                {{ job.job_title }}
+                                            </div>
+                                            {% endif %}
+                                            {% if job.company and job.company != 'None' %}
+                                            <div class="list-group-item text-truncate">
+                                                {{ job.company }}
+                                            </div>
+                                            {% endif %}
+                                            {% if job.city and job.city != 'None' %}
+                                            <div class="list-group-item text-truncate">
+                                                {{ job.city }}
+                                            </div>
+                                            {% endif %}
                                         </div>
 
                                         <!-- Move the 'a' tag to the top-right -->
