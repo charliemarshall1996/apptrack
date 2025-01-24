@@ -12,7 +12,6 @@ User = get_user_model()
 
 @login_required
 def settings_view(request):
-    pk = request.user.id
 
     user = User.objects.get(pk=request.user.pk)
     profile = user.profile

@@ -126,11 +126,16 @@ class JobListView(LoginRequiredMixin, ListView):
         Returns:
             dict: The context data.
         """
+        jobs = Job.objects.filter(
+            profile=self.request.user.profile, archived=False).all()
+        edit_forms = {job.id: JobForm(instance=job) for job in jobs}
         context = super().get_context_data(**kwargs)
         context["user_id"] = self.request.user.id
         context["filter_form"] = JobFilterForm(
             self.request.GET
         )  # Pass form to template
+
+        context["edit_forms"] = edit_forms
 
         context["job_form"] = JobForm()
         return context
