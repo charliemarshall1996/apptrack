@@ -91,9 +91,8 @@ function post_request(col_id, job_id){
         showArchiveModal(data.job_id);
       } else if (data.job_status == 'CL') {
         showArchiveModal(data.job_id);
-      } else {
-        window.location.reload();
       };
+      window.location.reload();
       
       
     },
