@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Added dynamic page meta titles
 - auto_archive receiver added to jobs signals.py, to auto archive jobs on user login, based on user settings.
 
 ### Changed
