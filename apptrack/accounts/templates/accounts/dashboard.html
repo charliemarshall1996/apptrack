@@ -3,12 +3,13 @@
 {% extends 'core/base_authenticated.html' %}
 
 {% load static %}
-{% block content %}
-
 <head>
+    {% block title %}
     <title>Dashboard</title>
-    
+    {% endblock title %}
 </head>
+
+{% block content %}
 <div class="row">
     <div class="col">
         <h1>Dashboard</h1>
