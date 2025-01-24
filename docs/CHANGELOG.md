@@ -18,6 +18,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- Fixed edit job button on list view
 - Fixed add job button on list view, to point to correct modal
 
 ## [V1.0.3]
