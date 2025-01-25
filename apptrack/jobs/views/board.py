@@ -48,4 +48,4 @@ def board_view(request):
     }
 
     # Render template
-    return render(request, "jobs/jobs_kanban.html", context)
+    return render(request, "jobs/board.html", context)
