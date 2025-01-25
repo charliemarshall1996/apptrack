@@ -14,6 +14,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- Changes to auto_archive in jobs/signals.py
+- Changes to \_set_archived method in Job model
 - Made jobs be ordered by job title on board view
 - Changed board cards detail to provide more info
 - Put jobs app onto single nav-link in base authenticated navigation
