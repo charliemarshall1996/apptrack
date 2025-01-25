@@ -1,8 +1,12 @@
 """URLs for the tasks app."""
 
-from django.urls import path
+from django import urls
 from . import views
 
+from rest_framework.routers import DefaultRouter
+
+router = DefaultRouter()
+router.register(r'tasks', views.TaskViewset, basename='tasks')
 app_name = "tasks"
 
-urlpatterns = [path("cards/", views.task_cards_view, name="cards")]
+urlpatterns = router.urls

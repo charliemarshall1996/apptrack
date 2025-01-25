@@ -51,13 +51,12 @@ def auto_archive(sender, instance, **kwargs):
     if created:
         settings.save()
     for job in jobs:
-        if settings.auto_archive and job.status == StatusChoices.APPLIED[0]:
+        if settings.auto_archive and any([job.status == StatusChoices.APPLIED[0],
+                                          job.status == StatusChoices.REJECTED[0],
+                                          job.status == StatusChoices.CLOSED[0],
+                                          job.status == StatusChoices.OPEN[0]]):
             today = timezone.now().date()
-            if job.date_applied:
-                date_diff = today - job.date_applied
-                if date_diff.days >= (settings.archive_after_weeks * 7):
-                    job.archived = True
-                    job.save()
-            else:
-                job.date_applied = today
+            date_diff = today - job.created.date()
+            if date_diff.days >= (settings.archive_after_weeks * 7):
+                job.archived = True
                 job.save()

@@ -152,10 +152,12 @@ class Job(models.Model):
                 if created:
                     col.save()
                 self.column = col
-            except ObjectDoesNotExist:
+            except ObjectDoesNotExist as err:
                 raise ValueError(
-                    f"Column with position {StatusChoices.get_status_column_position(self.status)} for board {self.board} does not exist."
-                )
+                    f"Column with position \
+                        {StatusChoices.get_status_column_position(self.status)} for \
+                        board {self.board} does not exist."
+                ) from err
 
         elif self.column:
             logger.info("Column exists")
@@ -188,9 +190,7 @@ class Job(models.Model):
                     if not self.date_applied:
                         self.date_applied = timezone.now()
                 else:
-                    if (self.status != StatusChoices.REJECTED) and (
-                        self.status != StatusChoices.CLOSED
-                    ):
+                    if self.status == StatusChoices.OPEN[0]:
                         logger.info("Job is not applied")
                         self.applied = False
         except Job.DoesNotExist:

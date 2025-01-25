@@ -33,7 +33,7 @@ droppables.forEach((zone) => {
     const bottomTask = insertAboveTask(zone, e.clientY);
     const curTask = document.querySelector(".is-dragging");
 
-    if (!bottomTask) {
+    if (bottomTask) {
       zone.appendChild(curTask);
     } else {
       zone.insertBefore(curTask, bottomTask);
@@ -84,7 +84,7 @@ $.ajaxSetup({
 function post_request(col_id, job_id){
   $.ajax({
     type: 'POST',
-    url: `/jobs/job-assign/${col_id}/${job_id}/`,
+    url: `/jobs/assign/${col_id}/${job_id}/`,
     success: function(data) {
       console.log('Post successful', data);
       if (data.job_status == 'RE') {

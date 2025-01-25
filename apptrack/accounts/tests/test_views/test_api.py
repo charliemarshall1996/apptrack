@@ -17,3 +17,8 @@ def test_api_view(client, profile_factory):
 
     data = response.data
     assert data["basic_stats"] == api._get_basic_stats(profile)
+
+
+@pytest.mark.django_db
+def test_api_view_total_applications(client, profile_factory):
+    pass
