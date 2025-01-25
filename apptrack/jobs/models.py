@@ -213,7 +213,6 @@ class Job(models.Model):
 
     def save(self, *args, **kwargs):
         self._manage_columns_and_boards()
-        # Call the parent's save method to persist the object
         self._update_if_changed()
         self._set_applied()
         self._set_interviewed()

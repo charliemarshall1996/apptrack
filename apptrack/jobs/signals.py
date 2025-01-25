@@ -60,3 +60,11 @@ def auto_archive(sender, instance, **kwargs):
             if date_diff.days >= (settings.archive_after_weeks * 7):
                 job.archived = True
                 job.save()
+
+
+@receiver(user_login)
+def check_jobs(sender, instance, **kwargs):
+    profile = instance.profile
+    jobs = Job.objects.filter(profile=profile)
+    for job in jobs:
+        job.save()
