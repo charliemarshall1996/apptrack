@@ -182,17 +182,25 @@ class Job(models.Model):
         logger.info("Setting applied...")
 
         try:
-            original = Job.objects.get(pk=self.pk)
-            if original.status != self.status:
-                if self.status in StatusChoices.get_applied_statuses():
-                    logger.info("Job is applied")
+            if self.status in StatusChoices.get_applied_statuses():
+                logger.info("Job is applied")
+
+                if not self.applied:
                     self.applied = True
-                    if not self.date_applied:
-                        self.date_applied = timezone.now()
-                else:
-                    if self.status == StatusChoices.OPEN[0]:
-                        logger.info("Job is not applied")
+
+                if not self.date_applied:
+                    self.date_applied = timezone.now()
+
+            else:
+                if self.status == StatusChoices.OPEN[0]:
+                    logger.info("Job is not applied")
+
+                    if self.applied:
                         self.applied = False
+
+                    if self.date_applied:
+                        self.date_applied = None
+
         except Job.DoesNotExist:
             pass
 
@@ -202,13 +210,6 @@ class Job(models.Model):
             self.interviewed = True
             if not self.date_interviewed_set:
                 self.date_interviewed_set = timezone.now()
-
-    def _set_offered(self):
-        logger.info("Setting offered...")
-        if self.status == StatusChoices.OFFER:
-            self.offered = True
-            if not self.date_offered_set:
-                self.date_offered_set = timezone.now()
 
     def save(self, *args, **kwargs):
         self._manage_columns_and_boards()
