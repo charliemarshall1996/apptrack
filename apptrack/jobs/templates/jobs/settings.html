@@ -5,20 +5,17 @@
 {% block page_content %}
 
   <div class="card w-50 m-auto">
-      <div class="card-header">
-        <h1>Jobs Settings</h1>
-      </div>
-
-      <div class="card-body">
-        {% load crispy_forms_tags %}
-        <form method="POST">
-            {% csrf_token %}
-            {{ form|crispy }}
-            <button type="submit" class="btn btn-primary">Update</button>
-        </form>
+    <div class="card-header">
+      <h1>Jobs Settings</h1>
     </div>
-    <div class="card-footer text-center">
-        <a class="btn btn-danger" href="{% url 'accounts:delete_account' %}">Delete Account</a>
+
+    <div class="card-body">
+      {% load crispy_forms_tags %}
+      <form method="POST">
+          {% csrf_token %}
+          {{ form|crispy }}
+          <button type="submit" class="btn btn-primary">Update</button>
+      </form>
     </div>
   </div>
 

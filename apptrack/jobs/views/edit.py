@@ -46,4 +46,4 @@ def job_edit_view(request, pk):
             try:
                 return redirect(referer_url)
             except (NoReverseMatch, TypeError):
-                return redirect("jobs:board")
+                return redirect("jobs:list")

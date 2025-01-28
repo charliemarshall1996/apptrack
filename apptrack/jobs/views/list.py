@@ -83,7 +83,6 @@ class JobListView(LoginRequiredMixin, ListView):
             region = form.cleaned_data.get("region")
             countries = form.cleaned_data.get("countries")
             archived = form.cleaned_data.get("archived")
-
             queryset = self._archive_filter(queryset, archived)
 
             # Check if the statuses filter is set

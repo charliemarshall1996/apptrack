@@ -31,7 +31,6 @@ def job_add_view(request):
                 response will contain an error message.
     """
     board = Board.objects.filter(profile=request.user.profile).first()
-    referer_url = request.POST.get("referrer")
 
     if request.method == "POST":
         form = JobForm(request.POST)
@@ -46,4 +45,4 @@ def job_add_view(request):
             messages.error(request, f"Failed to add job {form.errors}. \
                            Please try again.")
 
-    return redirect(referer_url)
+    return redirect("jobs:list")

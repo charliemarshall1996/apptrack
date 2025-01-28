@@ -4,7 +4,6 @@ from . import views
 app_name = "jobs"
 
 urlpatterns = [
-    path("board/", views.board_view, name="board"),
     path("add/", views.job_add_view, name="add"),
     path("archive/", views.JobArchiveView.as_view(), name="archive"),
     path(
