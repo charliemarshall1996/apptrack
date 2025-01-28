@@ -22,6 +22,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Put jobs app onto single nav-link in base authenticated navigation
 - Separated interviews into separate app
 
+### Removed
+
+- Removed job board view. Will look to re-add later.
+
 ### Fixed
 
 - Ensured that board refreshes on all status changes
