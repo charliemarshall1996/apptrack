@@ -64,7 +64,7 @@
                             </div>
                             <div class="col">
                                 {% if job.city or job.region or job.country %}
-                                {% if job.city %}{{ job.city }},{% endif %}{% if job.region %}{{ job.region }},{% endif %}{% if job.country %}{{ job.get_country_display }}{% endif %}
+                                {% if job.city %}{{ job.city }}{% endif %}{% if job.region and job.city %},{{ job.region }}{% elif job.region %}{{ job.region }}{% endif %}{% if job.country and job.region %}{{ job.get_country_display }},{% elif job.country and job.city %},{{ job.get_country_display }}{% elif job.country %}{{ job.get_country_display }}{% endif %}
                                 {% else %}
                                 -
                                 {% endif %}
