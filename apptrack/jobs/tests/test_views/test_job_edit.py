@@ -21,7 +21,6 @@ def test_edit_job_view(client, job_factory, profile_factory, jobs_data):  # noqa
     job.save()
 
     data = JobForm(data=jobs_data).data
-    data["editJobReferrer"] = reverse("jobs:board")
     response = client.post(
         reverse("accounts:login"), {
             "email": profile.user.email, "password": password}
