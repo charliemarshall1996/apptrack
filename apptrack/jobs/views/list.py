@@ -40,10 +40,8 @@ class JobListView(LoginRequiredMixin, ListView):
             region = form.cleaned_data.get("region")
             countries = form.cleaned_data.get("countries")
             archived = form.cleaned_data.get("archived")
+            queryset = self._archive_filter(queryset, archived)
 
-            if archived:
-                queryset = queryset.filter(
-                    archived__in=archived)  # pylint: disable=not-callable=)
             # Check if the statuses filter is set
             if statuses:
                 queryset = queryset.filter(status__in=statuses)
@@ -91,3 +89,29 @@ class JobListView(LoginRequiredMixin, ListView):
         context["job_form"] = JobForm()
         context["ordering"] = self.get_ordering()
         return context
+
+    def _archive_filter(self, queryset, filter_val):
+        """Archive filter helper.
+
+        Takes a queryset and a filter value and filters the queryset according to the
+        filter value.
+
+        Args:
+            queryset (QuerySet): The queryset to filter.
+            filter_val (str): The filter value. Must be one of "in", "on", or "ex".
+
+        Returns:
+            QuerySet: The filtered queryset.
+        """
+        if filter_val != "in":
+            # If the archived filter is set to "only",
+            # filter the queryset to show only archived jobs
+            if filter_val == "on":
+                queryset = queryset.filter(archived=True)
+
+            # If the archived filter is set to "exclude",
+            # filter the queryset to exclude archived jobs
+            else:
+                queryset = queryset.exclude(archived=True)
+
+        return queryset
