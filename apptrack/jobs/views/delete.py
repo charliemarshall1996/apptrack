@@ -15,7 +15,7 @@ class JobDeleteView(LoginRequiredMixin, SuccessMessageMixin, View):
     If the request method is GET, it redirects to the core home page.
     """
     model = Job
-    success_url = reverse_lazy("jobs:board")
+    success_url = reverse_lazy("jobs:list")
     success_message = "Job deleted successfully"
 
     def get(self, request, *args, **kwargs):  # noqa: D102
@@ -24,4 +24,4 @@ class JobDeleteView(LoginRequiredMixin, SuccessMessageMixin, View):
     def post(self, request, *args, **kwargs):  # noqa: D102
         job = self.model.objects.get(id=kwargs["pk"])
         job.delete()
-        return redirect(reverse("jobs:board"))
+        return redirect(reverse("jobs:list"))
