@@ -7,7 +7,9 @@
     <style>
         .btn-outline-primary {
     border: none;
-    padding: 0;
+    }
+    .header-col {
+        padding: 0;
     }
     </style>
 {% endblock %}
@@ -36,38 +38,40 @@
             <div class="list-group list-group-action">
                 <div class="list-group-item">
                     <div class="row">
-                        <div class="col text-start">
+                        <div class="col header-col">
                             <a class="btn btn-outline-primary" href="?ordering={% if ordering == 'job_title' %}-job_title{% else %}job_title{% endif %}">
                                 <strong>Job Title</strong>
                                 {% if ordering == 'job_title' %}▲{% elif ordering == '-job_title' %}▼{% endif %}
                             </a>
                         </div>
-                        <div class="col">
-                            <a class="text-end btn btn-outline-primary" href="?ordering={% if ordering == 'company' %}-company{% else %}company{% endif %}">
+                        <div class="col header-col">
+                            <a class="btn btn-outline-primary" href="?ordering={% if ordering == 'company' %}-company{% else %}company{% endif %}">
                                 <strong>Company</strong>
                                 {% if ordering == 'company' %}▲{% elif ordering == '-company' %}▼{% endif %}
                             </a>
                         </div>
-                        <div class="col">
-                            <a class="text-end btn btn-outline-primary" href="?ordering={% if ordering == 'status' %}-status{% else %}status{% endif %}">
+                        <div class="col header-col">
+                            <a class="btn btn-outline-primary" href="?ordering={% if ordering == 'status' %}-status{% else %}status{% endif %}">
                                 <strong>Status</strong>
                                 {% if ordering == 'status' %}▲{% elif ordering == '-status' %}▼{% endif %}
                             </a>
                         </div>
-                        <div class="col">
-                            <a class="text-end btn btn-outline-primary" href="?ordering={% if ordering == 'city' %}-city{% else %}city{% endif %}">
+                        <div class="col header-col">
+                            <a class="btn btn-outline-primary" href="?ordering={% if ordering == 'city' %}-city{% else %}city{% endif %}">
                                 <strong>Location</strong>
                                 {% if ordering == 'city' %}▲{% elif ordering == '-city' %}▼{% endif %}
                             </a>
                         </div>
-                        <div class="col">
-                            <a class="text-end btn btn-outline-primary" href="?ordering={% if ordering == 'archived' %}-archived{% else %}archived{% endif %}">
+                        <div class="col header-col">
+                            <a class="btn btn-outline-primary" href="?ordering={% if ordering == 'archived' %}-archived{% else %}archived{% endif %}">
                                 <strong>Archived</strong>
                                 {% if ordering == 'archived' %}▲{% elif ordering == '-archived' %}▼{% endif %}
                             </a>
                         </div>
                         <div class="col">
-                            <strong>Actions</strong>
+                            <a class="btn btn-outline-primary disabled" href="#">
+                                <strong>Actions</strong>
+                            </a>
                         </div>
                     </div>
                 </div>
