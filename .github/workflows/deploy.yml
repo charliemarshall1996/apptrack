@@ -2,32 +2,7 @@ name: Deploy Release
 run-name: ${{ github.actor }} is deploying a release
 
 on:
-  release:
-    types:
-      - published
-      - edited
-  workflow_dispatch:
-    inputs:
-      migrate:
-        type: boolean
-        description: Migrate database?
-        required: false
-        default: false
-      init_new_db:
-        type: boolean
-        description: Initialize new database?
-        required: false
-        default: false
-      install_dependencies:
-        type: boolean
-        description: Install dependencies?
-        required: false
-        default: false
-      collect_static:
-        type: boolean
-        description: Collect static files?
-        required: false
-        default: false
+  - workflow_dispatch
 
 jobs:
   deploy:
