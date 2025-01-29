@@ -1,9 +1,16 @@
 <!DOCTYPE html>
-
 {% extends 'jobs/base.html' %}
 {% load static %}
 {% block page_content %}
 <head>{% block subtitle %}<title>Jobs | List</title>{% endblock %}</head>
+{% block page_css %}
+    <style>
+        .btn-outline-primary {
+    border: none;
+    padding: 0;
+    }
+    </style>
+{% endblock %}
 <div class="container-fluid py-3">
     <div class="row">
         <div class="col">
@@ -29,21 +36,35 @@
             <div class="list-group list-group-action">
                 <div class="list-group-item">
                     <div class="row">
-                        <div class="col">
-                            <strong>Job Title</strong>
+                        <div class="col text-start">
+                            <a class="btn btn-outline-primary" href="?ordering={% if ordering == 'job_title' %}-job_title{% else %}job_title{% endif %}">
+                                <strong>Job Title</strong>
+                                {% if ordering == 'job_title' %}▲{% elif ordering == '-job_title' %}▼{% endif %}
+                            </a>
                         </div>
                         <div class="col">
-                            <strong>Company</strong>
+                            <a class="text-end btn btn-outline-primary" href="?ordering={% if ordering == 'company' %}-company{% else %}company{% endif %}">
+                                <strong>Company</strong>
+                                {% if ordering == 'company' %}▲{% elif ordering == '-company' %}▼{% endif %}
+                            </a>
                         </div>
                         <div class="col">
-                            <strong>Status</strong>
+                            <a class="text-end btn btn-outline-primary" href="?ordering={% if ordering == 'status' %}-status{% else %}status{% endif %}">
+                                <strong>Status</strong>
+                                {% if ordering == 'status' %}▲{% elif ordering == '-status' %}▼{% endif %}
+                            </a>
                         </div>
-                        
                         <div class="col">
-                            <strong>Location</strong>
+                            <a class="text-end btn btn-outline-primary" href="?ordering={% if ordering == 'city' %}-city{% else %}city{% endif %}">
+                                <strong>Location</strong>
+                                {% if ordering == 'city' %}▲{% elif ordering == '-city' %}▼{% endif %}
+                            </a>
                         </div>
                         <div class="col">
-                            <strong>Archived</strong>
+                            <a class="text-end btn btn-outline-primary" href="?ordering={% if ordering == 'archived' %}-archived{% else %}archived{% endif %}">
+                                <strong>Archived</strong>
+                                {% if ordering == 'archived' %}▲{% elif ordering == '-archived' %}▼{% endif %}
+                            </a>
                         </div>
                         <div class="col">
                             <strong>Actions</strong>
@@ -64,7 +85,21 @@
                             </div>
                             <div class="col">
                                 {% if job.city or job.region or job.country %}
-                                {% if job.city %}{{ job.city }}{% endif %}{% if job.region and job.city %},{{ job.region }}{% elif job.region %}{{ job.region }}{% endif %}{% if job.country and job.region %}{{ job.get_country_display }},{% elif job.country and job.city %},{{ job.get_country_display }}{% elif job.country %}{{ job.get_country_display }}{% endif %}
+                                {% if job.city %}
+                                    {{ job.city }}
+                                {% endif %}
+                                {% if job.region and job.city %}
+                                    ,{{ job.region }}
+                                {% elif job.region %}
+                                    {{ job.region }}
+                                {% endif %}
+                                {% if job.country and job.region %}
+                                    ,{{ job.get_country_display }}
+                                {% elif job.country and job.city %}
+                                    ,{{ job.get_country_display }}
+                                {% elif job.country %}
+                                    {{ job.get_country_display }}
+                                {% endif %}
                                 {% else %}
                                 -
                                 {% endif %}
@@ -75,13 +110,13 @@
                             <div class="col">
                                 <div class="row">
                                     <div class="col">
-                                        <button type="button" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#jobDetailModal{{ job.id }}">
+                                        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#jobDetailModal{{ job.id }}">
                                             View
                                         </button>
                                     </div>
                                     {% if not job.applied and job.url %}
                                     <div class="col">
-                                        <a href="{{ job.url }}" target="_blank" class="btn btn-sm btn-primary">Apply</a>
+                                        <a href="{{ job.url }}" target="_blank" class="btn btn-primary">Apply</a>
                                     </div>
                                     {% endif %}
                                 </div>

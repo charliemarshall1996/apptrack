@@ -25,20 +25,17 @@
             <h5 class="card-title">{{ task.name }}</h5>
         </div>
         <div class="card-body text-center">
-            {% if task.type == "target" %}
-            <p class="card-text">Applications Target: {{ task.target.current }}/{{ task.target.amount }}</p>
-            {% endif %}
             {% if task.type == "interview" %}
             <p class="card-text">Interview: {{ task.interview.name }}</p>
             <p class="card-text">Date: {{ task.interview.start_date }}</p>
+            <p class="card-text">Task: {{ task.name }}</p>
             {% endif %}
             {% if task.type == "job" %}
             <p class="card-text">Job: {{ task.job.job_title }}</p>
             <p class="card-text">Company: {{ task.job.company }}</p>
+            <p class="card-text">Task: {{ task.name }}</p>
             {% endif %}
-            {% if task.type != "target" %}
-                <button class="btn btn-primary complete-task" data-id="{{ task.id }}">Complete</button>
-            {% endif %}
+            <button class="btn btn-primary complete-task" data-id="{{ task.id }}">Complete</button>
         </div>
     </div>
     {% empty %}
