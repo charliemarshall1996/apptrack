@@ -32,7 +32,7 @@ INSTALLED_APPS = [
 
     'accounts',
     'blog',
-    'companies',
+    'company',
     'core',
     'jobs',
     'interviews',
