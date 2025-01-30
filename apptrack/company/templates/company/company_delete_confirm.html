@@ -1,0 +1,13 @@
+{% extends 'core/base_authenticated.html' %}
+
+{% block heading %}Delete Company{% endblock %}
+
+{% block content %}
+    <form method="post">
+        {% csrf_token %}
+        {% load crispy_forms_tags %}
+        {{ form|crispy }}
+        <button type="submit" class="btn btn-primary btn-danger">Submit</button>
+        <a href="{% url 'company:list' %}" class="btn btn-secondary">Cancel</a>
+    </form>
+{% endblock %}

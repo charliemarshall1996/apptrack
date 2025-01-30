@@ -58,10 +58,13 @@
       <div class="collapse navbar-collapse" id="navbarNav">
         <ul class="navbar-nav w-100">
           <li class="nav-item">
-            <a class="nav-link {% if request.path == 'accounts/dashboard/' %}active{% endif %}" href="{% url 'accounts:dashboard' %}">Dashboard</a>
+            <a class="nav-link {% if request.path == '/accounts/dashboard/' %}active{% endif %}" href="{% url 'accounts:dashboard' %}">Dashboard</a>
           </li>
           <li class="nav-item">
             <a class="nav-link {% if '/jobs/' in request.path %}active{% endif %}" href="{% url 'jobs:list' %}">Jobs</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link {% if '/company/' in request.path %}active{% endif %}" href="{% url 'company:list' %}">Companies</a>
           </li>
           <li class="nav-item">
             <a class="nav-link {% if request.path == '/tasks/' %}active{% endif %}" href="{% url 'tasks:tasks-list' %}">Tasks</a>

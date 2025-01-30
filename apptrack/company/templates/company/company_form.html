@@ -1,0 +1,11 @@
+{% extends 'core/base_authenticated.html' %}
+
+{% block content %}
+    <form method="post">
+        {% csrf_token %}
+        {% load crispy_forms_tags %}
+        {{ form|crispy }}
+        <button type="submit" class="btn btn-primary">Submit</button>
+        <a href="{% url 'company:list' %}" class="btn btn-secondary">Cancel</a>
+    </form>
+{% endblock %}

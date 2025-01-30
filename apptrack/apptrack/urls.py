@@ -25,6 +25,7 @@ urlpatterns = [
     path("", include("core.urls")),
     path("accounts/", include("accounts.urls")),
     path("blog/", include("blog.urls")),
+    path("company/", include("company.urls")),
     path("jobs/", include("jobs.urls")),
     path("tasks/", include("tasks.urls")),
     path("interviews/", include("interviews.urls")),

@@ -1,0 +1,31 @@
+{% extends 'core/base_authenticated.html' %}
+
+{% block heading %}Companies{% endblock %}
+
+{% block content %}
+    <a href="{% url 'company:create' %}" class="btn btn-primary mb-3">Create Company</a>
+    
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Is Recruiter</th>
+                <th>Ignore</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for company in object_list %}
+            <tr>
+                <td>{{ company.name }}</td>
+                <td>{{ company.is_recruiter }}</td>
+                <td>{{ company.ignore }}</td>
+                <td>
+                    <a href="{% url 'company:update' company.id %}" class="btn btn-sm btn-warning">Edit</a>
+                    <a href="{% url 'company:delete' company.id %}" class="btn btn-sm btn-danger">Delete</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}
