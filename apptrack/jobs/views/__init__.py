@@ -2,7 +2,6 @@
 
 from .add import job_add_view
 from .archive import JobArchiveView
-from .assign import JobAssignView
 from .delete import JobDeleteView
 from .download import job_download_view
 from .edit import job_edit_view
@@ -12,7 +11,6 @@ from .settings import settings_view
 __all__ = [
     "job_add_view",
     "JobArchiveView",
-    "JobAssignView",
     "JobDeleteView",
     "job_download_view",
     "job_edit_view",

@@ -6,7 +6,6 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect
 from django.views.decorators.http import require_POST
 
-from jobs.models import Board
 from jobs.forms import JobForm
 
 logger = logging.getLogger(__name__)
@@ -30,14 +29,12 @@ def job_add_view(request):
             response will contain a success message. If the form is invalid, the 
                 response will contain an error message.
     """
-    board = Board.objects.filter(profile=request.user.profile).first()
 
     if request.method == "POST":
         form = JobForm(request.POST)
 
         if form.is_valid():
             job = form.save()
-            job.board = board
             job.profile = request.user.profile
             job.save()
             messages.success(request, "Job added successfully!")

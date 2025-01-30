@@ -6,7 +6,7 @@ from accounts.models import Profile
 
 class Company(models.Model):
     profile = models.ForeignKey(
-        Profile, related_name="company", on_delete=models.CASCADE)
+        Profile, on_delete=models.CASCADE)
     name = models.CharField(max_length=100)
     is_recruiter = models.BooleanField(default=False)
     website = models.URLField(null=True, blank=True)

@@ -23,39 +23,9 @@ logger.setLevel(logging.DEBUG)
 # Create your models here.
 
 
-class Board(models.Model):
-    name = models.CharField(
-        max_length=255, null=True, blank=True, default="My Job Board"
-    )
-
-    profile = models.OneToOneField(
-        Profile, on_delete=models.CASCADE, related_name="board"
-    )
-
-
-class Column(models.Model):
-    board = models.ForeignKey(
-        "Board", on_delete=models.CASCADE, related_name="columns")
-    name = models.CharField(max_length=255)
-    position = models.PositiveIntegerField()
-
-    def __str__(self):
-        return self.name
-
-    class Meta:
-        ordering = ["position"]
-        unique_together = ("board", "name", "position")
-
-
 class Job(models.Model):
     id = models.BigAutoField(primary_key=True)
     profile = models.ForeignKey(Profile, on_delete=models.CASCADE)
-    column = models.ForeignKey(
-        Column, related_name="column", on_delete=models.CASCADE, null=True, blank=True
-    )
-    board = models.ForeignKey(
-        Board, related_name="jobs", on_delete=models.CASCADE, null=True, blank=True
-    )
 
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(null=True, blank=True)
@@ -131,53 +101,6 @@ class Job(models.Model):
                     logger.info("Updating job...")
                     self.updated = timezone.now()
 
-    def _manage_columns_and_boards(self):
-        logger.info("Managing columns and boards...")
-
-        # Check if the column
-        # is not already set
-        if not self.column and self.board:
-            self.board.save()
-            try:
-                position = StatusChoices.get_status_column_position(
-                    self.status)
-                name = StatusChoices.get_column_position_status_name(position)
-
-                # Retrieve the correct column
-                # based on the position and board
-                col, created = Column.objects.get_or_create(
-                    name=name, position=position, board=self.board
-                )
-
-                if created:
-                    col.save()
-                self.column = col
-            except ObjectDoesNotExist as err:
-                raise ValueError(
-                    f"Column with position \
-                        {StatusChoices.get_status_column_position(self.status)} for \
-                        board {self.board} does not exist."
-                ) from err
-
-        elif self.column:
-            logger.info("Column exists")
-            self.board.save()
-            self.column.board = self.board
-            self.column.save()
-
-            original = Job.objects.filter(pk=self.pk).first()
-
-            if original and original.status != self.status:
-                self.column = Column.objects.filter(
-                    board=self.board,
-                    position=StatusChoices.get_status_column_position(
-                        self.status),
-                ).first()
-            elif original and original.column != self.column:
-                self.status = StatusChoices.get_column_position_status(
-                    self.column.position
-                )
-
     def _set_applied(self):
         logger.info("Setting applied...")
 
@@ -212,7 +135,6 @@ class Job(models.Model):
                 self.date_interviewed_set = timezone.now()
 
     def save(self, *args, **kwargs):
-        self._manage_columns_and_boards()
         self._update_if_changed()
         self._set_applied()
         self._set_interviewed()
