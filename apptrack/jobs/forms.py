@@ -1,11 +1,19 @@
 
 from django import forms
 
+from company.models import Company
 from core.models import Country
 from .models import Job, StatusChoices, JobFunction, Settings
 
 
 class JobForm(forms.ModelForm):
+    company_name = forms.CharField(label='Company')
+    company = forms.ModelChoiceField(
+        queryset=Company.objects.none(),
+        widget=forms.HiddenInput(),
+        required=False
+    )
+
     class Meta:
         model = Job
         fields = [
@@ -29,10 +37,34 @@ class JobForm(forms.ModelForm):
             "status",
         ]
 
-        widgets = {"is_recruiter": forms.CheckboxInput()}
+    def __init__(self, *args, **kwargs):
+        self.profile = kwargs.pop('profile', None)
+        super().__init__(*args, **kwargs)
+        if self.profile:
+            self.fields['company'].queryset = Company.objects.filter(
+                profile=self.profile)
+        if self.instance and self.instance.company:
+            self.initial['company_name'] = self.instance.company.name
 
-    def save(self, *args, **kwargs):
-        return super().save(*args, commit=False, **kwargs)
+    def clean(self):
+        cleaned_data = super().clean()
+        company_name = cleaned_data.get('company_name')
+        is_recruiter = cleaned_data.get('is_recruiter', False)
+        profile = self.profile
+
+        if not company_name:
+            self.add_error('company_name', 'This field is required.')
+            return cleaned_data
+
+        # Get or create the company
+        company, created = Company.objects.get_or_create(
+            profile=profile,
+            name=company_name,
+            defaults={'is_recruiter': is_recruiter}
+        )
+
+        cleaned_data['company'] = company
+        return cleaned_data
 
 
 class DownloadJobsForm(forms.Form):

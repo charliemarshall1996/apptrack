@@ -59,10 +59,11 @@ def remove_migrations():
             logger.info("Migrations found for app: %s", app.name)
 
             for file in migrations_folder.iterdir():
-                if file.name != "__init__.py":
+                if file.name != "__init__.py" and "__pycache__" not in file:
                     try:
                         logger.info("Removing migration: %s", file.name)
-                        subprocess.call(shell=True, args=["rm", "-f", file.name])
+                        subprocess.call(shell=True, args=[
+                                        "rm", "-f", file.name])
                         logger.info("Migration removed: %s", file.name)
                     except subprocess.CalledProcessError as e:
                         logger.error(

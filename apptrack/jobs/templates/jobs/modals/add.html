@@ -23,7 +23,18 @@
                         <div class="col">
                             <div class="row">
                                 <div class="col">
-                                    {{ job_form.company|as_crispy_field }}
+                                    <label for="id_company_name">Company</label>
+                                    <input type="text" name="company_name" id="id_company_name" class="form-control" list="company-list" value="{{ job_form.company_name.value|default:'' }}" />
+                                    <datalist id="company-list">
+                                        {% for company in request.user.profile.company_set.all %}
+                                            <option value="{{ company.name }}">
+                                        {% endfor %}
+                                    </datalist>
+                                    {% if job_form.company_name.errors %}
+                                        <div class="invalid-feedback">
+                                            {{ job_form.company_name.errors }}
+                                        </div>
+                                    {% endif %}
                                 </div>
                             </div>
                             <div class="row">

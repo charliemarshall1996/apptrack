@@ -32,18 +32,15 @@ def job_edit_view(request, pk):
     """
     logger.info("Editing job...")
     job = Job.objects.get(pk=pk)
-    referer_url = request.POST.get("editJobReferrer")
-    logger.info("Referer URL: %s", referer_url)
+
     if request.method == "POST":
         logger.info("Request method is POST")
-        form = JobForm(request.POST, instance=job)
+        form = JobForm(request.POST, instance=job,
+                       profile=request.user.profile)
         if form.is_valid():
             logger.info("Form is valid")
             job = form.save()
             job.save()
             logger.info("Job saved")
             logger.info("New job url: %s", job.url)
-            try:
-                return redirect(referer_url)
-            except (NoReverseMatch, TypeError):
-                return redirect("jobs:list")
+            return redirect("jobs:list")

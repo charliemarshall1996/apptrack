@@ -6,6 +6,7 @@ from django.db import models
 from django.utils import timezone
 
 from accounts.models import Profile
+from company.models import Company
 from core.models import (
     Country,
     Currency,
@@ -40,8 +41,8 @@ class Job(models.Model):
         JobFunction, on_delete=models.SET_NULL, null=True, blank=True
     )
     description = models.TextField(blank=True, null=True)
-
-    company = models.CharField(max_length=100, null=True, blank=True)
+    company = models.ForeignKey(Company, on_delete=models.CASCADE, null=True)
+    company_name = models.CharField(max_length=100, null=True, blank=True)
     is_recruiter = models.BooleanField(default=False, null=True, blank=True)
 
     location_policy = models.ForeignKey(

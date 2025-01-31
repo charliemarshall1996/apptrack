@@ -31,7 +31,7 @@ def job_add_view(request):
     """
 
     if request.method == "POST":
-        form = JobForm(request.POST)
+        form = JobForm(request.POST, profile=request.user.profile)
 
         if form.is_valid():
             job = form.save()
