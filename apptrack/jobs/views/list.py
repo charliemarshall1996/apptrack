@@ -6,6 +6,7 @@ Manages the job list view.
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import ListView
 
+from company.models import Company
 from jobs.models import Job
 from jobs.forms import JobForm, JobFilterForm
 
@@ -56,7 +57,10 @@ class JobListView(LoginRequiredMixin, ListView):
 
             # Check if the company filter is set
             if company:
-                queryset = queryset.filter(company__icontains=company)
+                companies = Company.objects.filter(
+                    name__icontains=company, profile=self.request.user.profile)
+                companies = [company.id for company in companies]
+                queryset = queryset.filter(company__in=companies)
 
             # Check if the city filter is set
             if city:

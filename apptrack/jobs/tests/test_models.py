@@ -5,7 +5,6 @@ import pytest
 
 from jobs.models import (
     Job,
-    Column,
     JobFunction,
     LocationPolicy,
     PayRate,
@@ -17,57 +16,16 @@ logger = logging.getLogger(__name__)
 
 
 @pytest.mark.django_db
-def test_board(profile_factory):
+def test_job(profile_factory, job_data_factory, company_factory):
     profile = profile_factory()
     profile.save()
-    board = profile.board
-    board.save()
-    board_columns = [column.name for column in board.columns.all()]
-    assert board.name == "My Job Board"
-    assert "Open" in board_columns
-    assert "Applied" in board_columns
-    assert "Shortlisted" in board_columns
-    assert "Interview" in board_columns
-    assert "Offer" in board_columns
-    assert "Rejected" in board_columns
-    assert "Closed" in board_columns
-    expected_columns = [
-        ("Open", 1),
-        ("Applied", 2),
-        ("Shortlisted", 3),
-        ("Interview", 4),
-        ("Offer", 5),
-        ("Rejected", 6),
-        ("Closed", 7),
-    ]
-
-    for name, position in expected_columns:
-        assert Column.objects.filter(
-            name=name, position=position, board=board).exists()
-
-
-@pytest.mark.django_db
-def test_column(board_factory, column_data_factory):
-    board = board_factory()
-    data = column_data_factory(board=board)
-    column = Column(**data)
-    assert column.name == data["name"]
-    assert column.position == data["position"]
-    assert column.board.name == board.name
-    assert column.board.id == board.id
-
-
-@pytest.mark.django_db
-def test_job(profile_factory, column_factory, job_data_factory):
-    data = job_data_factory()
-    profile = profile_factory()
-    profile.save()
-    board = profile.board
-    column = column_factory(board=board)
-    job = Job(profile=profile, column=column, board=board, **data)
+    company = company_factory(profile=profile)
+    company.save()
+    data = job_data_factory(company=company)
+    job = Job(profile=profile, **data)
 
     assert job.description == data["description"]
-    assert job.company == data["company"]
+    assert job.company == company
     assert job.source == data["source"]
     assert job.city == data["city"]
     assert job.job_title == data["job_title"]
@@ -77,19 +35,12 @@ def test_job(profile_factory, column_factory, job_data_factory):
     assert job.url == data["url"]
     assert job.status == data["status"]
 
-    assert job.column.name == column.name
-    assert job.column.position == column.position
-    assert job.column.board.name == board.name
-
 
 @pytest.mark.django_db
-def test_job_updated(profile_factory, column_factory, job_data_factory):
+def test_job_updated(profile_factory, job_data_factory):
     profile = profile_factory()
     profile.save()
-    board = profile.board
-    column = column_factory(board=board)
-    job = Job(profile=profile, column=column,
-              board=board, **job_data_factory())
+    job = Job(profile=profile, **job_data_factory(profile=profile))
 
     job.save()
 
@@ -117,20 +68,6 @@ def test_job_updated(profile_factory, column_factory, job_data_factory):
 
 
 @pytest.mark.django_db
-def test_job_status_no_column(profile_factory, job_data_factory):
-    profile = profile_factory()
-    profile.save()
-    board = profile.board
-    job = Job(profile=profile, board=board, **job_data_factory())
-    job.save()
-
-    assert job.column
-    assert StatusChoices.get_status_name(job.status) == job.column.name
-    assert StatusChoices.get_status_column_position(
-        job.status) == job.column.position
-
-
-@pytest.mark.django_db
 def test_job_status_applied(profile_factory, job_data_factory):
     applied_statuses = StatusChoices.get_applied_statuses()
     data = job_data_factory()
@@ -140,8 +77,7 @@ def test_job_status_applied(profile_factory, job_data_factory):
         logger.info("jobs_data: %s", data)
         profile = profile_factory()
         profile.save()
-        board = profile.board
-        job = Job(profile=profile, board=board, **data)
+        job = Job(profile=profile, **data)
         job.save()
 
         assert not job.applied

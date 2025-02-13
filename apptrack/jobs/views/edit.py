@@ -5,8 +5,8 @@ Manages the job edit view for the requesting user.
 import logging
 
 from django.contrib.auth.decorators import login_required
+from django.contrib import messages
 from django.shortcuts import redirect
-from django.urls.exceptions import NoReverseMatch
 from django.views.decorators.http import require_POST
 
 from jobs.models import Job
@@ -43,4 +43,9 @@ def job_edit_view(request, pk):
             job.save()
             logger.info("Job saved")
             logger.info("New job url: %s", job.url)
-            return redirect("jobs:list")
+            messages.success(request, "Job updated successfully!")
+        else:
+            logger.info("Form is not valid")
+            messages.error(request, f"Error updating job: {form.errors}")
+
+    return redirect("jobs:list")

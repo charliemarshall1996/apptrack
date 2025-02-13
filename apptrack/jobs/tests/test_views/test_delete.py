@@ -10,10 +10,7 @@ def test_delete_job_view(client, job_factory, profile_factory):  # noqa: D103
     profile = profile_factory(password=password)
     profile.save()
 
-    board = profile.board
-
     job = job_factory(profile=profile)
-    job.board = board
     job.save()
 
     response = client.post(

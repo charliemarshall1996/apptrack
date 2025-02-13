@@ -66,6 +66,14 @@ class JobForm(forms.ModelForm):
         cleaned_data['company'] = company
         return cleaned_data
 
+    def save(self, commit=True):
+        instance = super().save(commit=False)
+        instance.profile = self.profile
+        instance.company = self.cleaned_data['company']
+        if commit:
+            instance.save()
+        return instance
+
 
 class DownloadJobsForm(forms.Form):
     start_date = forms.DateField(

@@ -29,7 +29,6 @@ def job_add_view(request):
             response will contain a success message. If the form is invalid, the 
                 response will contain an error message.
     """
-
     if request.method == "POST":
         form = JobForm(request.POST, profile=request.user.profile)
 

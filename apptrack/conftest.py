@@ -13,7 +13,8 @@ from core.choices import (
     SourceChoices,
     ReminderUnitChoices,
 )
-from jobs.models import Job, Board, Column
+from company.models import Company
+from jobs.models import Job
 from interviews.models import Interview
 from blog.models import BlogPost
 
@@ -40,7 +41,7 @@ def user_registration_form_data():
 
 @pytest.fixture
 def custom_user_data_factory():
-    def factory(password=None, email_verified=True, verification_email_sent=True):
+    def factory(password=None, email_verified=True, verification_email_sent=True, **kwargs):
         if verification_email_sent:
             return {
                 "email": fake.email(),
@@ -99,6 +100,32 @@ def profile_factory(profile_data_factory):
 
 
 @pytest.fixture
+def company_data_factory(profile_factory):
+    def factory(**kwargs):
+        return {
+            "name": fake.company()
+        }
+
+    return factory
+
+
+@pytest.fixture
+def company_factory(company_data_factory, profile_factory):
+    def factory(**kwargs):
+        data = company_data_factory(**kwargs)
+        if kwargs.get("profile", None):
+            profile = kwargs["profile"]
+        else:
+            profile = profile_factory(**kwargs)
+            profile.save()
+        company = Company(profile=profile, **data)
+        company.save()
+        return company
+
+    return factory
+
+
+@pytest.fixture
 def jobs_form_data():
     return {
         "url": fake.url(),
@@ -145,7 +172,7 @@ def jobs_data():
 
 
 @pytest.fixture()
-def job_data_factory():
+def job_data_factory(company_factory):
     def factory(**kwargs):
         updated_days_previous = kwargs.pop("updated_days_previous", None)
         url = kwargs.pop("url", None)
@@ -171,7 +198,7 @@ def job_data_factory():
             # 'currency': currency or random.choice(CURRENCIES),
             "note": fake.text(),
             "status": status or random.choice(STATUSES),
-            "company": company or fake.company(),
+            "company": company or company_factory(profile=kwargs.pop("profile", None)),
             "city": city or fake.city(),
             # 'country': country or random.choice(COUNTRIES),
             "region": region or fake.state(),
@@ -186,6 +213,7 @@ def job_data_factory():
 @pytest.fixture
 def job_factory(job_data_factory):
     def factory(profile, **kwargs):
+        kwargs['profile'] = profile
         data = job_data_factory(**kwargs)
         return Job(profile=profile, **data)
 
@@ -215,24 +243,6 @@ def board_data_factory(profile_factory):
 
 
 @pytest.fixture()
-def board_factory(board_data_factory):
-    def factory(
-        profile=None,
-        user=None,
-        password=None,
-        email_verified=True,
-        name=None,
-        no_name=False,
-    ):
-        data = board_data_factory(
-            profile, user, password, email_verified, name, no_name
-        )
-        return Board(**data)
-
-    return factory
-
-
-@pytest.fixture()
 def column_data_factory():
     def factory(name=None, position=None, board=None):
         if not name:
@@ -251,15 +261,6 @@ def column_data_factory():
                 "position": position or random.randint(1, 7),
                 "board": board,
             }
-
-    return factory
-
-
-@pytest.fixture()
-def column_factory(column_data_factory):
-    def factory(name=None, position=None, board=None):
-        data = column_data_factory(name, position, board)
-        return Column(**data)
 
     return factory
 
