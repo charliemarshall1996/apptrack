@@ -7,7 +7,6 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('company', '0001_initial'),
         ('jobs', '0002_rename_company_job_company_name'),
     ]
 
@@ -15,6 +14,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='job',
             name='company',
-            field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.CASCADE, to='company.company'),
+            field=models.ForeignKey(
+                null=True, on_delete=django.db.models.deletion.CASCADE, to='company.company'),
         ),
     ]
