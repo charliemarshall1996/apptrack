@@ -3,7 +3,7 @@ from datetime import timedelta
 
 from django.contrib import messages
 from django.contrib.auth import authenticate, get_backends, get_user_model, login
-from django.dispatch import Signal
+from django import dispatch
 from django.shortcuts import redirect, render
 from django.urls import reverse
 
@@ -21,7 +21,7 @@ logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
 User = get_user_model()
 
-user_login = Signal()
+user_login = dispatch.Signal()
 
 
 def login_non_verified_email(request, email):
@@ -50,7 +50,7 @@ def login_non_verified_email(request, email):
         messages.error(request, AccountsMessageManager.email_not_found)
         return redirect("accounts:login")
 
-    if user.email_verified:
+    if user.email_verified or user.is_superuser:
         logger.info("Email already verified")
         messages.error(request, AccountsMessageManager.email_not_verified)
         return redirect("accounts:login")
@@ -106,7 +106,7 @@ def login_view(request):
 
             # Sign in the user if the email has been verified
             if user is not None:
-                if user.email_verified:
+                if user.email_verified or user.is_superuser:
                     for backend in get_backends():
                         if user == backend.get_user(user.id):
                             user.backend = (

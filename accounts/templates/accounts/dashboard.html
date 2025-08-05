@@ -55,85 +55,7 @@
             </div>
         </div>
     </div>
-    <div class="col">
-        <div class="card">
-            <div class="card-header text-center">
-                <h5>Interviews</h5>
-            </div>
-            <div class="card-body">
-                <div class="list-group">
-                    {% for interview in interviews %}
-                    <div class="list-group-item">
-                        <div class="row">
-                            <div class="col">
-                                <strong>{{ interview.job.job_title }}</strong>
-                            </div>
-                            <div class="col">
-                                <strong>{{ interview.start_date }}</strong>
-                            </div>
-                        </div>
-                    </div>
-                    {% empty %}
-                    <div class="list-group-item">
-                        <div class="row">
-                            <div class="col">
-                                <strong>No Interviews</strong>
-                            </div>
-                        </div>
-                    </div>
-                    {% endfor %}
-                </div>
-            </div>
-            <div class="card-footer">
-                <div class="row text-center">
-                    <div class="col">
-                        <a class="btn btn-sm btn-primary" href="{% url 'interviews:home' %}">Calendar</a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="col">
-        <div class="card">
-            <div class="card-header text-center">
-                <h5>Tasks</h5>
-            </div>
-            <div class="card-body">
-                <div class="list-group">
-                    {% for task in tasks %}
-                    <div class="list-group-item">
-                        <div class="row d-flex align-items-center" style="white-space: nowrap;">
-                            <div class="col d-flex">
-                                <strong>{{ task.name }}</strong>
-                            </div>
-                            {% if task.type == "target" %}
-                            <div class="col d-flex">
-                                <p class="my-0">{{ task.current_val }}/{{ task.target_val }}</p>
-                            </div>
-                            {% endif %}
-                        </div>
-                        
-                    </div>
-                    {% empty %}
-                    <div class="list-group-item">
-                        <div class="row">
-                            <div class="col">
-                                <strong>No Tasks</strong>
-                            </div>
-                        </div>
-                    </div>
-                    {% endfor %}
-                </div>
-            </div>
-            <div class="card-footer">
-                <div class="row text-center">
-                    <div class="col">
-                        <a class="btn btn-sm btn-primary" href="#">Task Cards</a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+
 </div>
 
 
@@ -162,27 +84,9 @@
                 <strong id="totalApplications"></strong>
             </td>
         </tr>
-        <tr>
-            <td>
-                Interview Conversion Rate
-            </td>
-            <td>
-                <strong id="interviewConversionRate"></strong>%
-            </td>
-        </tr>
-        <tr>
-            <td>
-                Total Interviews
-            </td>
-            <td>
-                <strong id="totalInterviews"></strong>
-            </td>
-        </tr>
     </tbody>
 </table>
 
-<span><h3 class="text-center">MORE STATS COMING SOON</h3></span>
-  
 <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script> 
 
 <script src="{% static 'accounts/scripts/basicStats.js' %}"></script>
