@@ -153,10 +153,10 @@ cython_debug/
 #.idea/
 
 *.sqlite3
-apptrack/apptrack/settings.py
-apptrack/keys.json
-apptrack/db.sqlite3
-apptrack/.env
+apptrack/settings.py
+keys.json
+db.sqlite3
+.env
 *experimental/
 
 # Tests and Linting
